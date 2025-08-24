@@ -1,5 +1,5 @@
 <!-- Choisissez votre langue / Choose votre language: -->
-[en](#english) | [🇫🇷 Français](#français)
+[en English](#english) | [🇫🇷 Français](#français)
 
 ---
 
