@@ -86,6 +86,10 @@ Ce projet permet de déployer une page d'erreur personnalisée via un Worker Clo
   ```
 - Copiez l'ID du namespace et ajoutez-le dans le champ `id` de la section `kv_namespaces` du fichier `wrangler.toml`.
 
+![Create KV](images/create_kv.png)
+![Add names](images/create_kv_add_name.png)
+![Copy id](images/create_kv_copy_id.png)
+
 ### 6. Déployer le Worker
 
 Si vous avez bien lier votre repo forker a votre Worker cloudflare il ve se deployer automatiquement a chaque modification
