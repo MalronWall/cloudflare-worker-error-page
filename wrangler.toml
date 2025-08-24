@@ -1,5 +1,5 @@
 # Configuration de base du Worker
-name = "cloudflare-worker-show-error-page"
+name = "cloudflare-worker-error-page"
 main = "worker.js"
 compatibility_date = "2025-08-24"
 
