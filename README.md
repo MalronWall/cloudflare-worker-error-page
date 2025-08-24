@@ -39,6 +39,10 @@ This project allows you to deploy a custom error page using a Cloudflare Worker.
   ```
 - Copy the namespace ID and add it to the `id` field in the `kv_namespaces` section of the `wrangler.toml` file.
 
+![Create KV](images/create_kv.png)
+![Add names](images/create_kv_add_name.png)
+![Copy id](images/create_kv_copy_id.png)
+
 ### 6. Deploy the Worker
 
 If your forked repo is correctly linked to your Cloudflare Worker, it will deploy automatically on each modification.
@@ -86,9 +90,9 @@ Ce projet permet de déployer une page d'erreur personnalisée via un Worker Clo
   ```
 - Copiez l'ID du namespace et ajoutez-le dans le champ `id` de la section `kv_namespaces` du fichier `wrangler.toml`.
 
-![Create KV](images/create_kv.png)
-![Add names](images/create_kv_add_name.png)
-![Copy id](images/create_kv_copy_id.png)
+![Creation du KV](images/create_kv.png)
+![lui donner un nom](images/create_kv_add_name.png)
+![Copier son ID](images/create_kv_copy_id.png)
 
 ### 6. Déployer le Worker
 
