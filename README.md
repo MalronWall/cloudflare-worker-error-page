@@ -1,5 +1,51 @@
-<!-- Choisissez votre langue / Choose your language: -->
-[🇫🇷 Français](#français) | [🇬🇧 English](#english)
+<!-- Choisissez votre langue / Choose votre language: -->
+[en](#english) | [🇫🇷 Français](#français)
+
+---
+
+## <a name="english"></a>en
+
+# Cloudflare Worker Error Page
+
+This project allows you to deploy a custom error page using a Cloudflare Worker.
+
+## Installation Steps
+
+### 1. Create a Worker on Cloudflare
+
+- Log in to your Cloudflare dashboard.
+- Go to the **Workers** section.
+- Create a new Worker.
+- Set the route on your main domain, for example: *kanago.fr/*
+
+### 2. Fork this repository
+
+### 3. Link the Worker to your forked repository
+
+- In the Cloudflare dashboard, link the created Worker to your forked repo.
+
+### 4. Enable environment variables
+
+- Open the `wrangler.toml` file.
+- Remove the `#` in front of the variables you want to enable, or add them as **secrets** in Cloudflare (Worker Variables/Secrets section).
+- Alternatively, you can leave the `#` and add the variables as secrets in the Worker.
+
+### 5. Create a KV namespace
+
+- In Cloudflare, go to **Workers > KV**.
+- Create a namespace named:
+  ```
+  cloudflare-worker-error-page
+  ```
+- Copy the namespace ID and add it to the `id` field in the `kv_namespaces` section of the `wrangler.toml` file.
+
+### 6. Deploy the Worker
+
+If your forked repo is correctly linked to your Cloudflare Worker, it will deploy automatically on each modification.
+
+## Notes
+
+- Canva URLs for error pages are configurable in `wrangler.toml`.
 
 ---
 
@@ -47,49 +93,3 @@ Si vous avez bien lier votre repo forker a votre Worker cloudflare il ve se depl
 ## Notes
 
 - Les URLs Canva pour les pages d'erreur sont configurables dans `wrangler.toml`.
-
----
-
-## <a name="english"></a>🇬🇧 English
-
-# Cloudflare Worker Error Page
-
-This project allows you to deploy a custom error page using a Cloudflare Worker.
-
-## Installation Steps
-
-### 1. Create a Worker on Cloudflare
-
-- Log in to your Cloudflare dashboard.
-- Go to the **Workers** section.
-- Create a new Worker.
-- Set the route on your main domain, for example: *kanago.fr/*
-
-### 2. Fork this repository
-
-### 3. Link the Worker to your forked repository
-
-- In the Cloudflare dashboard, link the created Worker to your forked repo.
-
-### 4. Enable environment variables
-
-- Open the `wrangler.toml` file.
-- Remove the `#` in front of the variables you want to enable, or add them as **secrets** in Cloudflare (Worker Variables/Secrets section).
-- Alternatively, you can leave the `#` and add the variables as secrets in the Worker.
-
-### 5. Create a KV namespace
-
-- In Cloudflare, go to **Workers > KV**.
-- Create a namespace named:
-  ```
-  cloudflare-worker-error-page
-  ```
-- Copy the namespace ID and add it to the `id` field in the `kv_namespaces` section of the `wrangler.toml` file.
-
-### 6. Deploy the Worker
-
-If your forked repo is correctly linked to your Cloudflare Worker, it will deploy automatically on each modification.
-
-## Notes
-
-- Canva URLs for error pages are configurable in `wrangler.toml`.
