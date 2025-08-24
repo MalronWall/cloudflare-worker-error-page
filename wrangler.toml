@@ -1,0 +1,31 @@
+# Configuration de base du Worker
+name = "cloudflare-worker-show-error-page"
+main = "worker.js"
+compatibility_date = "2025-08-24"
+
+# Namespace KV pour stocker l'état de maintenance
+kv_namespaces = [
+  { binding = "MAINTENANCE_KV", id = "f7ed9defd85c4a168b7c351d5d49d663" }
+]
+
+# Vous pouvez activer les variable ci-dessous ou les ajouter en tant que secrets dans Cloudflare
+#[vars]
+
+# Domaine autorisé pour accéder au bouton de maintenance
+# Vous pouvez mettre votre subdomaine de maintenance ici ou l'ajouter en tant que secret dans le worker
+# Ce serra la page pour activer/desactiver la maintenance
+# MAINTENANCE_DOMAIN = "maintenance.domaine.fr"
+
+# URL pour vérifier si Nginx Proxy Manager est accessible rediriger le vers le 80 de votre reserse proxy
+# Vous pouvez mettre votre subdomaine de test ici ou l'ajouter en tant que secret dans le worker
+# NPM_HEALTH_URL = "https://test.domaine.fr"
+
+# URL pour vérifier si le serveur d'origine est accessible 
+# Vous pouvez mettre l'ip de votre serveur ici ou l'ajouter en tant que secret dans le worker
+# ORIGIN_PING_URL = "IpDeVotreServer"
+
+# URLs Canva pour les différentes pages d'erreur
+CANVA_CONTAINER_ERROR_URL = "https://www.canva.com/design/DAGw0cB_HSQ/o5Nd2wkOIyuCcaph1TGFZA/view?embed"
+CANVA_MAINTENANCE_URL = "https://www.canva.com/design/DAGw0btoAtI/vPFHUpjVnSbtGi0zvCLGvA/view?embed"
+CANVA_BOX_ERROR_URL = "https://www.canva.com/design/DAGw0WyERC4/-gtXSzok-6tg6g1PvFCi0w/view?embed"
+CANVA_GENERIC_ERROR_URL = "https://www.canva.com/design/DAGw0ZdK1hk/lPFFQOyf3EEGXBCLt--p4w/view?embed"
