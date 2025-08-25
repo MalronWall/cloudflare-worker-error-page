@@ -31,31 +31,38 @@ async function injectBanner(response, bannerMessage) {
     /<body[^>]*>/i,
     `$&<div style="background:#ffc; color:#222; padding:12px; text-align:center; border-bottom:1px solid #eee; font-weight:bold;">${bannerMessage}</div>`
   );
-  return new Response(text, response);
+  // Return new Response preserving status and headers from original response
+  return new Response(text, { status: response.status, headers: response.headers });
 }
 
 // Log request with server IP information
-function logRequest(request, host, serverIP, responseHeaders = null) {
-  const url = new URL(request.url);
-  const timestamp = new Date().toISOString();
-  const userAgent = request.headers.get('user-agent') || 'Unknown';
-  const cfRay = request.headers.get('cf-ray') || 'Unknown';
-  
-  // Try to get server IP from response headers if available
-  const actualServerIP = responseHeaders?.get('cf-server-ip') || 
-                         responseHeaders?.get('x-server-ip') ||
-                         serverIP;
-  
+function logRequest(request, host, note = null, responseHeaders = null, env = null) {
+  // Try to get server/origin IP from common headers set by origin if available
+  let actualServerIP = null;
+  if (responseHeaders) {
+    const candidates = ['x-origin-ip', 'x-server-ip', 'x-real-ip', 'x-origin-server-ip', 'x-forwarded-for'];
+    for (const h of candidates) {
+      const v = responseHeaders.get(h);
+      if (v) {
+        // x-forwarded-for may contain a list
+        actualServerIP = v.split(',')[0].trim();
+        break;
+      }
+    }
+    // some proxies set a Server header (often "cloudflare") — ignore that as origin IP
+    if (!actualServerIP) {
+      const serverHdr = responseHeaders.get('server');
+      if (serverHdr && serverHdr.toLowerCase() !== 'cloudflare') actualServerIP = serverHdr;
+    }
+  }
+
+  // If no origin IP found, add a hint for the developer
+  const hint = actualServerIP ? null : 'no-origin-ip-found; ensure origin sets X-Origin-IP or use unproxied host';
   console.log(JSON.stringify({
-    timestamp,
+    note: note || null,
     host,
-    method: request.method,
-    path: url.pathname,
-    serverIP: actualServerIP,
-    userAgent,
-    cfRay,
-    referer: request.headers.get('referer') || '',
-    userIP: request.headers.get('cf-connecting-ip') || 'Unknown'
+    serverIP: actualServerIP || 'cloudflare',
+    hint
   }));
 }
 
@@ -63,13 +70,9 @@ export default {
   async fetch(request, env, ctx) {
     const host = request.headers.get('host');
     const url = new URL(request.url);
-    
-    // Get user IP (not server IP)
-    const userIP = request.headers.get('cf-connecting-ip') || 'Unknown';
 
-    // Log the request with configured server IP
-    const serverIP = env.SERVER_IP || 'configured-server-ip';
-    logRequest(request, host, serverIP);
+    // Log incoming request (no response headers yet)
+    logRequest(request, host, 'incoming', null, env);
 
     // Read state
     const state = await getMaintenanceState(env, host);
@@ -94,11 +97,11 @@ export default {
       response = await fetch(request);
       
       // Log after getting response (to capture server info)
-      logRequest(request, host, 'server-via-tunnel', response.headers);
+      logRequest(request, host, 'fetched', response.headers, env);
       
     } catch (err) {
       // Log failed request
-      logRequest(request, host, 'server-unreachable');
+      logRequest(request, host, 'server-unreachable', null, env);
       
       const redirectResponse = await c_redirect(request, null, err, isMaintenance, env);
       if (redirectResponse) return redirectResponse;
