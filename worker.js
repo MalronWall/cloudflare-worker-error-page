@@ -34,6 +34,26 @@ async function injectBanner(response, bannerMessage) {
   return new Response(text, response);
 }
 
+// Extract IPv4 from IP string (may contain both IPv4 and IPv6)
+function extractIPv4(ipString) {
+  if (!ipString || ipString === 'Unknown') return 'Unknown';
+  
+  // Split by comma in case there are multiple IPs
+  const ips = ipString.split(',').map(ip => ip.trim());
+  
+  // Look for IPv4 pattern (xxx.xxx.xxx.xxx)
+  const ipv4Pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  
+  for (const ip of ips) {
+    if (ipv4Pattern.test(ip)) {
+      return ip;
+    }
+  }
+  
+  // If no IPv4 found, return the first IP or 'Unknown'
+  return ips[0] || 'Unknown';
+}
+
 // Log request with server IP information
 function logRequest(request, host, serverIP, responseHeaders = null) {
   const url = new URL(request.url);
@@ -46,16 +66,20 @@ function logRequest(request, host, serverIP, responseHeaders = null) {
                          responseHeaders?.get('x-server-ip') ||
                          serverIP;
   
+  // Extract IPv4 from user IP
+  const userIPRaw = request.headers.get('cf-connecting-ip') || 'Unknown';
+  const userIPv4 = extractIPv4(userIPRaw);
+  
   console.log(JSON.stringify({
     timestamp,
     host,
     method: request.method,
     path: url.pathname,
-    serverIP: actualServerIP,
+    serverIP: extractIPv4(actualServerIP),
     userAgent,
     cfRay,
     referer: request.headers.get('referer') || '',
-    userIP: request.headers.get('cf-connecting-ip') || 'Unknown'
+    userIP: userIPv4
   }));
 }
 
