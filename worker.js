@@ -12,6 +12,13 @@ export default {
       env.MAINTENANCE_KV.get('MAINTENANCE_SUBDOMAINS').then(s => JSON.parse(s || '[]'))
     ]);
 
+    // Bandeau personnalisé : lecture KV
+    const [bannerSubdomainsRaw, bannerMessage] = await Promise.all([
+      env.MAINTENANCE_KV.get('BANNER_SUBDOMAINS'),
+      env.MAINTENANCE_KV.get('BANNER_MESSAGE')
+    ]);
+    const bannerSubdomains = bannerSubdomainsRaw ? JSON.parse(bannerSubdomainsRaw) : [];
+
     const isGlobalMaintenance = globalMaintenance === 'true';
     const isSubdomainMaintenance = subdomainsMaintenance.includes(host);
     const isMaintenance = isGlobalMaintenance || isSubdomainMaintenance;
@@ -19,12 +26,12 @@ export default {
     // Interface de contrôle de maintenance
     if (host === env.MAINTENANCE_DOMAIN && url.pathname === '/') {
       return new Response(
-        maintenanceHtml(isGlobalMaintenance, subdomainsMaintenance),
+        maintenanceHtml(isGlobalMaintenance, subdomainsMaintenance, bannerSubdomains, bannerMessage),
         { headers: { 'content-type': 'text/html' } }
       );
     }
 
-    // API de gestion de la maintenance
+    // API de gestion de la maintenance + gestion du bandeau
     if (url.pathname.startsWith('/worker/api/')) {
       if (host !== env.MAINTENANCE_DOMAIN) {
         return new Response(`Forbidden: Only accessible on ${env.MAINTENANCE_DOMAIN}`, { status: 403 });
@@ -51,6 +58,19 @@ export default {
         return new Response('Sous-domaine retiré');
       }
 
+      // Ajout pour gérer le bandeau :
+      if (url.pathname === '/worker/api/banner/subdomains' && request.method === 'POST') {
+        const { subdomains } = await request.json();
+        await env.MAINTENANCE_KV.put('BANNER_SUBDOMAINS', JSON.stringify(subdomains));
+        return new Response('Liste des sous-domaines du bandeau mise à jour');
+      }
+
+      if (url.pathname === '/worker/api/banner/message' && request.method === 'POST') {
+        const { message } = await request.json();
+        await env.MAINTENANCE_KV.put('BANNER_MESSAGE', message);
+        return new Response('Message du bandeau mis à jour');
+      }
+
       return new Response('Forbidden', { status: 403 });
     }
 
@@ -68,6 +88,17 @@ export default {
     // Vérifie s'il faut afficher une page personnalisée
     const redirectResponse = await c_redirect(request, response, null, isMaintenance, env);
     if (redirectResponse) return redirectResponse;
+
+    // Ajout du bandeau sur les sous-domaines choisis
+    const currentSubdomain = host.split('.')[0];
+    const showBanner = bannerMessage && bannerSubdomains.includes(currentSubdomain);
+
+    if (showBanner && response.headers.get('content-type')?.includes('text/html')) {
+      let text = await response.text();
+      // Injecte le bandeau juste après <body>
+      text = text.replace(/<body[^>]*>/i, `$&<div style="background:#ffc; color:#222; padding:12px; text-align:center; border-bottom:1px solid #eee; font-weight:bold;">${bannerMessage}</div>`);
+      return new Response(text, response);
+    }
 
     return response;
   }
