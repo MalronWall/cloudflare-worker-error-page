@@ -21,12 +21,24 @@ This project allows you to deploy a custom error page using a Cloudflare Worker.
 - Go to Create
 - Select import a repository
 - Link your Github account to Cloudflare and select the repository forked
-- Add the project name ``` cloudflare-worker-error-page ```
-- Set the route on your main domain, for example: *kanago.fr/*
+- Add the project name : ``` cloudflare-worker-error-page ```
+- Add the build command : ``` npx wrangler deploy --assets=./ ```
+- Go to Create and deploy
+- Wait for the build to finish and click on continue to project
+- Go to Settings -> Domains & Routes -> Add
+- Click on Route and selecto your domaine in Zone
+- Add this on Route : ``` *domain.fr/* ``` Don't put the . after the first * otherwise it's going to work only for subdomain.
 
-### 3. Link the Worker to your forked repository
+### 3. Create a KV namespace
 
-- In the Cloudflare dashboard, link the created Worker to your forked repo.
+- In Cloudflare, go to **Workers > KV**.
+- Create a namespace named: ``` cloudflare-worker-error-page ```
+- Copy the namespace ID and add it to the `id` field in the `kv_namespaces` section of the `wrangler.toml` file.
+- Because you link the github repo with Cloudflare the projet the worker will be automatically updated.
+
+![Create KV](images/create_kv.png)
+![Add names](images/create_kv_add_name.png)
+![Copy id](images/create_kv_copy_id.png)
 
 ### 4. Enable environment variables
 
@@ -34,28 +46,33 @@ This project allows you to deploy a custom error page using a Cloudflare Worker.
 - Remove the `#` in front of the variables you want to enable, or add them as **secrets** in Cloudflare (Worker Variables/Secrets section).
 - Alternatively, you can leave the `#` and add the variables as secrets in the Worker.
 
-### 5. Create a KV namespace
-
-- In Cloudflare, go to **Workers > KV**.
-- Create a namespace named:
-  ```
-  cloudflare-worker-error-page
-  ```
-- Copy the namespace ID and add it to the `id` field in the `kv_namespaces` section of the `wrangler.toml` file.
-
-![Create KV](images/create_kv.png)
-![Add names](images/create_kv_add_name.png)
-![Copy id](images/create_kv_copy_id.png)
-
-### 6. Deploy the Worker
-
-If your forked repo is correctly linked to your Cloudflare Worker, it will deploy automatically on each modification.
-
 ## Notes
 
 - Canva URLs for error pages are configurable in `wrangler.toml`.
 
 ---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## <a name="français"></a>🇫🇷 Français
 
