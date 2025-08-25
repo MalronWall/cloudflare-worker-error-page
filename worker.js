@@ -34,10 +34,39 @@ async function injectBanner(response, bannerMessage) {
   return new Response(text, response);
 }
 
+// Log request with server IP information
+function logRequest(request, host, serverIP) {
+  const url = new URL(request.url);
+  const timestamp = new Date().toISOString();
+  const userAgent = request.headers.get('user-agent') || 'Unknown';
+  const cfRay = request.headers.get('cf-ray') || 'Unknown';
+  
+  console.log(JSON.stringify({
+    timestamp,
+    host,
+    method: request.method,
+    path: url.pathname,
+    serverIP,
+    userAgent,
+    cfRay,
+    referer: request.headers.get('referer') || '',
+    userIP: request.headers.get('cf-connecting-ip') || 'Unknown'
+  }));
+}
+
 export default {
   async fetch(request, env, ctx) {
     const host = request.headers.get('host');
     const url = new URL(request.url);
+    
+    // Get server IP from Cloudflare headers
+    const serverIP = request.headers.get('cf-connecting-ip') || 
+                    request.headers.get('x-forwarded-for') || 
+                    request.headers.get('x-real-ip') || 
+                    'Unknown';
+    
+    // Log the request
+    logRequest(request, host, serverIP);
 
     // Read state
     const state = await getMaintenanceState(env, host);
