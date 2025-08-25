@@ -11,6 +11,9 @@ kv_namespaces = [
 
 [vars]
 
+# Language setting (FR or EN)
+LANGUAGE = "EN"
+
 # For 503 errors when maintenance is activated
 TEXT_MAINTENANCE_TYPE = "Maintenance serveur"
 TEXT_MAINTENANCE_MESSAGE = "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗"

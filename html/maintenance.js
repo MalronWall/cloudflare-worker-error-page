@@ -1,10 +1,50 @@
-export default function maintenanceHtml(globalMaintenance, subdomainsMaintenance = [], bannerSubdomains = [], bannerMessage = '') {
+export default function maintenanceHtml(globalMaintenance, subdomainsMaintenance = [], bannerSubdomains = [], bannerMessage = '', language = 'FR') {
+  const texts = {
+    FR: {
+      title: 'Contrôle Maintenance',
+      globalMaintenance: 'Maintenance globale',
+      active: 'active',
+      inactive: 'inactive',
+      toggleGlobal: 'Basculer l\'état global',
+      subdomainsTitle: 'Sous-domaines en maintenance',
+      remove: 'Retirer',
+      addSubdomainPlaceholder: 'Ajouter un sous-domaine',
+      add: 'Ajouter',
+      bannerTitle: 'Bandeau personnalisé',
+      bannerMessageLabel: 'Message du bandeau :',
+      update: 'Mettre à jour',
+      addBannerSubdomainLabel: 'Ajouter un sous-domaine pour le bandeau :',
+      bannerSubdomainPlaceholder: 'ex: admin.monsite.com',
+      bannerInfo: 'Le bandeau s\'affiche sur les sous-domaines listés ci-dessus'
+    },
+    EN: {
+      title: 'Maintenance Control',
+      globalMaintenance: 'Global maintenance',
+      active: 'active',
+      inactive: 'inactive',
+      toggleGlobal: 'Toggle global state',
+      subdomainsTitle: 'Subdomains in maintenance',
+      remove: 'Remove',
+      addSubdomainPlaceholder: 'Add a subdomain',
+      add: 'Add',
+      bannerTitle: 'Custom Banner',
+      bannerMessageLabel: 'Banner message:',
+      update: 'Update',
+      addBannerSubdomainLabel: 'Add a subdomain for the banner:',
+      bannerSubdomainPlaceholder: 'ex: admin.mysite.com',
+      bannerInfo: 'The banner is displayed on the subdomains listed above'
+    }
+  };
+
+  const t = texts[language] || texts.FR;
+  const htmlLang = language === 'EN' ? 'en' : 'fr';
+
   return `<!DOCTYPE html>
-  <html lang="fr">
+  <html lang="${htmlLang}">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contrôle Maintenance</title>
+    <title>${t.title}</title>
     <style>
       body {
         margin: 0;
@@ -98,40 +138,40 @@ export default function maintenanceHtml(globalMaintenance, subdomainsMaintenance
   </head>
   <body>
     <div class="container">
-      <h1>Contrôle Maintenance</h1>
+      <h1>${t.title}</h1>
       <div class="section">
         <div class="status ${globalMaintenance ? '' : 'inactive'}">
-          Maintenance globale: ${globalMaintenance ? 'active' : 'inactive'}
+          ${t.globalMaintenance}: ${globalMaintenance ? t.active : t.inactive}
         </div>
-        <button onclick="toggleGlobal()">Basculer l'état global</button>
+        <button onclick="toggleGlobal()">${t.toggleGlobal}</button>
       </div>
       <div class="section">
-        <h2>Sous-domaines en maintenance</h2>
+        <h2>${t.subdomainsTitle}</h2>
         <div class="subdomain-list">
-          ${subdomainsMaintenance.map(sd => `<div class="subdomain-item">${sd} <button class="remove-btn" onclick="removeSubdomain('${sd}')">Retirer</button></div>`).join('')}
+          ${subdomainsMaintenance.map(sd => `<div class="subdomain-item">${sd} <button class="remove-btn" onclick="removeSubdomain('${sd}')">${t.remove}</button></div>`).join('')}
         </div>
         <div class="subdomain-controls">
-          <input id="subdomain-input" placeholder="Ajouter un sous-domaine" />
-          <button onclick="addSubdomain()">Ajouter</button>
+          <input id="subdomain-input" placeholder="${t.addSubdomainPlaceholder}" />
+          <button onclick="addSubdomain()">${t.add}</button>
         </div>
       </div>
       <div class="section">
-        <h2>Bandeau personnalisé</h2>
+        <h2>${t.bannerTitle}</h2>
         <div>
-          <label for="banner-message">Message du bandeau :</label>
+          <label for="banner-message">${t.bannerMessageLabel}</label>
           <input id="banner-message" value="${bannerMessage.replace(/"/g, '&quot;')}" />
-          <button onclick="setBannerMessage()">Mettre à jour</button>
+          <button onclick="setBannerMessage()">${t.update}</button>
         </div>
         <div>
-          <label for="banner-subdomain-input">Ajouter un sous-domaine pour le bandeau :</label>
-          <input id="banner-subdomain-input" placeholder="ex: admin.monsite.com" />
-          <button onclick="addBannerSubdomain()">Ajouter</button>
+          <label for="banner-subdomain-input">${t.addBannerSubdomainLabel}</label>
+          <input id="banner-subdomain-input" placeholder="${t.bannerSubdomainPlaceholder}" />
+          <button onclick="addBannerSubdomain()">${t.add}</button>
         </div>
         <div class="banner-subdomain-list">
-          ${bannerSubdomains.map(sd => `<div class="banner-subdomain-item">${sd} <button class="remove-btn" onclick="removeBannerSubdomain('${sd}')">Retirer</button></div>`).join('')}
+          ${bannerSubdomains.map(sd => `<div class="banner-subdomain-item">${sd} <button class="remove-btn" onclick="removeBannerSubdomain('${sd}')">${t.remove}</button></div>`).join('')}
         </div>
         ${bannerMessage ? `<div class="banner-preview">${bannerMessage}</div>` : ''}
-        <div style="font-size:0.9em;color:#bbb;margin-top:8px;">Le bandeau s’affiche sur les sous-domaines listés ci-dessus</div>
+        <div style="font-size:0.9em;color:#bbb;margin-top:8px;">${t.bannerInfo}</div>
       </div>
     </div>
     <script>
