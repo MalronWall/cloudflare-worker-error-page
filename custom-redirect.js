@@ -61,15 +61,15 @@ async function handleMaintenanceMode(isMaintenance, env) {
  */
 async function handleTunnelError(env) {
   const originUp = await HELPER.isOriginReachable().catch(() => null);
-  if (originUp === false) { //CANVA_BOX_ERROR_URL
-    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.BOX_NO_IP);
+  if (originUp === false) {
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX_NO_IP);
   }
   
   const npmUp = await HELPER.isNpmUp().catch(() => false);
-  if (npmUp) { //CANVA_CONTAINER_ERROR_URL
-    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.CONTAINER);
-  } //CANVA_GENERIC_ERROR_URL
-  return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.SERVER);
+  if (npmUp) {
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), STATUS.CONTAINER);
+  }
+  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERROR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
 }
 
 /**
@@ -82,23 +82,23 @@ async function handleCloudflareError(response, env) {
   const cfCode = await HELPER.getCloudflareErrorCode(response);
   const originUp = await HELPER.isOriginReachable().catch(() => null);
 
-  if (originUp === false) { // CANVA_BOX_ERROR_URL
-    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.BOX_NO_IP);
+  if (originUp === false) {
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX_NO_IP);
   }
 
   if (cfCode === 1033 || [502, 521, 522, 524, 525, 526].includes(response.status)) {
     const npmUp = await HELPER.isNpmUp().catch(() => false);
-    if (npmUp) { //CANVA_CONTAINER_ERROR_URL
-      return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.CONTAINER);
-    } //CANVA_BOX_ERROR_URL
-    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.BOX);
+    if (npmUp) {
+      return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERRORE_GIF), STATUS.CONTAINER);
+    }
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX);
   }
 
-  if (response.status === 523) { //CANVA_BOX_ERROR_URL
-    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.BOX);
+  if (response.status === 523) {
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX);
   }
-  //CANVA_GENERIC_ERROR_URL
-  return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.SERVER);
+
+  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERROR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
 }
 
 /**
@@ -109,16 +109,16 @@ async function handleCloudflareError(response, env) {
  */
 async function handleOriginError(response, env) {
   const originUp = await HELPER.isOriginReachable().catch(() => null);
-  if (originUp === false) { //CANVA_BOX_ERROR_URL
-    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.BOX_NO_IP);
+  if (originUp === false) {
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX_NO_IP);
   }
 
   const npmUp = await HELPER.isNpmUp().catch(() => false);
-  if (npmUp) { //CANVA_CONTAINER_ERROR_URL
-    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.CONTAINER);
+  if (npmUp) {
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), STATUS.CONTAINER);
   }
-  // CANVA_GENERIC_ERROR_URL
-  return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.SERVER);
+  
+  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERROR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
 }
 
 /**
