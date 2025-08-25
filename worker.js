@@ -62,9 +62,9 @@ function logRequest(request, host, serverIP, responseHeaders = null) {
   const cfRay = request.headers.get('cf-ray') || 'Unknown';
   
   // Try to get server IP from response headers if available
-  const actualServerIP = responseHeaders?.get('cf-server-ip') || 
-                         responseHeaders?.get('x-server-ip') ||
-                         serverIP;
+  const actualServerIP = responseHeaders?.get('x-server-ip') || 
+                         env.SERVER_IP || 
+                         'Unknown';
   
   // Extract IPv4 from user IP
   const userIPRaw = request.headers.get('cf-connecting-ip') || 'Unknown';
@@ -88,13 +88,6 @@ export default {
     const host = request.headers.get('host');
     const url = new URL(request.url);
     
-    // Get user IP (not server IP)
-    const userIP = request.headers.get('cf-connecting-ip') || 'Unknown';
-
-    // Log the request with configured server IP
-    const serverIP = env.SERVER_IP || 'configured-server-ip';
-    logRequest(request, host, serverIP);
-
     // Read state
     const state = await getMaintenanceState(env, host);
     const isMaintenance = state.isGlobalMaintenance || state.isSubdomainMaintenance;
@@ -117,12 +110,14 @@ export default {
     try {
       response = await fetch(request);
       
-      // Log after getting response (to capture server info)
-      logRequest(request, host, 'server-via-tunnel', response.headers);
+      // Log successful request with server IP from env variable
+      const serverIP = env.SERVER_IP || 'Unknown';
+      logRequest(request, host, serverIP, response.headers);
       
     } catch (err) {
       // Log failed request
-      logRequest(request, host, 'server-unreachable');
+      const serverIP = env.SERVER_IP || 'Unknown';
+      logRequest(request, host, `${serverIP}-unreachable`);
       
       const redirectResponse = await c_redirect(request, null, err, isMaintenance, env);
       if (redirectResponse) return redirectResponse;
