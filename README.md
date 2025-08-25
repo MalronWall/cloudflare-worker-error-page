@@ -11,14 +11,18 @@ This project allows you to deploy a custom error page using a Cloudflare Worker.
 
 ## Installation Steps
 
-### 1. Create a Worker on Cloudflare
+### 1. Fork this repository
+
+### 2. Create a Worker on Cloudflare
 
 - Log in to your Cloudflare dashboard.
-- Go to the **Workers** section.
-- Create a new Worker.
+- Go to the **Workers Routes** section.
+- Got to Manage Workers.
+- Go to Create
+- Select import a repository
+- Link your Github account to Cloudflare and select the repository forked
+- Add the project name ``` cloudflare-worker-error-page ```
 - Set the route on your main domain, for example: *kanago.fr/*
-
-### 2. Fork this repository
 
 ### 3. Link the Worker to your forked repository
 
