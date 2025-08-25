@@ -6,24 +6,24 @@ export default {
     const host = request.headers.get('host');
     const url = new URL(request.url);
 
-    // Lecture des états de maintenance
-    const [globalMaintenance, subdomainsMaintenance] = await Promise.all([
-      env.MAINTENANCE_KV.get('MAINTENANCE_GLOBAL'),
-      env.MAINTENANCE_KV.get('MAINTENANCE_SUBDOMAINS').then(s => JSON.parse(s || '[]'))
-    ]);
+    // Lecture des états de maintenance (avec gestion d'erreur)
+    let globalMaintenance = await env.MAINTENANCE_KV.get('MAINTENANCE_GLOBAL');
+    let subdomainsMaintenanceRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_SUBDOMAINS');
+    let subdomainsMaintenance = [];
+    try { subdomainsMaintenance = JSON.parse(subdomainsMaintenanceRaw || '[]'); } catch { subdomainsMaintenance = []; }
 
-    // Bandeau personnalisé : lecture KV
-    const [bannerSubdomainsRaw, bannerMessage] = await Promise.all([
-      env.MAINTENANCE_KV.get('BANNER_SUBDOMAINS'),
-      env.MAINTENANCE_KV.get('BANNER_MESSAGE')
-    ]);
-    const bannerSubdomains = bannerSubdomainsRaw ? JSON.parse(bannerSubdomainsRaw) : [];
+    // Lecture du bandeau (KV)
+    let bannerSubdomainsRaw = await env.MAINTENANCE_KV.get('BANNER_SUBDOMAINS');
+    let bannerMessage = await env.MAINTENANCE_KV.get('BANNER_MESSAGE');
+    let bannerSubdomains = [];
+    try { bannerSubdomains = JSON.parse(bannerSubdomainsRaw || '[]'); } catch { bannerSubdomains = []; }
+    if (typeof bannerMessage !== 'string') bannerMessage = '';
 
     const isGlobalMaintenance = globalMaintenance === 'true';
     const isSubdomainMaintenance = subdomainsMaintenance.includes(host);
     const isMaintenance = isGlobalMaintenance || isSubdomainMaintenance;
 
-    // Interface de contrôle de maintenance
+    // Interface de contrôle de maintenance (admin)
     if (host === env.MAINTENANCE_DOMAIN && url.pathname === '/') {
       return new Response(
         maintenanceHtml(isGlobalMaintenance, subdomainsMaintenance, bannerSubdomains, bannerMessage),
@@ -31,7 +31,7 @@ export default {
       );
     }
 
-    // API de gestion de la maintenance + gestion du bandeau
+    // API de gestion de la maintenance et du bandeau
     if (url.pathname.startsWith('/worker/api/')) {
       if (host !== env.MAINTENANCE_DOMAIN) {
         return new Response(`Forbidden: Only accessible on ${env.MAINTENANCE_DOMAIN}`, { status: 403 });
@@ -61,14 +61,22 @@ export default {
       // Ajout pour gérer le bandeau :
       if (url.pathname === '/worker/api/banner/subdomains' && request.method === 'POST') {
         const { subdomains } = await request.json();
-        await env.MAINTENANCE_KV.put('BANNER_SUBDOMAINS', JSON.stringify(subdomains));
-        return new Response('Liste des sous-domaines du bandeau mise à jour');
+        if (Array.isArray(subdomains)) {
+          await env.MAINTENANCE_KV.put('BANNER_SUBDOMAINS', JSON.stringify(subdomains));
+          return new Response('Liste des sous-domaines du bandeau mise à jour');
+        } else {
+          return new Response('Format attendu: { subdomains: [...] }', { status: 400 });
+        }
       }
 
       if (url.pathname === '/worker/api/banner/message' && request.method === 'POST') {
         const { message } = await request.json();
-        await env.MAINTENANCE_KV.put('BANNER_MESSAGE', message);
-        return new Response('Message du bandeau mis à jour');
+        if (typeof message === 'string') {
+          await env.MAINTENANCE_KV.put('BANNER_MESSAGE', message);
+          return new Response('Message du bandeau mis à jour');
+        } else {
+          return new Response('Format attendu: { message: "..." }', { status: 400 });
+        }
       }
 
       return new Response('Forbidden', { status: 403 });
