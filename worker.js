@@ -31,59 +31,13 @@ async function injectBanner(response, bannerMessage) {
     /<body[^>]*>/i,
     `$&<div style="background:#ffc; color:#222; padding:12px; text-align:center; border-bottom:1px solid #eee; font-weight:bold;">${bannerMessage}</div>`
   );
-  // Return new Response preserving status and headers from original response
-  return new Response(text, { status: response.status, headers: response.headers });
-}
-
-// Log request with server IP information
-function logRequest(request, host, note = null, responseHeaders = null, env = null) {
-  let actualServerIP = null;
-  let hint = null;
-
-  // If responseHeaders is a Headers-like object, try common origin headers
-  if (responseHeaders && typeof responseHeaders.get === 'function') {
-    const candidates = ['x-origin-ip', 'x-server-ip', 'x-real-ip', 'x-origin-server-ip', 'x-forwarded-for'];
-    for (const h of candidates) {
-      const v = responseHeaders.get(h);
-      if (v) {
-        actualServerIP = v.split(',')[0].trim();
-        break;
-      }
-    }
-    // Fallback: server header only if it's not the Cloudflare marker
-    if (!actualServerIP) {
-      const serverHdr = responseHeaders.get('server');
-      if (serverHdr && serverHdr.toLowerCase() !== 'cloudflare') actualServerIP = serverHdr;
-    }
-  }
-
-  // If responseHeaders is a plain string we treat it as a label (e.g. "server-via-tunnel")
-  if (!actualServerIP && responseHeaders && typeof responseHeaders === 'string') {
-    actualServerIP = responseHeaders;
-  }
-
-  // Final default when nothing indicates origin IP
-  if (!actualServerIP) {
-    actualServerIP = 'cloudflare';
-    hint = 'no-origin-ip-found; ensure origin sets X-Origin-IP or use unproxied host';
-  }
-
-  // Output consistent shape avoiding the key "source" to prevent double-nesting by upstream log wrappers
-  console.log(JSON.stringify({
-    server: { serverIP: actualServerIP },
-    note: note || undefined,
-    host: host || undefined,
-    hint: hint || undefined
-  }));
+  return new Response(text, response);
 }
 
 export default {
   async fetch(request, env, ctx) {
     const host = request.headers.get('host');
     const url = new URL(request.url);
-
-    // Log incoming request (no response headers yet)
-    logRequest(request, host, 'incoming', null, env);
 
     // Read state
     const state = await getMaintenanceState(env, host);
@@ -107,13 +61,7 @@ export default {
     try {
       response = await fetch(request);
       
-      // Log after getting response (to capture server info)
-      logRequest(request, host, 'fetched', response.headers, env);
-      
     } catch (err) {
-      // Log failed request
-      logRequest(request, host, 'server-unreachable', null, env);
-      
       const redirectResponse = await c_redirect(request, null, err, isMaintenance, env);
       if (redirectResponse) return redirectResponse;
       return new Response('Upstream unreachable', { status: 502 });
