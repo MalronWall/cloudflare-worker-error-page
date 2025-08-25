@@ -3,9 +3,9 @@ import { HELPER } from './helper-functions.js'
 
 const REDIRECT = {
   /**
-   * Génère le contenu HTML avec l'URL Canva appropriée
-   * @param {string} canvaUrl - L'URL de l'embed Canva
-   * @returns {string} Le HTML avec l'URL injectée
+   * Generates HTML content with appropriate Canva URL
+   * @param {string} canvaUrl - The Canva embed URL
+   * @returns {string} The HTML with injected URL
    */
   generateErrorPage: (ERROR_CODE, ERROR_TYPE, ERROR_MESSAGE, ERROR_GIF) => {
     return errorTemplate
@@ -16,7 +16,7 @@ const REDIRECT = {
   }
 };
 
-// Constantes pour les statuts HTTP
+// Constants for HTTP statuses
 const STATUS = {
   BOX_NO_IP: 504,
   CONTAINER: 504,
@@ -26,10 +26,10 @@ const STATUS = {
 };
 
 /**
- * Crée une réponse HTTP avec le contenu et le statut spécifiés
- * @param {string} content - Le contenu HTML de la réponse
- * @param {number} status - Le code de statut HTTP
- * @returns {Response} La réponse formatée
+ * Creates an HTTP response with specified content and status
+ * @param {string} content - HTML content for the response
+ * @param {number} status - HTTP status code
+ * @returns {Response} The formatted response
  */
 function makeResponse(content, status) {
   return new Response(content, {
@@ -42,10 +42,10 @@ function makeResponse(content, status) {
 }
 
 /**
- * Gère le mode maintenance du site
- * @param {boolean} isMaintenance - Indique si le mode maintenance est actif
- * @param {Object} env - Variables d'environnement
- * @returns {Promise<Response|null>} Réponse de maintenance ou null
+ * Handles site maintenance mode
+ * @param {boolean} isMaintenance - Indicates if maintenance mode is active
+ * @param {Object} env - Environment variables
+ * @returns {Promise<Response|null>} Maintenance response or null
  */
 async function handleMaintenanceMode(isMaintenance, env) {
   if (isMaintenance) {
@@ -55,9 +55,9 @@ async function handleMaintenanceMode(isMaintenance, env) {
 }
 
 /**
- * Gère les erreurs de tunnel et de connexion
- * @param {Object} env - Variables d'environnement
- * @returns {Promise<Response>} Réponse appropriée selon le type d'erreur
+ * Handles tunnel and connection errors
+ * @param {Object} env - Environment variables
+ * @returns {Promise<Response>} Appropriate response based on error type
  */
 async function handleTunnelError(env) {
   const originUp = await HELPER.isOriginReachable().catch(() => null);
@@ -73,10 +73,10 @@ async function handleTunnelError(env) {
 }
 
 /**
- * Gère les erreurs spécifiques à Cloudflare
- * @param {Response} response - La réponse d'erreur de Cloudflare
- * @param {Object} env - Variables d'environnement
- * @returns {Promise<Response>} Réponse appropriée selon le type d'erreur
+ * Handles Cloudflare specific errors
+ * @param {Response} response - Cloudflare error response
+ * @param {Object} env - Environment variables
+ * @returns {Promise<Response>} Appropriate response based on error type
  */
 async function handleCloudflareError(response, env) {
   const cfCode = await HELPER.getCloudflareErrorCode(response);
@@ -102,10 +102,10 @@ async function handleCloudflareError(response, env) {
 }
 
 /**
- * Gère les erreurs provenant du serveur d'origine
- * @param {Response} response - La réponse d'erreur du serveur
- * @param {Object} env - Variables d'environnement
- * @returns {Promise<Response>} Réponse appropriée selon le type d'erreur
+ * Handles errors from origin server
+ * @param {Response} response - Origin server error response
+ * @param {Object} env - Environment variables
+ * @returns {Promise<Response>} Appropriate response based on error type
  */
 async function handleOriginError(response, env) {
   const originUp = await HELPER.isOriginReachable().catch(() => null);
@@ -122,25 +122,25 @@ async function handleOriginError(response, env) {
 }
 
 /**
- * Fonction principale de redirection et gestion des erreurs
- * @param {Request} request - La requête entrante
- * @param {Response|null} response - La réponse du serveur si disponible
- * @param {Error|null} thrownError - L'erreur levée si présente
- * @param {boolean} isMaintenance - État du mode maintenance
- * @param {Object} env - Variables d'environnement
- * @returns {Promise<Response|null>} Réponse d'erreur appropriée ou null
+ * Main redirection and error handling function
+ * @param {Request} request - Incoming request
+ * @param {Response|null} response - Server response if available
+ * @param {Error|null} thrownError - Thrown error if present
+ * @param {boolean} isMaintenance - Maintenance mode state
+ * @param {Object} env - Environment variables
+ * @returns {Promise<Response|null>} Appropriate error response or null
  */
 export async function c_redirect(request, response, thrownError = null, isMaintenance = false, env) {
-  // Vérification du mode maintenance
+  // Check maintenance mode
   const maintenanceResponse = await handleMaintenanceMode(isMaintenance, env);
   if (maintenanceResponse) return maintenanceResponse;
 
-  // Gestion des erreurs de tunnel
+  // Handle tunnel errors
   if (thrownError) {
     return handleTunnelError(env);
   }
 
-  // Gestion des erreurs 5xx
+  // Handle 5xx errors
   if (response && response.status >= 500) {
     if (HELPER.isCloudflareError(response)) {
       return handleCloudflareError(response, env);

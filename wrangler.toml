@@ -1,56 +1,51 @@
-# Configuration de base du Worker
+# Basic Worker configuration
 name = "cloudflare-worker-error-page"
 main = "worker.js"
 compatibility_date = "2025-08-24"
 
-# Namespace KV pour stocker l'état de maintenance
+# KV namespace to store maintenance state
 kv_namespaces = [
   { binding = "MAINTENANCE_KV", id = "f7ed9defd85c4a168b7c351d5d49d663" }
 ]
 
 [vars]
 
-# Pour les erreur 503 quand on active la maintenance
+# For 503 errors when maintenance is activated
 TEXT_MAINTENANCE_TYPE = "Maintenance serveur"
 TEXT_MAINTENANCE_MESSAGE = "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗"
 TEXT_MAINTENANCE_GIF = "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="
 
-# Pour les erreur 504 quand la connexion internet est coupe
+# For 504 errors when internet connection is down
 TEXT_BOX_ERROR_TYPE = "Erreur de connexion"
 TEXT_BOX_ERROR_MESSAGE = "On dirait que ma box fibre et 4G ont décidé de faire une pause, il va falloir patienter... 😩 N’hésitez pas à me le signaler quand même !"
 TEXT_BOX_ERROR_GIF = "https://www.canva.com/7652efd4-9b1b-4f1f-9c0c-d9be78e60cc0"
 
-# Pour les erreur 500 quand le serveur a surement du crash
+# For 500 errors when server probably crashed
 TEXT_GENERIC_ERROR_TYPE = "Erreur serveur"
 TEXT_GENERIC_ERRORR_MESSAGE = "Le serveur a sûrement dû crash... N'hésitez pas à me le signaler !"
 TEXT_GENERIC_ERROR_GIF = "https://video-private-assets.canva.com/VAFo2N9wRIw/v/124fbdf415.mp4?exp=1756131240000&cf-ck=VnfL7Qol9aBWFnWyRFvuOg7YcU7elnCchHnUpkMyq6U&cf-sig=n4KaIDEJbtjJA9mdQTGYa1QyPbiYz_4rt1kte6GssWE&cf-sig-kid=CO7cCjZ_YiI=&sig=26wDrku7DIVU7Gn6Dvwpx7g3v9M9-Dt_M2tN0WOik1g&sig-kid=GzFgFdhXD-Q="
 
-# Pour les erreur 503 quand le service est down
+# For 503 errors when service is down
 TEXT_CONTAINER_ERROR_TYPE = "Service indisponible"
 TEXT_CONTAINER_ERROR_MESSAGE = "Service non démarré ou planté ! N’hésitez pas à me le signaler au cas où !"
 TEXT_CONTAINER_ERROR_GIF = "https://canva-embed.com/files/6acde7e20044e2a5d4e4e8a47184abd9.mp4"
 
-# Activer ou désactiver la fonctionnalité de bandeau 4G
+# Enable or disable 4G banner functionality
 ENABLE_4G_BANNER = true
-# Message pour le bandeau 4G quand la fibre est en panne
+# Message for 4G banner when fiber is down
 TEXT_4G_BANNER_MESSAGE = "Attention des lenteurs peuvent survenir, ma fibre est H.S. Le serveur fonctionne en 4G !"
 
+# You can enable the variables below or add them as secrets in Cloudflare
 
-
-
-
-# Vous pouvez activer les variable ci-dessous ou les ajouter en tant que secrets dans Cloudflare
-
-
-# Domaine autorisé pour accéder au bouton de maintenance
-# Vous pouvez mettre votre subdomaine de maintenance ici ou l'ajouter en tant que secret dans le worker
-# Ce serra la page pour activer/desactiver la maintenance
+# Domain authorized to access maintenance button
+# You can put your maintenance subdomain here or add it as a secret in the worker
+# This will be the page to enable/disable maintenance
 # MAINTENANCE_DOMAIN = "maintenance.domaine.fr"
 
-# URL pour vérifier si Nginx Proxy Manager est accessible rediriger le vers le 80 de votre reserse proxy
-# Vous pouvez mettre votre subdomaine de test ici ou l'ajouter en tant que secret dans le worker
+# URL to check if Nginx Proxy Manager is accessible redirect to port 80 of your reverse proxy
+# You can put your test subdomain here or add it as a secret in the worker
 # NPM_HEALTH_URL = "https://test.domaine.fr"
 
-# URL pour vérifier si le serveur d'origine est accessible 
-# Vous pouvez mettre l'ip de votre serveur ici ou l'ajouter en tant que secret dans le worker
-# ORIGIN_PING_URL = "IpDeVotreServer"
+# URL to check if origin server is accessible
+# You can put your server IP here or add it as a secret in the worker
+# ORIGIN_PING_URL = "YourServerIP"

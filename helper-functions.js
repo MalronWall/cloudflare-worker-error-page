@@ -1,7 +1,7 @@
 /**
- * Crée un contrôleur d'abandon avec timeout
- * @param {number} timeoutMs - Délai avant abandon en millisecondes
- * @returns {[AbortController, number]} Contrôleur et ID du timeout
+ * Creates an abort controller with timeout
+ * @param {number} timeoutMs - Timeout in milliseconds before abort
+ * @returns {[AbortController, number]} Controller and timeout ID
  */
 function createTimeoutController(timeoutMs) {
   const controller = new AbortController();
@@ -10,10 +10,10 @@ function createTimeoutController(timeoutMs) {
 }
 
 /**
- * Effectue une requête avec retry HEAD/GET
- * @param {string} url - URL à tester
- * @param {Object} options - Options de la requête
- * @returns {Promise<Response>} Réponse de la requête
+ * Performs a request with HEAD/GET retry
+ * @param {string} url - URL to test
+ * @param {Object} options - Request options
+ * @returns {Promise<Response>} Request response
  */
 async function fetchWithMethodFallback(url, { signal, ...options } = {}) {
   let response = await fetch(url, {
@@ -37,9 +37,9 @@ async function fetchWithMethodFallback(url, { signal, ...options } = {}) {
 
 export const HELPER = {
   /**
-   * Vérifie si NPM est accessible
-   * @param {Object} options - Options de la requête
-   * @returns {Promise<boolean>} true si NPM est accessible
+   * Checks if NPM is accessible
+   * @param {Object} options - Request options
+   * @returns {Promise<boolean>} true if NPM is accessible
    */
   async isNpmUp({ timeoutMs = 2000 } = {}, env) {
     const [controller, id] = createTimeoutController(timeoutMs);
@@ -57,9 +57,9 @@ export const HELPER = {
   },
 
   /**
-   * Vérifie si l'origine est accessible
-   * @param {Object} options - Options de la requête
-   * @returns {Promise<boolean|null>} État de l'accessibilité
+   * Checks if origin is reachable
+   * @param {Object} options - Request options
+   * @returns {Promise<boolean|null>} Reachability state
    */
   async isOriginReachable({ timeoutMs = 1500 } = {}, env) {
     if (!env.ORIGIN_PING_URL) return null;
@@ -76,9 +76,9 @@ export const HELPER = {
   },
 
   /**
-   * Vérifie si la réponse vient de Cloudflare
-   * @param {Response} resp - Réponse HTTP à vérifier
-   * @returns {boolean} true si c'est une erreur Cloudflare
+   * Checks if response comes from Cloudflare
+   * @param {Response} resp - HTTP response to check
+   * @returns {boolean} true if it's a Cloudflare error
    */
   isCloudflareError(resp) {
     if (!resp?.headers) return false;
@@ -88,9 +88,9 @@ export const HELPER = {
   },
 
   /**
-   * Extrait le code d'erreur Cloudflare
-   * @param {Response} resp - Réponse HTTP à analyser
-   * @returns {Promise<number|null>} Code d'erreur ou null
+   * Extracts Cloudflare error code
+   * @param {Response} resp - HTTP response to analyze
+   * @returns {Promise<number|null>} Error code or null
    */
   async getCloudflareErrorCode(resp) {
     try {
@@ -104,9 +104,9 @@ export const HELPER = {
   },
 
   /**
-   * Détermine le type de page pour les erreurs 5xx
-   * @param {number} status - Code de statut HTTP
-   * @returns {string} Type de page à afficher
+   * Determines page type for 5xx errors
+   * @param {number} status - HTTP status code
+   * @returns {string} Page type to display
    */
   pageForCloudflare5xx(status) {
     if (status === 523) return 'BOX';
