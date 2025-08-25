@@ -8,7 +8,6 @@ kv_namespaces = [
   { binding = "MAINTENANCE_KV", id = "f7ed9defd85c4a168b7c351d5d49d663" }
 ]
 
-# Vous pouvez activer les variable ci-dessous ou les ajouter en tant que secrets dans Cloudflare
 [vars]
 
 # Pour les erreur 503 quand on active la maintenance
@@ -33,7 +32,7 @@ TEXT_CONTAINER_ERROR_GIF = "https://canva-embed.com/files/6acde7e20044e2a5d4e4e8
 
 
 
-
+# Vous pouvez activer les variable ci-dessous ou les ajouter en tant que secrets dans Cloudflare
 
 
 # Domaine autorisé pour accéder au bouton de maintenance
