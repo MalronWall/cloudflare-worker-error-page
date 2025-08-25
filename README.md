@@ -54,7 +54,6 @@ This project allows you to deploy a custom error page using a Cloudflare Worker.
 
 - Open the `wrangler.toml` file.
 - Remove the `#` in front of the variables you want to enable, or add them as **secrets** in Cloudflare (Worker Variables/Secrets section).
-- Alternatively, you can leave the `#` and add the variables as secrets in the Worker.
 
 ## Notes
 
