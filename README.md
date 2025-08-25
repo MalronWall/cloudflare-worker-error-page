@@ -10,6 +10,7 @@
 This project allows you to deploy a custom error page using a Cloudflare Worker.
 
 ![Create worker](images/other/presentation.png)
+![Create worker](images/other/maintenance.png)
 
 ## Installation Steps
 
