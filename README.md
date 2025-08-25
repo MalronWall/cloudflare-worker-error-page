@@ -8,7 +8,7 @@
 # Cloudflare Worker Error Page
 
 This project allows you to deploy a custom error page using a Cloudflare Worker.
-An an option for enable maintenance mod, add a banner to spacific or all domain and show a banner when your LTE backup is active
+With an option for enable maintenance mod, add a banner to a specific or all domain and show a banner when your LTE backup is active
 
 ![Create worker](images/other/presentation.png)
 ![Create worker](images/other/maintenance.png)
