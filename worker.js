@@ -15,12 +15,15 @@ async function getMaintenanceState(env, host) {
   const bannerSubdomainsRaw = await env.MAINTENANCE_KV.get('BANNER_SUBDOMAINS');
   const bannerMessage = await env.MAINTENANCE_KV.get('BANNER_MESSAGE');
   const bannerSubdomains = safeJsonParse(bannerSubdomainsRaw, []);
+  const is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
+  
   return {
     isGlobalMaintenance: globalMaintenance === 'true',
     subdomainsMaintenance,
     isSubdomainMaintenance: subdomainsMaintenance.includes(host),
     bannerSubdomains,
-    bannerMessage: typeof bannerMessage === 'string' ? bannerMessage : ''
+    bannerMessage: typeof bannerMessage === 'string' ? bannerMessage : '',
+    is4gMode: is4gMode === 'true'
   };
 }
 
@@ -46,7 +49,7 @@ export default {
     // Maintenance control interface (admin)
     if (host === env.MAINTENANCE_DOMAIN && url.pathname === '/') {
       return new Response(
-        maintenanceHtml(state.isGlobalMaintenance, state.subdomainsMaintenance, state.bannerSubdomains, state.bannerMessage),
+        maintenanceHtml(state.isGlobalMaintenance, state.subdomainsMaintenance, state.bannerSubdomains, state.bannerMessage, state.is4gMode),
         { headers: { 'content-type': 'text/html' } }
       );
     }
@@ -71,10 +74,20 @@ export default {
     const redirectResponse = await c_redirect(request, response, null, isMaintenance, env);
     if (redirectResponse) return redirectResponse;
 
-    // Banner injection
-    const showBanner = state.bannerMessage && state.bannerSubdomains.includes(host);
+    // Banner injection - check for 4G mode or regular banner
+    let showBanner = false;
+    let bannerMessage = '';
+    
+    if (state.is4gMode) {
+      showBanner = true;
+      bannerMessage = env.TEXT_4G_BANNER_MESSAGE;
+    } else if (state.bannerMessage && state.bannerSubdomains.includes(host)) {
+      showBanner = true;
+      bannerMessage = state.bannerMessage;
+    }
+    
     if (showBanner && response.headers.get('content-type')?.includes('text/html')) {
-      return await injectBanner(response, state.bannerMessage);
+      return await injectBanner(response, bannerMessage);
     }
 
     return response;

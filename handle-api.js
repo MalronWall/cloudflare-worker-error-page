@@ -70,6 +70,23 @@ export async function handleApi(request, url, host, env, state) {
     }
   }
 
+  // Toggle 4G mode
+  if (url.pathname === '/worker/api/toggle-4g-mode' && request.method === 'POST') {
+    await env.MAINTENANCE_KV.put('wan-is-4g', state.is4gMode ? 'false' : 'true');
+    return new Response('Mode 4G mis à jour');
+  }
+
+  // Set 4G mode status
+  if (url.pathname === '/worker/api/4g-mode' && request.method === 'POST') {
+    const { enabled } = await request.json();
+    if (typeof enabled === 'boolean') {
+      await env.MAINTENANCE_KV.put('wan-is-4g', enabled ? 'true' : 'false');
+      return new Response('Mode 4G mis à jour');
+    } else {
+      return new Response('Format attendu: { enabled: true/false }', { status: 400 });
+    }
+  }
+
   // Fallback for unknown API routes
   return new Response('Forbidden', { status: 403 });
 }
