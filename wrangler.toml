@@ -3,10 +3,17 @@ name = "cloudflare-worker-error-page"
 main = "worker.js"
 compatibility_date = "2025-08-24"
 
+
+
 # KV namespace to store maintenance state
 kv_namespaces = [
   { binding = "MAINTENANCE_KV", id = "f7ed9defd85c4a168b7c351d5d49d663" }
 ]
+
+# Assets configuration to serve static files
+[assets]
+directory = "./assets"
+binding = "ASSETS"
 
 [vars]
 
