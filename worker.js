@@ -49,7 +49,7 @@ export default {
     // Maintenance control interface (admin)
     if (host === env.MAINTENANCE_DOMAIN && url.pathname === '/') {
       return new Response(
-        maintenanceHtml(state.isGlobalMaintenance, state.subdomainsMaintenance, state.bannerSubdomains, state.bannerMessage, state.is4gMode),
+        maintenanceHtml(state.isGlobalMaintenance, state.subdomainsMaintenance, state.bannerSubdomains, state.bannerMessage, env.LANGUAGE || 'EN'),
         { headers: { 'content-type': 'text/html' } }
       );
     }
