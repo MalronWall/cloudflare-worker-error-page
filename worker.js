@@ -68,14 +68,12 @@ function logRequest(request, host, note = null, responseHeaders = null, env = nu
     hint = 'no-origin-ip-found; ensure origin sets X-Origin-IP or use unproxied host';
   }
 
-  // Output consistent shape
+  // Output consistent shape avoiding the key "source" to prevent double-nesting by upstream log wrappers
   console.log(JSON.stringify({
-    source: { serverIP: actualServerIP },
-    // keep minimal extra info for debugging (optional)
-    meta: note ? { note } : undefined,
-    // include host only when helpful
+    server: { serverIP: actualServerIP },
+    note: note || undefined,
     host: host || undefined,
-    hint
+    hint: hint || undefined
   }));
 }
 
