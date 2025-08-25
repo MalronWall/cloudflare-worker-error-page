@@ -49,7 +49,7 @@ function makeResponse(content, status) {
  */
 async function handleMaintenanceMode(isMaintenance, env) {
   if (isMaintenance) {
-    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.MAINTENANCE);
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_MAINTENANCE_TYPE, env.TEXT_MAINTENANCE_MESSAGE, env.TEXT_MAINTENANCE_GIF), STATUS.MAINTENANCE);
   }
   return null;
 }

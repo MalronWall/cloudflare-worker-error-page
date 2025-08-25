@@ -9,7 +9,11 @@ kv_namespaces = [
 ]
 
 # Vous pouvez activer les variable ci-dessous ou les ajouter en tant que secrets dans Cloudflare
-#[vars]
+[vars]
+
+TEXT_MAINTENANCE_TYPE = "Maintenance serveur"
+TEXT_MAINTENANCE_MESSAGE = "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗"
+TEXT_MAINTENANCE_GIF = "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="
 
 # Domaine autorisé pour accéder au bouton de maintenance
 # Vous pouvez mettre votre subdomaine de maintenance ici ou l'ajouter en tant que secret dans le worker
@@ -23,9 +27,3 @@ kv_namespaces = [
 # URL pour vérifier si le serveur d'origine est accessible 
 # Vous pouvez mettre l'ip de votre serveur ici ou l'ajouter en tant que secret dans le worker
 # ORIGIN_PING_URL = "IpDeVotreServer"
-
-# URLs Canva pour les différentes pages d'erreur
-CANVA_CONTAINER_ERROR_URL = "https://www.canva.com/design/DAGw0cB_HSQ/o5Nd2wkOIyuCcaph1TGFZA/view?embed"
-CANVA_MAINTENANCE_URL = "https://www.canva.com/design/DAGw0btoAtI/vPFHUpjVnSbtGi0zvCLGvA/view?embed"
-CANVA_BOX_ERROR_URL = "https://www.canva.com/design/DAGw0WyERC4/-gtXSzok-6tg6g1PvFCi0w/view?embed"
-CANVA_GENERIC_ERROR_URL = "https://www.canva.com/design/DAGw0ZdK1hk/lPFFQOyf3EEGXBCLt--p4w/view?embed"
