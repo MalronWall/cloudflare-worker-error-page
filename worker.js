@@ -34,55 +34,28 @@ async function injectBanner(response, bannerMessage) {
   return new Response(text, response);
 }
 
-// Extract IPv4 from IP string (may contain both IPv4 and IPv6)
-function extractIPv4(ipString) {
-  if (!ipString || ipString === 'Unknown') return 'Unknown';
-  
-  // Split by comma in case there are multiple IPs
-  const ips = ipString.split(',').map(ip => ip.trim());
-  
-  // Look for IPv4 pattern (xxx.xxx.xxx.xxx)
-  const ipv4Pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-  
-  for (const ip of ips) {
-    if (ipv4Pattern.test(ip)) {
-      return ip;
-    }
-  }
-  
-  // If no IPv4 found, return the first IP or 'Unknown'
-  return ips[0] || 'Unknown';
-}
-
 // Log request with server IP information
-function logRequest(request, host, responseHeaders = null) {
+function logRequest(request, host, serverIP, responseHeaders = null) {
   const url = new URL(request.url);
   const timestamp = new Date().toISOString();
   const userAgent = request.headers.get('user-agent') || 'Unknown';
   const cfRay = request.headers.get('cf-ray') || 'Unknown';
   
-  // Get server IP from Cloudflare headers (IP of your origin server)
-  const serverIP = responseHeaders?.get('cf-cache-status') ? 
-                   (responseHeaders.get('server') || 
-                    responseHeaders.get('cf-origin-ip') ||
-                    responseHeaders.get('x-forwarded-server') ||
-                    request.cf?.colo || 'Unknown') : 'Unknown';
-  
-  // Extract IPv4 from user IP
-  const userIPRaw = request.headers.get('cf-connecting-ip') || 'Unknown';
-  const userIPv4 = extractIPv4(userIPRaw);
+  // Try to get server IP from response headers if available
+  const actualServerIP = responseHeaders?.get('cf-server-ip') || 
+                         responseHeaders?.get('x-server-ip') ||
+                         serverIP;
   
   console.log(JSON.stringify({
     timestamp,
     host,
     method: request.method,
     path: url.pathname,
-    serverIP: extractIPv4(serverIP),
-    cfColo: request.cf?.colo || 'Unknown',
+    serverIP: actualServerIP,
     userAgent,
     cfRay,
     referer: request.headers.get('referer') || '',
-    userIP: userIPv4
+    userIP: request.headers.get('cf-connecting-ip') || 'Unknown'
   }));
 }
 
@@ -91,6 +64,13 @@ export default {
     const host = request.headers.get('host');
     const url = new URL(request.url);
     
+    // Get user IP (not server IP)
+    const userIP = request.headers.get('cf-connecting-ip') || 'Unknown';
+
+    // Log the request with configured server IP
+    const serverIP = env.SERVER_IP || 'configured-server-ip';
+    logRequest(request, host, serverIP);
+
     // Read state
     const state = await getMaintenanceState(env, host);
     const isMaintenance = state.isGlobalMaintenance || state.isSubdomainMaintenance;
@@ -113,12 +93,12 @@ export default {
     try {
       response = await fetch(request);
       
-      // Log successful request
-      logRequest(request, host, response.headers);
+      // Log after getting response (to capture server info)
+      logRequest(request, host, 'server-via-tunnel', response.headers);
       
     } catch (err) {
       // Log failed request
-      logRequest(request, host, null);
+      logRequest(request, host, 'server-unreachable');
       
       const redirectResponse = await c_redirect(request, null, err, isMaintenance, env);
       if (redirectResponse) return redirectResponse;
