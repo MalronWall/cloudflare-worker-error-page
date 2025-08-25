@@ -13,22 +13,22 @@ kv_namespaces = [
 # For 503 errors when maintenance is activated
 TEXT_MAINTENANCE_TYPE = "Maintenance serveur"
 TEXT_MAINTENANCE_MESSAGE = "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗"
-TEXT_MAINTENANCE_GIF = "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="
+TEXT_MAINTENANCE_GIF = "maintenance.gif"
 
 # For 504 errors when internet connection is down
 TEXT_BOX_ERROR_TYPE = "Erreur de connexion"
 TEXT_BOX_ERROR_MESSAGE = "On dirait que ma box fibre et 4G ont décidé de faire une pause, il va falloir patienter... 😩 N’hésitez pas à me le signaler quand même !"
-TEXT_BOX_ERROR_GIF = "https://www.canva.com/7652efd4-9b1b-4f1f-9c0c-d9be78e60cc0"
+TEXT_BOX_ERROR_GIF = "box_error.gif"
 
 # For 500 errors when server probably crashed
 TEXT_GENERIC_ERROR_TYPE = "Erreur serveur"
 TEXT_GENERIC_ERRORR_MESSAGE = "Le serveur a sûrement dû crash... N'hésitez pas à me le signaler !"
-TEXT_GENERIC_ERROR_GIF = "https://video-private-assets.canva.com/VAFo2N9wRIw/v/124fbdf415.mp4?exp=1756131240000&cf-ck=VnfL7Qol9aBWFnWyRFvuOg7YcU7elnCchHnUpkMyq6U&cf-sig=n4KaIDEJbtjJA9mdQTGYa1QyPbiYz_4rt1kte6GssWE&cf-sig-kid=CO7cCjZ_YiI=&sig=26wDrku7DIVU7Gn6Dvwpx7g3v9M9-Dt_M2tN0WOik1g&sig-kid=GzFgFdhXD-Q="
+TEXT_GENERIC_ERROR_GIF = "generic_error.gif"
 
 # For 503 errors when service is down
 TEXT_CONTAINER_ERROR_TYPE = "Service indisponible"
 TEXT_CONTAINER_ERROR_MESSAGE = "Service non démarré ou planté ! N’hésitez pas à me le signaler au cas où !"
-TEXT_CONTAINER_ERROR_GIF = "https://canva-embed.com/files/6acde7e20044e2a5d4e4e8a47184abd9.mp4"
+TEXT_CONTAINER_ERROR_GIF = "container_error.gif"
 
 # Enable or disable 4G banner functionality
 ENABLE_4G_BANNER = true
