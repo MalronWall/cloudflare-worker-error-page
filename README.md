@@ -27,7 +27,7 @@ This project allows you to deploy a custom error page using a Cloudflare Worker.
 - Wait for the build to finish and click on continue to project
 - Go to Settings -> Domains & Routes -> Add
 - Click on Route and selecto your domaine in Zone
-- Add this on Route : ``` *domain.fr/* ``` Don't put the . after the first * otherwise it's going to work only for subdomain.
+- Add this on Route : ``` *domain.fr/* ``` Don't put the . after the first * otherwise it's going to work only for subdomain. And you can add multiple Route with multiple domain
 
 ### 3. Create a KV namespace
 
