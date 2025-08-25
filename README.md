@@ -52,6 +52,7 @@ This project allows you to deploy a custom error page using a Cloudflare Worker.
 
 ### 4. OPTIONAL Add a docker container on your server for send the info to Cloudflare when your 4G/5G backup is active
 
+- On wrangler.toml set ``` ENABLE_4G_BANNER = true ```
 - clone this repo on your server
 - execute ``` docker build -t wan-ip-checker . ``` for build the docker image
 - launch the docker container with this command :

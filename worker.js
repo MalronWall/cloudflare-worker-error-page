@@ -78,7 +78,7 @@ export default {
     let showBanner = false;
     let bannerMessage = '';
     
-    if (state.is4gMode) {
+    if (env.ENABLE_4G_BANNER && state.is4gMode) {
       showBanner = true;
       bannerMessage = env.TEXT_4G_BANNER_MESSAGE;
     } else if (state.bannerMessage && state.bannerSubdomains.includes(host)) {
