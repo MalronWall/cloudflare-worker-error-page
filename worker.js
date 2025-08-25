@@ -65,10 +65,55 @@ export default {
       return new Response('Upstream unreachable', { status: 502 });
     }
 
+    // Vérifie s'il faut afficher une page personnalisée
+    const redirectResponse = await c_redirect(request, response, null, isMaintenance, env);
+    if (redirectResponse) return redirectResponse;
+
+   // 🔴 AJOUT DE LA BANNIÈRE POUR LE DOMAINE wingetty.jamesserver.fr
+    if (host === "wingetty.jamesserver.fr") {
+      let contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('text/html')) {
+        let html = await response.text();
+        const banner = `
+          <div style="
+            background: #ffcc00;
+            color: #222;
+            text-align: center;
+            font-family: sans-serif;
+            font-size: 18px;
+            padding: 12px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            box-shadow: 0 2px 6px rgba(0,0,0,.1);
+          ">
+            ⚠️ Attention des lenteurs peuvent survenir, ma fibre est H.S, le serveur fonctionne en 4G.
+          </div>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              document.body.style.marginTop = '56px';
+            });
+          </script>
+        `;
+        // Injecte le bandeau juste après la balise <body>
+        html = html.replace(/<body[^>]*>/i, match => match + banner);
+        // Reconstruit la réponse avec le HTML modifié
+        return new Response(html, {
+          status: response.status,
+          headers: response.headers
+        });
+      }
+      // Si pas HTML, retourne la réponse normale
+      return response;
+    }
+
     // Vérifie s'il faut afficher une page Canva personnalisée
     const redirectResponse = await c_redirect(request, response, null, isMaintenance, env);
     if (redirectResponse) return redirectResponse;
 
     return response;
+  }
   }
 }
