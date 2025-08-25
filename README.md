@@ -81,6 +81,10 @@ docker run -e CF_ACCOUNT_ID=Your_cloudflare_account_id \
 - Open the `wrangler.toml` file.
 - Remove the `#` in front of the variables you want to enable, or add them as **secrets** in Cloudflare (Worker Variables/Secrets section).
 
+### 6. Add Auth on your maintenance page
+
+TO DO
+
 ---
 
 
