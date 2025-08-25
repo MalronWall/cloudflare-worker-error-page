@@ -37,31 +37,44 @@ async function injectBanner(response, bannerMessage) {
 
 // Log request with server IP information
 function logRequest(request, host, note = null, responseHeaders = null, env = null) {
-  // Try to get server/origin IP from common headers set by origin if available
   let actualServerIP = null;
-  if (responseHeaders) {
+  let hint = null;
+
+  // If responseHeaders is a Headers-like object, try common origin headers
+  if (responseHeaders && typeof responseHeaders.get === 'function') {
     const candidates = ['x-origin-ip', 'x-server-ip', 'x-real-ip', 'x-origin-server-ip', 'x-forwarded-for'];
     for (const h of candidates) {
       const v = responseHeaders.get(h);
       if (v) {
-        // x-forwarded-for may contain a list
         actualServerIP = v.split(',')[0].trim();
         break;
       }
     }
-    // some proxies set a Server header (often "cloudflare") — ignore that as origin IP
+    // Fallback: server header only if it's not the Cloudflare marker
     if (!actualServerIP) {
       const serverHdr = responseHeaders.get('server');
       if (serverHdr && serverHdr.toLowerCase() !== 'cloudflare') actualServerIP = serverHdr;
     }
   }
 
-  // If no origin IP found, add a hint for the developer
-  const hint = actualServerIP ? null : 'no-origin-ip-found; ensure origin sets X-Origin-IP or use unproxied host';
+  // If responseHeaders is a plain string we treat it as a label (e.g. "server-via-tunnel")
+  if (!actualServerIP && responseHeaders && typeof responseHeaders === 'string') {
+    actualServerIP = responseHeaders;
+  }
+
+  // Final default when nothing indicates origin IP
+  if (!actualServerIP) {
+    actualServerIP = 'cloudflare';
+    hint = 'no-origin-ip-found; ensure origin sets X-Origin-IP or use unproxied host';
+  }
+
+  // Output consistent shape
   console.log(JSON.stringify({
-    note: note || null,
-    host,
-    serverIP: actualServerIP || 'cloudflare',
+    source: { serverIP: actualServerIP },
+    // keep minimal extra info for debugging (optional)
+    meta: note ? { note } : undefined,
+    // include host only when helpful
+    host: host || undefined,
     hint
   }));
 }
