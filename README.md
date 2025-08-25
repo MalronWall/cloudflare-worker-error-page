@@ -50,7 +50,28 @@ This project allows you to deploy a custom error page using a Cloudflare Worker.
 ![Add names](images/create_kv/create_kv_add_name.png)
 ![Copy id](images/create_kv/create_kv_copy_id.png)
 
-### 4. Enable environment variables
+### 4. OPTIONAL Add a docker container on your server for send the info to Cloudflare when your 4G/5G backup is active
+
+- clone this repo on your server
+- execute ``` docker build -t wan-ip-checker . ``` for build the docker image
+- launch the docker container with this command :
+```
+docker run -e CF_ACCOUNT_ID=Your_cloudflare_account_id \
+           -e CF_NAMESPACE_ID=Your_cloudflare_namespace_id \
+           -e CF_API_TOKEN=Your_cloudflare_api_token \
+           -e KV_KEY=wan-ip \
+           -e KV_4G_KEY=wan-is-4g \
+           wan-ip-checker
+```
+- You can get tour account id on the [dashboard](https://dash.cloudflare.com/login), click on the 3 dot right to your mail
+- You can get your namespace id in your wrangler.toml
+- For generate a new api token go to your profile -> API Tokens -> Create Token -> click on Use template for Edit Cloudflare Workers
+- remove every permissions exept **Workers KV Storage** and set it to Edit
+- On Account Resources select your cloudflare account
+- On Zone Resources select Include and All zones
+- Click on **Continue to summary** and **Create token**
+
+### 5. Enable environment variables
 
 - Open the `wrangler.toml` file.
 - Remove the `#` in front of the variables you want to enable, or add them as **secrets** in Cloudflare (Worker Variables/Secrets section).
