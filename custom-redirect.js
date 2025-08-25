@@ -7,8 +7,12 @@ const REDIRECT = {
    * @param {string} canvaUrl - L'URL de l'embed Canva
    * @returns {string} Le HTML avec l'URL injectée
    */
-  generateErrorPage: (canvaUrl) => {
-    return errorTemplate.replace('CANVA_EMBED_URL', canvaUrl);
+  generateErrorPage: (ERROR_CODE, ERROR_TYPE, ERROR_MESSAGE, ERROR_GIF) => {
+    return errorTemplate
+    .replace('ERROR_CODE', ERROR_CODE)
+    .replace('ERROR_TYPE', ERROR_TYPE)
+    .replace('ERROR_MESSAGE', ERROR_MESSAGE)
+    .replace('ERROR_GIF', ERROR_GIF);
   }
 };
 
@@ -45,7 +49,7 @@ function makeResponse(content, status) {
  */
 async function handleMaintenanceMode(isMaintenance, env) {
   if (isMaintenance) {
-    return makeResponse(REDIRECT.generateErrorPage(env.CANVA_MAINTENANCE_URL), STATUS.MAINTENANCE);
+    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.MAINTENANCE);
   }
   return null;
 }
@@ -57,15 +61,15 @@ async function handleMaintenanceMode(isMaintenance, env) {
  */
 async function handleTunnelError(env) {
   const originUp = await HELPER.isOriginReachable().catch(() => null);
-  if (originUp === false) {
-    return makeResponse(REDIRECT.generateErrorPage(env.CANVA_BOX_ERROR_URL), STATUS.BOX_NO_IP);
+  if (originUp === false) { //CANVA_BOX_ERROR_URL
+    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.BOX_NO_IP);
   }
   
   const npmUp = await HELPER.isNpmUp().catch(() => false);
-  if (npmUp) {
-    return makeResponse(REDIRECT.generateErrorPage(env.CANVA_CONTAINER_ERROR_URL), STATUS.CONTAINER);
-  }
-  return makeResponse(REDIRECT.generateErrorPage(env.CANVA_GENERIC_ERROR_URL), STATUS.SERVER);
+  if (npmUp) { //CANVA_CONTAINER_ERROR_URL
+    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.CONTAINER);
+  } //CANVA_GENERIC_ERROR_URL
+  return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.SERVER);
 }
 
 /**
@@ -78,23 +82,23 @@ async function handleCloudflareError(response, env) {
   const cfCode = await HELPER.getCloudflareErrorCode(response);
   const originUp = await HELPER.isOriginReachable().catch(() => null);
 
-  if (originUp === false) {
-    return makeResponse(REDIRECT.generateErrorPage(env.CANVA_BOX_ERROR_URL), STATUS.BOX_NO_IP);
+  if (originUp === false) { // CANVA_BOX_ERROR_URL
+    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.BOX_NO_IP);
   }
 
   if (cfCode === 1033 || [502, 521, 522, 524, 525, 526].includes(response.status)) {
     const npmUp = await HELPER.isNpmUp().catch(() => false);
-    if (npmUp) {
-      return makeResponse(REDIRECT.generateErrorPage(env.CANVA_CONTAINER_ERROR_URL), STATUS.CONTAINER);
-    }
-    return makeResponse(REDIRECT.generateErrorPage(env.CANVA_BOX_ERROR_URL), STATUS.BOX);
+    if (npmUp) { //CANVA_CONTAINER_ERROR_URL
+      return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.CONTAINER);
+    } //CANVA_BOX_ERROR_URL
+    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.BOX);
   }
 
-  if (response.status === 523) {
-    return makeResponse(REDIRECT.generateErrorPage(env.CANVA_BOX_ERROR_URL), STATUS.BOX);
+  if (response.status === 523) { //CANVA_BOX_ERROR_URL
+    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.BOX);
   }
-
-  return makeResponse(REDIRECT.generateErrorPage(env.CANVA_GENERIC_ERROR_URL), STATUS.SERVER);
+  //CANVA_GENERIC_ERROR_URL
+  return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.SERVER);
 }
 
 /**
@@ -105,16 +109,16 @@ async function handleCloudflareError(response, env) {
  */
 async function handleOriginError(response, env) {
   const originUp = await HELPER.isOriginReachable().catch(() => null);
-  if (originUp === false) {
-    return makeResponse(REDIRECT.generateErrorPage(env.CANVA_BOX_ERROR_URL), STATUS.BOX_NO_IP);
+  if (originUp === false) { //CANVA_BOX_ERROR_URL
+    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.BOX_NO_IP);
   }
 
   const npmUp = await HELPER.isNpmUp().catch(() => false);
-  if (npmUp) {
-    return makeResponse(REDIRECT.generateErrorPage(env.CANVA_CONTAINER_ERROR_URL), STATUS.CONTAINER);
+  if (npmUp) { //CANVA_CONTAINER_ERROR_URL
+    return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.CONTAINER);
   }
-  
-  return makeResponse(REDIRECT.generateErrorPage(env.CANVA_GENERIC_ERROR_URL), STATUS.SERVER);
+  // CANVA_GENERIC_ERROR_URL
+  return makeResponse(REDIRECT.generateErrorPage("503", "Maintenance serveur", "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗", "https://video-private-assets.canva.com/VAFj8I_yGVw/v/4bb77a0016.mp4?exp=1756131120000&cf-ck=GkEmAv8gD8BRKATE3I7M_s9Rh-rnF__Lew_LUl1uMt4&cf-sig=SvW4OqyHTvybbMq7f_2bEC5DtLxBiLS71FVGGbfzO9E&cf-sig-kid=CO7cCjZ_YiI=&sig=0SQnpq30A2NipD9A2CQmwfrtxPbrFDUdU6KMJcxUlZ8&sig-kid=GzFgFdhXD-Q="), STATUS.SERVER);
 }
 
 /**

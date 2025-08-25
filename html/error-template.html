@@ -1,44 +1,24 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erreur Serveur</title>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            background-color: #f0f0f0;
-        }
-        .iframe-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            max-width: 100vw;
-            max-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .iframe-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            max-width: 100vw;
-            max-height: 100vh;
-            aspect-ratio: 7 / 5;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Erreur Serveur</title>
+  <style>
+    body { background: #1e2323; color: #fff; font-family: Arial, sans-serif; }
+    .container { width: 450px; margin: 50px auto; text-align: center; background: #222; border-radius: 15px; padding: 30px; }
+    .error-code { font-size: 64px; color: #faa237; font-weight: bold; }
+    .error-type { font-size: 64px; color: #faa237; font-weight: bold; }
+    .error-message { font-size: 24px; margin: 20px 0; }
+    .gif { max-width: 80%; margin-bottom: 25px; }
+    .footer { color: #aaa; font-size: 14px; margin-top: 40px; }
+  </style>
 </head>
 <body>
-    <div class="iframe-container">
-        <iframe loading="lazy" src="CANVA_EMBED_URL" allowfullscreen allow="fullscreen"></iframe>
-    </div>
+  <div class="container">
+    <div class="error-code">ERROR_CODE</div>
+    <div class="error-type">ERROR_TYPE</div>
+    <div class="error-message">ERROR_MESSAGE</div>
+    <video class="gif" src="ERROR_GIF" autoplay loop muted playsinline></video>
+  </div>
 </body>
 </html>
