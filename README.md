@@ -46,9 +46,9 @@ This project allows you to deploy a custom error page using a Cloudflare Worker.
 - Copy the namespace ID and add it to the `id` field in the `kv_namespaces` section of the `wrangler.toml` file.
 - Because you link the github repo with Cloudflare the projet the worker will be automatically updated.
 
-![Create KV](images/create_kv.png)
-![Add names](images/create_kv_add_name.png)
-![Copy id](images/create_kv_copy_id.png)
+![Create KV](images/create_kv/create_kv.png)
+![Add names](images/create_kv/create_kv_add_name.png)
+![Copy id](images/create_kv/create_kv_copy_id.png)
 
 ### 4. Enable environment variables
 
