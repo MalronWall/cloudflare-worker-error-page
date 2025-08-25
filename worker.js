@@ -69,6 +69,24 @@ export default {
         }
       }
 
+      if (url.pathname === '/worker/api/banner/subdomains/add' && request.method === 'POST') {
+        const { subdomain } = await request.json();
+        if (typeof subdomain !== 'string') return new Response('Format attendu: { subdomain: "..." }', { status: 400 });
+        if (!bannerSubdomains.includes(subdomain)) {
+          bannerSubdomains.push(subdomain);
+          await env.MAINTENANCE_KV.put('BANNER_SUBDOMAINS', JSON.stringify(bannerSubdomains));
+        }
+        return new Response('Sous-domaine ajouté au bandeau');
+      }
+
+      if (url.pathname === '/worker/api/banner/subdomains/remove' && request.method === 'POST') {
+        const { subdomain } = await request.json();
+        if (typeof subdomain !== 'string') return new Response('Format attendu: { subdomain: "..." }', { status: 400 });
+        const newList = bannerSubdomains.filter(d => d !== subdomain);
+        await env.MAINTENANCE_KV.put('BANNER_SUBDOMAINS', JSON.stringify(newList));
+        return new Response('Sous-domaine retiré du bandeau');
+      }
+
       if (url.pathname === '/worker/api/banner/message' && request.method === 'POST') {
         const { message } = await request.json();
         if (typeof message === 'string') {
@@ -97,9 +115,8 @@ export default {
     const redirectResponse = await c_redirect(request, response, null, isMaintenance, env);
     if (redirectResponse) return redirectResponse;
 
-    // Ajout du bandeau sur les sous-domaines choisis
-    const currentSubdomain = host.split('.')[0];
-    const showBanner = bannerMessage && bannerSubdomains.includes(currentSubdomain);
+    // Ajout du bandeau sur les sous-domaines choisis (on compare host complet)
+    const showBanner = bannerMessage && bannerSubdomains.includes(host);
 
     if (showBanner && response.headers.get('content-type')?.includes('text/html')) {
       let text = await response.text();

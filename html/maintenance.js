@@ -63,10 +63,10 @@ export default function maintenanceHtml(globalMaintenance, subdomainsMaintenance
         padding: 16px;
         border-bottom: 1px solid rgba(255,255,255,0.1);
       }
-      .subdomain-list {
+      .subdomain-list, .banner-subdomain-list {
         margin: 16px 0;
       }
-      .subdomain-controls {
+      .subdomain-controls, .banner-controls {
         display: flex;
         gap: 8px;
         margin-top: 16px;
@@ -78,7 +78,7 @@ export default function maintenanceHtml(globalMaintenance, subdomainsMaintenance
         background: rgba(255,255,255,0.1);
         color: white;
       }
-      .subdomain-item {
+      .subdomain-item, .banner-subdomain-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -123,9 +123,12 @@ export default function maintenanceHtml(globalMaintenance, subdomainsMaintenance
           <button onclick="setBannerMessage()">Mettre à jour</button>
         </div>
         <div>
-          <label for="banner-subdomains">Sous-domaines du bandeau (séparés par une virgule) :</label>
-          <input id="banner-subdomains" value="${bannerSubdomains.join(',')}" />
-          <button onclick="setBannerSubdomains()">Mettre à jour</button>
+          <label for="banner-subdomain-input">Ajouter un sous-domaine pour le bandeau :</label>
+          <input id="banner-subdomain-input" placeholder="ex: admin.monsite.com" />
+          <button onclick="addBannerSubdomain()">Ajouter</button>
+        </div>
+        <div class="banner-subdomain-list">
+          ${bannerSubdomains.map(sd => `<div class="banner-subdomain-item">${sd} <button class="remove-btn" onclick="removeBannerSubdomain('${sd}')">Retirer</button></div>`).join('')}
         </div>
         ${bannerMessage ? `<div class="banner-preview">${bannerMessage}</div>` : ''}
         <div style="font-size:0.9em;color:#bbb;margin-top:8px;">Le bandeau s’affiche sur les sous-domaines listés ci-dessus</div>
@@ -163,12 +166,21 @@ export default function maintenanceHtml(globalMaintenance, subdomainsMaintenance
         });
         location.reload();
       }
-      async function setBannerSubdomains() {
-        const val = document.getElementById('banner-subdomains').value.split(',').map(s => s.trim()).filter(Boolean);
-        await fetch('/worker/api/banner/subdomains', {
+      async function addBannerSubdomain() {
+        const val = document.getElementById('banner-subdomain-input').value.trim();
+        if (!val) return;
+        await fetch('/worker/api/banner/subdomains/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ subdomains: val })
+          body: JSON.stringify({ subdomain: val })
+        });
+        location.reload();
+      }
+      async function removeBannerSubdomain(sd) {
+        await fetch('/worker/api/banner/subdomains/remove', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subdomain: sd })
         });
         location.reload();
       }
