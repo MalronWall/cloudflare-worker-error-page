@@ -55,16 +55,18 @@ function extractIPv4(ipString) {
 }
 
 // Log request with server IP information
-function logRequest(request, host, serverIP, responseHeaders = null) {
+function logRequest(request, host, responseHeaders = null) {
   const url = new URL(request.url);
   const timestamp = new Date().toISOString();
   const userAgent = request.headers.get('user-agent') || 'Unknown';
   const cfRay = request.headers.get('cf-ray') || 'Unknown';
   
-  // Try to get server IP from response headers if available
-  const actualServerIP = responseHeaders?.get('x-server-ip') || 
-                         env.SERVER_IP || 
-                         'Unknown';
+  // Get server IP from Cloudflare headers (IP of your origin server)
+  const serverIP = responseHeaders?.get('cf-cache-status') ? 
+                   (responseHeaders.get('server') || 
+                    responseHeaders.get('cf-origin-ip') ||
+                    responseHeaders.get('x-forwarded-server') ||
+                    request.cf?.colo || 'Unknown') : 'Unknown';
   
   // Extract IPv4 from user IP
   const userIPRaw = request.headers.get('cf-connecting-ip') || 'Unknown';
@@ -75,7 +77,8 @@ function logRequest(request, host, serverIP, responseHeaders = null) {
     host,
     method: request.method,
     path: url.pathname,
-    serverIP: extractIPv4(actualServerIP),
+    serverIP: extractIPv4(serverIP),
+    cfColo: request.cf?.colo || 'Unknown',
     userAgent,
     cfRay,
     referer: request.headers.get('referer') || '',
@@ -110,14 +113,12 @@ export default {
     try {
       response = await fetch(request);
       
-      // Log successful request with server IP from env variable
-      const serverIP = env.SERVER_IP || 'Unknown';
-      logRequest(request, host, serverIP, response.headers);
+      // Log successful request
+      logRequest(request, host, response.headers);
       
     } catch (err) {
       // Log failed request
-      const serverIP = env.SERVER_IP || 'Unknown';
-      logRequest(request, host, `${serverIP}-unreachable`);
+      logRequest(request, host, null);
       
       const redirectResponse = await c_redirect(request, null, err, isMaintenance, env);
       if (redirectResponse) return redirectResponse;
