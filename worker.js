@@ -35,18 +35,23 @@ async function injectBanner(response, bannerMessage) {
 }
 
 // Log request with server IP information
-function logRequest(request, host, serverIP) {
+function logRequest(request, host, serverIP, responseHeaders = null) {
   const url = new URL(request.url);
   const timestamp = new Date().toISOString();
   const userAgent = request.headers.get('user-agent') || 'Unknown';
   const cfRay = request.headers.get('cf-ray') || 'Unknown';
+  
+  // Try to get server IP from response headers if available
+  const actualServerIP = responseHeaders?.get('cf-server-ip') || 
+                         responseHeaders?.get('x-server-ip') ||
+                         serverIP;
   
   console.log(JSON.stringify({
     timestamp,
     host,
     method: request.method,
     path: url.pathname,
-    serverIP,
+    serverIP: actualServerIP,
     userAgent,
     cfRay,
     referer: request.headers.get('referer') || '',
@@ -59,13 +64,11 @@ export default {
     const host = request.headers.get('host');
     const url = new URL(request.url);
     
-    // Get server IP from Cloudflare headers
-    const serverIP = request.headers.get('cf-connecting-ip') || 
-                    request.headers.get('x-forwarded-for') || 
-                    request.headers.get('x-real-ip') || 
-                    'Unknown';
-    
-    // Log the request
+    // Get user IP (not server IP)
+    const userIP = request.headers.get('cf-connecting-ip') || 'Unknown';
+
+    // Log the request with configured server IP
+    const serverIP = env.SERVER_IP || 'configured-server-ip';
     logRequest(request, host, serverIP);
 
     // Read state
@@ -89,7 +92,14 @@ export default {
     let response;
     try {
       response = await fetch(request);
+      
+      // Log after getting response (to capture server info)
+      logRequest(request, host, 'server-via-tunnel', response.headers);
+      
     } catch (err) {
+      // Log failed request
+      logRequest(request, host, 'server-unreachable');
+      
       const redirectResponse = await c_redirect(request, null, err, isMaintenance, env);
       if (redirectResponse) return redirectResponse;
       return new Response('Upstream unreachable', { status: 502 });
