@@ -38,18 +38,3 @@ TEXT_CONTAINER_ERROR_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudf
 ENABLE_4G_BANNER = true
 # Message for 4G banner when fiber is down
 TEXT_4G_BANNER_MESSAGE = "Attention des lenteurs peuvent survenir, ma fibre est H.S. Le serveur fonctionne en 4G !"
-
-# You can enable the variables below or add them as secrets in Cloudflare
-
-# Domain authorized to access maintenance button
-# You can put your maintenance subdomain here or add it as a secret in the worker
-# This will be the page to enable/disable maintenance
-# MAINTENANCE_DOMAIN = "maintenance.domaine.fr"
-
-# URL to check if Nginx Proxy Manager is accessible redirect to port 80 of your reverse proxy
-# You can put your test subdomain here or add it as a secret in the worker
-# NPM_HEALTH_URL = "https://test.domaine.fr"
-
-# URL to check if origin server is accessible
-# You can put your server IP here or add it as a secret in the worker
-# ORIGIN_PING_URL = "YourServerIP"
