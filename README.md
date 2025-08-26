@@ -133,20 +133,123 @@ TO DO
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## <a name="français"></a>🇫🇷 Français
+
+# Page d'erreur Cloudflare Worker
+
+Ce projet vous permet de déployer une page d'erreur personnalisée à l'aide d'un Cloudflare Worker.
+Avec une option pour activer le mode maintenance, ajouter une bannière à un ou plusieurs domaines spécifiques et afficher une bannière lorsque votre backup LTE est actif.
+
+![Créer worker](images/other/presentation.png)
+![Créer worker](images/other/connection_error.png)
+![Créer worker](images/other/server_error.png)
+![Créer worker](images/other/banner_4g.png)
+![Créer worker](images/other/maintenance.png)
+
+## Étapes d'installation
+
+### 1. Forkez ce dépôt
+
+### 2. Modifiez les variables dans wrangler.toml
+
+- Définissez votre langue (FR ou EN)
+- Modifiez le texte des différents messages d'erreur
+
+### 3. Créez un espace de noms KV
+
+- Sur Cloudflare, allez dans **Workers > KV**.
+- Créez un espace de noms nommé : ``` cloudflare-worker-error-page ```
+- Copiez l'ID de l'espace de noms et ajoutez-le au champ `id` dans la section `kv_namespaces` du fichier `wrangler.toml`.
+
+![Créer KV](images/create_kv/create_kv.png)
+![Ajouter nom](images/create_kv/create_kv_add_name.png)
+![Copier id](images/create_kv/create_kv_copy_id.png)
+
+### 4. Configurez le sous-domaine
+
+- Créez un sous-domaine ``` maintenance.domain.fr ``` et redirigez-le vers votre reverse proxy
+- Créez un autre sous-domaine pour vérifier si le worker peut accéder à votre reverse proxy pour vérifier les erreurs ``` test.domain.fr ```
+- Ouvrez un port sur votre serveur qui sera utilisé par le worker pour déterminer si votre serveur est hors ligne ou si votre connexion est coupée. Vous pouvez utiliser n'importe quel port.
+- Pour la sécurité, vous pouvez limiter les IP qui peuvent accéder aux IP Cloudflare accessibles [ici](https://www.cloudflare.com/fr-fr/ips/)
+
+#### Exemple pour limiter l'accès aux IP Cloudflare sur Unifi
+![Copier id](images/domain/unifi_1.png)
+![Copier id](images/domain/unifi_2.png)
+
+### 5. Créez un Worker sur Cloudflare
+
+- Connectez-vous à votre tableau de bord Cloudflare.
+- Allez dans la section **Workers Routes**.
+- Allez dans Gérer les Workers.
+- Cliquez sur Créer
+- Sélectionnez importer un dépôt
+- Liez votre compte Github à Cloudflare et sélectionnez le dépôt forké
+- Ajoutez le nom du projet : ``` cloudflare-worker-error-page ```
+- Ajoutez la commande de build : ``` npx wrangler deploy --assets=./ ```
+- Cliquez sur Créer et déployer
+- Attendez la fin du build et cliquez sur continuer vers le projet
+- Allez dans Paramètres -> Domaines & Routes -> Ajouter
+- Cliquez sur Route et sélectionnez votre domaine dans Zone
+- Ajoutez ceci dans Route : ``` *domain.fr/* ``` Ne mettez pas le . après le premier * sinon cela ne fonctionnera que pour le sous-domaine. Vous pouvez ajouter plusieurs routes avec plusieurs domaines.
+- Ajoutez le secret MAINTENANCE_DOMAIN avec le domaine créé précédemment
+- Ajoutez le secret NPM_HEALTH_URL avec le domaine de test créé précédemment
+- Ajoutez le secret ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment
+
+![Créer worker](images/create_worker/create_worker_1.png)
+![Créer worker](images/create_worker/create_worker_2.png)
+![Créer worker](images/create_worker/create_worker_3.png)
+![Créer worker](images/create_worker/create_worker_4.png)
+![Créer worker](images/create_worker/create_worker_5.png)
+![Créer worker](images/create_worker/create_worker_6.png)
+![Créer worker](images/create_worker/create_worker_7.png)
+![Créer worker](images/create_worker/create_worker_8.png)
+![Créer worker](images/create_worker/create_worker_9.png)
+![Créer worker](images/create_worker/create_worker_10.png)
+
+### 6. OPTIONNEL : Ajoutez un conteneur Docker sur votre serveur pour envoyer l'info à Cloudflare lorsque votre backup 4G/5G est actif
+
+- Dans wrangler.toml, mettez ``` ENABLE_4G_BANNER = true ```
+
+#### Option 1 : Utiliser l'image Docker pré-construite (Recommandé)
+
+⚠️ Si vous avez forké mon dépôt, vous pouvez modifier le ``` ghcr.io/jamesdadams/cloudflare-worker-error-page:latest ```
+avec votre nom Github -> ``` ghcr.io/VotreNomGithub/cloudflare-worker-error-page:latest ```
+
+- Utilisez l'image pré-construite depuis GitHub Container Registry :
+```bash
+docker run -e CF_ACCOUNT_ID=Votre_id_compte_cloudflare \
+           -e CF_NAMESPACE_ID=Votre_id_namespace_cloudflare \
+           -e CF_API_TOKEN=Votre_token_api_cloudflare \
+           -e KV_IP_KEY=wan-ip \
+           -e KV_4G_KEY=wan-is-4g \
+           -e SLEEP_SECONDS=60 \
+           ghcr.io/jamesdadams/cloudflare-worker-error-page:latest
+```
+
+#### Option 2 : Construisez l'image vous-même
+
+- Clonez ce dépôt sur votre serveur
+- Exécutez ``` docker build -t wan-ip-checker ./docker ``` pour construire l'image docker
+- Lancez le conteneur docker avec cette commande :
+```bash
+docker run -e CF_ACCOUNT_ID=Votre_id_compte_cloudflare \
+           -e CF_NAMESPACE_ID=Votre_id_namespace_cloudflare \
+           -e CF_API_TOKEN=Votre_token_api_cloudflare \
+           -e KV_IP_KEY=wan-ip \
+           -e KV_4G_KEY=wan-is-4g \
+           wan-ip-checker
+```
+
+- Vous pouvez obtenir votre id de compte sur le [dashboard](https://dash.cloudflare.com/login), cliquez sur les 3 points à droite de votre mail
+- Vous pouvez obtenir votre id de namespace dans votre wrangler.toml
+- Pour générer un nouveau token API, allez dans votre profil -> API Tokens -> Créer un token -> cliquez sur Utiliser le template pour Edit Cloudflare Workers
+- Retirez toutes les permissions sauf **Workers KV Storage** et mettez-la sur Edit
+- Dans Account Resources, sélectionnez votre compte Cloudflare
+- Dans Zone Resources, sélectionnez Inclure et Toutes les zones
+- Cliquez sur **Continuer vers le résumé** et **Créer le token**
+- SLEEP_SECONDS définit la fréquence à laquelle le conteneur vérifiera l'adresse IP du serveur.
+
+### 7. Ajoutez une authentification sur votre page de maintenance
+
+À FAIRE
 
