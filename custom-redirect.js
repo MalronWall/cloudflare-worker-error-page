@@ -69,7 +69,7 @@ async function handleTunnelError(env) {
   if (npmUp) {
     return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), STATUS.CONTAINER);
   }
-  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERROR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
+  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERRORR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
 }
 
 /**
@@ -98,7 +98,7 @@ async function handleCloudflareError(response, env) {
     return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX);
   }
 
-  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERROR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
+  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERRORR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
 }
 
 /**
@@ -118,7 +118,7 @@ async function handleOriginError(response, env) {
     return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), STATUS.CONTAINER);
   }
   
-  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERROR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
+  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERRORR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
 }
 
 /**
