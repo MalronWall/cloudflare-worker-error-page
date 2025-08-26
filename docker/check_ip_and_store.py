@@ -8,7 +8,7 @@ CF_NAMESPACE_ID = os.environ["CF_NAMESPACE_ID"]
 CF_API_TOKEN = os.environ["CF_API_TOKEN"]
 KV_IP_KEY = os.environ.get("KV_IP_KEY", "wan-ip")
 KV_4G_KEY = os.environ.get("KV_4G_KEY", "wan-is-4g")
-SLEEP_SECONDS = int(os.environ.get("SLEEP_SECONDS", "60"))
+SLEEP_SECONDS = int(os.environ.get("SLEEP_SECONDS", 60))
 
 def get_wan_ip():
     return requests.get("https://api.ipify.org").text.strip()
