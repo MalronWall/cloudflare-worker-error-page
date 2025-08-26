@@ -1,12 +1,14 @@
 import requests
 import time
 import os
+from datetime import datetime
 
 CF_ACCOUNT_ID = os.environ["CF_ACCOUNT_ID"]
 CF_NAMESPACE_ID = os.environ["CF_NAMESPACE_ID"]
 CF_API_TOKEN = os.environ["CF_API_TOKEN"]
 KV_IP_KEY = os.environ.get("KV_IP_KEY", "wan-ip")
 KV_4G_KEY = os.environ.get("KV_4G_KEY", "wan-is-4g")
+SLEEP_SECONDS = int(os.environ.get("SLEEP_SECONDS", "60"))
 
 def get_wan_ip():
     return requests.get("https://api.ipify.org").text.strip()
@@ -30,29 +32,33 @@ def is_mobile_ip(ip):
     # ip-api.com returns 'mobile': True if the connection is mobile (4G/5G)
     return bool(data.get("mobile", False))
 
+def log(msg, level="INFO"):
+    now = datetime.now().isoformat(timespec="seconds")
+    print(f"[{now}] [{level}] {msg}")
+
 def main():
     last_ip = None
     last_is_4g = None
     while True:
         try:
             ip = get_wan_ip()
-            print(f"[INFO] Retrieved IP: {ip}")
+            log(f"Retrieved IP: {ip}")
             is_4g = is_mobile_ip(ip)
-            print(f"[INFO] Is mobile (4G/5G): {is_4g}")
+            log(f"Is mobile (4G/5G): {is_4g}")
 
             # Update if IP or connection type changed
             if ip != last_ip:
-                print(f"[INFO] IP change detected, updating Cloudflare KV.")
+                log("IP change detected, updating Cloudflare KV.")
                 update_cloudflare_kv(KV_IP_KEY, ip)
                 last_ip = ip
 
             if is_4g != last_is_4g:
-                print(f"[INFO] Connection type change detected, updating Cloudflare KV.")
+                log("Connection type change detected, updating Cloudflare KV.")
                 update_cloudflare_kv(KV_4G_KEY, str(is_4g).lower())
                 last_is_4g = is_4g
         except Exception as e:
-            print(f"[ERROR] {e}")
-        time.sleep(60)
+            log(str(e), level="ERROR")
+        time.sleep(SLEEP_SECONDS)
 
 if __name__ == "__main__":
     main()
