@@ -24,7 +24,6 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 
 - Set your language (FR or EN)
 - Change the text message for the various error
-- Remove the `#` in front of the variables you want to enable, or add them as **secrets** in Cloudflare (Worker Variables/Secrets section).
 
 ### 3. Create a KV namespace
 
@@ -35,6 +34,17 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 ![Create KV](images/create_kv/create_kv.png)
 ![Add names](images/create_kv/create_kv_add_name.png)
 ![Copy id](images/create_kv/create_kv_copy_id.png)
+
+### 4. Config sub domain
+
+- create a subdomain ``` maintenance.domain.fr ``` and redirect it to your reverse proxy
+- create an other subdomain for check if the worker can acces to your reverse proxy for check error ``` test.domain.fr ```
+- open a port on your server which will be used by the worker to determine whether your server is down or your connection is down you can use whichever port you want.
+- For safety you can limite the IP who can acces to the cloudflare Ip accesible [here](https://www.cloudflare.com/fr-fr/ips/)
+
+#### Exemple for limite acces to cloudflare ip on Unifi
+![Copy id](images/domain/unifi_1.png)
+![Copy id](images/domain/unifi_2.png)
 
 ### 2. Create a Worker on Cloudflare
 
