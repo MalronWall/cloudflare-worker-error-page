@@ -17,6 +17,22 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 
 ### 1. Fork this repository
 
+### 2. Edit variable in wrangler.toml
+
+- Set your language (FR or EN)
+- Change the text message for the various error
+- Remove the `#` in front of the variables you want to enable, or add them as **secrets** in Cloudflare (Worker Variables/Secrets section).
+
+### 3. Create a KV namespace
+
+- In Cloudflare, go to **Workers > KV**.
+- Create a namespace named: ``` cloudflare-worker-error-page ```
+- Copy the namespace ID and add it to the `id` field in the `kv_namespaces` section of the `wrangler.toml` file.
+
+![Create KV](images/create_kv/create_kv.png)
+![Add names](images/create_kv/create_kv_add_name.png)
+![Copy id](images/create_kv/create_kv_copy_id.png)
+
 ### 2. Create a Worker on Cloudflare
 
 - Log in to your Cloudflare dashboard.
@@ -43,17 +59,6 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 ![Create worker](images/create_worker/create_worker_8.png)
 ![Create worker](images/create_worker/create_worker_9.png)
 
-### 3. Create a KV namespace
-
-- In Cloudflare, go to **Workers > KV**.
-- Create a namespace named: ``` cloudflare-worker-error-page ```
-- Copy the namespace ID and add it to the `id` field in the `kv_namespaces` section of the `wrangler.toml` file.
-- Because you link the github repo with Cloudflare the projet the worker will be automatically updated.
-
-![Create KV](images/create_kv/create_kv.png)
-![Add names](images/create_kv/create_kv_add_name.png)
-![Copy id](images/create_kv/create_kv_copy_id.png)
-
 ### 4. OPTIONAL Add a docker container on your server for send the info to Cloudflare when your 4G/5G backup is active
 
 - On wrangler.toml set ``` ENABLE_4G_BANNER = true ```
@@ -76,12 +81,7 @@ docker run -e CF_ACCOUNT_ID=Your_cloudflare_account_id \
 - On Zone Resources select Include and All zones
 - Click on **Continue to summary** and **Create token**
 
-### 5. Enable environment variables
-
-- Open the `wrangler.toml` file.
-- Remove the `#` in front of the variables you want to enable, or add them as **secrets** in Cloudflare (Worker Variables/Secrets section).
-
-### 6. Add Auth on your maintenance page
+### 5. Add Auth on your maintenance page
 
 TO DO 
 
