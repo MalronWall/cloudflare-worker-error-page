@@ -78,6 +78,7 @@ docker run -e CF_ACCOUNT_ID=Your_cloudflare_account_id \
            -e CF_API_TOKEN=Your_cloudflare_api_token \
            -e KV_IP_KEY=wan-ip \
            -e KV_4G_KEY=wan-is-4g \
+           -e SLEEP_SECONDS=60 \
            ghcr.io/jamesdadams/cloudflare-worker-error-page:latest
 ```
 
@@ -102,6 +103,7 @@ docker run -e CF_ACCOUNT_ID=Your_cloudflare_account_id \
 - On Account Resources select your cloudflare account
 - On Zone Resources select Include and All zones
 - Click on **Continue to summary** and **Create token**
+- SLEEP_SECONDS is how often the container will check the server's IP address.
 
 ### 5. Add Auth on your maintenance page
 
