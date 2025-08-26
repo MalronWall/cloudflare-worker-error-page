@@ -61,6 +61,10 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 - Go to Settings -> Domains & Routes -> Add
 - Click on Route and selecto your domaine in Zone
 - Add this on Route : ``` *domain.fr/* ``` Don't put the . after the first * otherwise it's going to work only for subdomain. And you can add multiple Route with multiple domain
+- Add the secret MAINTENANCE_DOMAIN with the domain create earlier
+- Add the secret NPM_HEALTH_URL with the test domain create earlier
+- Add the secret ORIGIN_PING_URL with your server ip and the port open earlier
+
 
 ![Create worker](images/create_worker/create_worker_1.png)
 ![Create worker](images/create_worker/create_worker_2.png)
@@ -71,6 +75,7 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 ![Create worker](images/create_worker/create_worker_7.png)
 ![Create worker](images/create_worker/create_worker_8.png)
 ![Create worker](images/create_worker/create_worker_9.png)
+![Create worker](images/create_worker/create_worker_10.png)
 
 ### 4. OPTIONAL Add a docker container on your server for send the info to Cloudflare when your 4G/5G backup is active
 
