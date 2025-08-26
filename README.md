@@ -13,8 +13,8 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 ![Create worker](images/other/presentation.png)
 ![Create worker](images/other/connection_error.png)
 ![Create worker](images/other/server_error.png)
-![Create worker](images/other/maintenance.png)
 ![Create worker](images/other/banner_4g.png)
+![Create worker](images/other/maintenance.png)
 
 ## Installation Steps
 
