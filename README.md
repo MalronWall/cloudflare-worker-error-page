@@ -11,6 +11,7 @@ This project allows you to deploy a custom error page using a Cloudflare Worker.
 With an option for enable maintenance mod, add a banner to a specific or all domain and show a banner when your LTE backup is active
 
 ![Create worker](images/other/presentation.png)
+![Create worker](images/other/connection_error.png)
 ![Create worker](images/other/maintenance.png)
 ![Create worker](images/other/banner_4g.png)
 
