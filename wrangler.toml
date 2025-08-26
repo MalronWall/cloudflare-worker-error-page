@@ -6,7 +6,7 @@ compatibility_date = "2025-08-24"
 
 # KV namespace to store maintenance state
 kv_namespaces = [
-  { binding = "MAINTENANCE_KV", id = "f7ed9defd85c4a168b7c351d5d49d663" }
+  { binding = "MAINTENANCE_KV", id = "57a8af4a40c64e889cfacb226bf1ece4" }
 ]
 
 [vars]
