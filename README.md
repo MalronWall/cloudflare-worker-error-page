@@ -46,7 +46,7 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 ![Copy id](images/domain/unifi_1.png)
 ![Copy id](images/domain/unifi_2.png)
 
-### 2. Create a Worker on Cloudflare
+### 5. Create a Worker on Cloudflare
 
 - Log in to your Cloudflare dashboard.
 - Go to the **Workers Routes** section.
@@ -77,7 +77,7 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 ![Create worker](images/create_worker/create_worker_9.png)
 ![Create worker](images/create_worker/create_worker_10.png)
 
-### 4. OPTIONAL Add a docker container on your server for send the info to Cloudflare when your 4G/5G backup is active
+### 6. OPTIONAL Add a docker container on your server for send the info to Cloudflare when your 4G/5G backup is active
 
 - On wrangler.toml set ``` ENABLE_4G_BANNER = true ```
 
@@ -120,7 +120,7 @@ docker run -e CF_ACCOUNT_ID=Your_cloudflare_account_id \
 - Click on **Continue to summary** and **Create token**
 - SLEEP_SECONDS is how often the container will check the server's IP address.
 
-### 5. Add Auth on your maintenance page
+### 7. Add Auth on your maintenance page
 
 TO DO 
 
