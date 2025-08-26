@@ -68,6 +68,9 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 
 #### Option 1: Use the pre-built Docker image (Recommended)
 
+⚠️ If you have fork my repository you can edit the ``` ghcr.io/jamesdadams/cloudflare-worker-error-page:latest ```
+with your github name -> ``` ghcr.io/YourGithubName/cloudflare-worker-error-page:latest ```
+
 - Use the pre-built image from GitHub Container Registry:
 ```bash
 docker run -e CF_ACCOUNT_ID=Your_cloudflare_account_id \
@@ -75,7 +78,7 @@ docker run -e CF_ACCOUNT_ID=Your_cloudflare_account_id \
            -e CF_API_TOKEN=Your_cloudflare_api_token \
            -e KV_IP_KEY=wan-ip \
            -e KV_4G_KEY=wan-is-4g \
-           ghcr.io/yourusername/cloudflare-worker-error-page/wan-ip-checker:latest
+           ghcr.io/jamesdadams/cloudflare-worker-error-page:latest
 ```
 
 #### Option 2: Build the image yourself
