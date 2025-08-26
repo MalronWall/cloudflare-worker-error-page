@@ -65,21 +65,37 @@ With an option for enable maintenance mod, add a banner to a specific or all dom
 ### 4. OPTIONAL Add a docker container on your server for send the info to Cloudflare when your 4G/5G backup is active
 
 - On wrangler.toml set ``` ENABLE_4G_BANNER = true ```
-- clone this repo on your server
-- execute ``` docker build -t wan-ip-checker . ``` for build the docker image
-- launch the docker container with this command :
-```
+
+#### Option 1: Use the pre-built Docker image (Recommended)
+
+- Use the pre-built image from GitHub Container Registry:
+```bash
 docker run -e CF_ACCOUNT_ID=Your_cloudflare_account_id \
            -e CF_NAMESPACE_ID=Your_cloudflare_namespace_id \
            -e CF_API_TOKEN=Your_cloudflare_api_token \
-           -e KV_KEY=wan-ip \
+           -e KV_IP_KEY=wan-ip \
+           -e KV_4G_KEY=wan-is-4g \
+           ghcr.io/yourusername/cloudflare-worker-error-page/wan-ip-checker:latest
+```
+
+#### Option 2: Build the image yourself
+
+- Clone this repo on your server
+- Execute ``` docker build -t wan-ip-checker ./docker ``` to build the docker image
+- Launch the docker container with this command:
+```bash
+docker run -e CF_ACCOUNT_ID=Your_cloudflare_account_id \
+           -e CF_NAMESPACE_ID=Your_cloudflare_namespace_id \
+           -e CF_API_TOKEN=Your_cloudflare_api_token \
+           -e KV_IP_KEY=wan-ip \
            -e KV_4G_KEY=wan-is-4g \
            wan-ip-checker
 ```
-- You can get tour account id on the [dashboard](https://dash.cloudflare.com/login), click on the 3 dot right to your mail
+
+- You can get your account id on the [dashboard](https://dash.cloudflare.com/login), click on the 3 dot right to your mail
 - You can get your namespace id in your wrangler.toml
 - For generate a new api token go to your profile -> API Tokens -> Create Token -> click on Use template for Edit Cloudflare Workers
-- remove every permissions exept **Workers KV Storage** and set it to Edit
+- remove every permissions except **Workers KV Storage** and set it to Edit
 - On Account Resources select your cloudflare account
 - On Zone Resources select Include and All zones
 - Click on **Continue to summary** and **Create token**
