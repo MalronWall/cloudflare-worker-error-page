@@ -10,6 +10,8 @@
 This project allows you to deploy a custom error page using a Cloudflare Worker.
 With an option for enable maintenance mod, add a banner to a specific or all domain and show a banner when your LTE backup is active
 
+⚠️ For Now only work with Cloudflare tunnel (Zero trust)
+
 ![Create worker](images/other/presentation.png)
 ![Create worker](images/other/connection_error.png)
 ![Create worker](images/other/server_error.png)
@@ -139,6 +141,8 @@ TO DO
 
 Ce projet vous permet de déployer une page d'erreur personnalisée à l'aide d'un Cloudflare Worker.
 Avec une option pour activer le mode maintenance, ajouter une bannière à un ou plusieurs domaines spécifiques et afficher une bannière lorsque votre backup LTE est actif.
+
+⚠️ Pour l'instant, fonctionne uniquement avec le tunnel Cloudflare (Zero trust)
 
 ![Créer worker](images/other/presentation.png)
 ![Créer worker](images/other/connection_error.png)
