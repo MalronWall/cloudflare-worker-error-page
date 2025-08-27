@@ -199,6 +199,7 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 - Selectionner Fail open (Cela permet de quand même accéder au site si le Worker ne fonctionne plus à cause d'un bug ou du quota qui est atteint)
 - Dans Variables and Secrets ajoutez MAINTENANCE_DOMAIN avec le domaine créé précédemment (Ex: maintenance.domain.fr)
 - Dans Variables and Secrets NPM_HEALTH_URL avec le domaine de test créé précédemment (Ex: test.domain.fr)
+⚠️ Pour ceux qui utilisent un tunnel Cloudflare (Zero trust) vous devez faire cette étape en plus.
 - Dans Variables and Secrets ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment (Ex: 172.18.95.145:5055)
 
 ![Créer worker](images/create_worker/create_worker_1.png)
