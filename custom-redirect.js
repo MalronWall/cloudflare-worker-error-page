@@ -151,5 +151,3 @@ export async function c_redirect(request, response, thrownError = null, isMainte
 
   return null;
 }
-  return null;
-
