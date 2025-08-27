@@ -16,16 +16,13 @@ const REDIRECT = {
   }
 };
 
-// Constants for HTTP statuses (dynamic based on Zero Trust flag)
-const getStatus = (env) => {
-  const isZeroTrust = env.IS_ZERO_TRUST_TUNNEL === 'true';
-  return {
-    BOX_NO_IP: isZeroTrust ? 504 : 502,
-    CONTAINER: isZeroTrust ? 504 : 500,
-    BOX: 502,
-    SERVER: 500,
-    MAINTENANCE: 503
-  };
+// Constants for HTTP statuses
+const STATUS = {
+  BOX_NO_IP: 504,
+  CONTAINER: 504,
+  BOX: 502,
+  SERVER: 500,
+  MAINTENANCE: 503
 };
 
 /**
@@ -34,10 +31,9 @@ const getStatus = (env) => {
  * @param {number} status - HTTP status code
  * @returns {Response} The formatted response
  */
-function makeResponse(content, status, env) {
-  const dynamicStatus = getStatus(env)[status] || status; // Fallback to original if key not found
+function makeResponse(content, status) {
   return new Response(content, {
-    status: dynamicStatus,
+    status,
     headers: {
       'Content-Type': 'text/html',
       'X-Worker-Handled': 'true'
@@ -53,7 +49,7 @@ function makeResponse(content, status, env) {
  */
 async function handleMaintenanceMode(isMaintenance, env) {
   if (isMaintenance) {
-    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_MAINTENANCE_TYPE, env.TEXT_MAINTENANCE_MESSAGE, env.TEXT_MAINTENANCE_GIF), 'MAINTENANCE', env);
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_MAINTENANCE_TYPE, env.TEXT_MAINTENANCE_MESSAGE, env.TEXT_MAINTENANCE_GIF), STATUS.MAINTENANCE);
   }
   return null;
 }
@@ -66,14 +62,14 @@ async function handleMaintenanceMode(isMaintenance, env) {
 async function handleTunnelError(env) {
   const originUp = await HELPER.isOriginReachable().catch(() => null);
   if (originUp === false) {
-    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), 'BOX_NO_IP', env);
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX_NO_IP);
   }
   
   const npmUp = await HELPER.isNpmUp().catch(() => false);
   if (npmUp) {
-    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), 'CONTAINER', env);
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), STATUS.CONTAINER);
   }
-  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERRORR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), 'SERVER', env);
+  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERRORR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
 }
 
 /**
@@ -87,22 +83,22 @@ async function handleCloudflareError(response, env) {
   const originUp = await HELPER.isOriginReachable().catch(() => null);
 
   if (originUp === false) {
-    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), 'BOX_NO_IP', env);
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX_NO_IP);
   }
 
   if (cfCode === 1033 || [502, 521, 522, 524, 525, 526].includes(response.status)) {
     const npmUp = await HELPER.isNpmUp().catch(() => false);
     if (npmUp) {
-      return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERRORE_GIF), 'CONTAINER', env);
+      return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERRORE_GIF), STATUS.CONTAINER);
     }
-    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), 'BOX', env);
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX);
   }
 
   if (response.status === 523) {
-    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), 'BOX', env);
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX);
   }
 
-  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERRORR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), 'SERVER', env);
+  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERRORR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
 }
 
 /**
@@ -114,15 +110,15 @@ async function handleCloudflareError(response, env) {
 async function handleOriginError(response, env) {
   const originUp = await HELPER.isOriginReachable().catch(() => null);
   if (originUp === false) {
-    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), 'BOX_NO_IP', env);
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX_NO_IP);
   }
 
   const npmUp = await HELPER.isNpmUp().catch(() => false);
   if (npmUp) {
-    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), 'CONTAINER', env);
+    return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), STATUS.CONTAINER);
   }
   
-  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERRORR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), 'SERVER', env);
+  return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERRORR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
 }
 
 /**

@@ -14,9 +14,6 @@ kv_namespaces = [
 # Language setting (FR or EN)
 LANGUAGE = "FR"
 
-# Specify if using Cloudflare Tunnel Zero Trust (boolean)
-IS_ZERO_TRUST_TUNNEL = true
-
 # FOR HAVE A RETURN TO THE LINE USE <br> IN MESSAGE
 
 # For 503 errors when maintenance is activated
