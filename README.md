@@ -172,6 +172,8 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 
 - Créez un sous-domaine ``` maintenance.domain.fr ``` et redirigez-le vers votre reverse proxy
 - Créez un autre sous-domaine pour vérifier si le worker peut accéder à votre reverse proxy pour vérifier les erreurs ``` test.domain.fr ```
+
+⚠️ Pour ceux qui utilisent un tunnel Cloudflare (Zero trust) vous devez faire ces 2 étapes en plus.
 - Ouvrez un port sur votre serveur qui sera utilisé par le worker pour déterminer si votre serveur est hors ligne ou si votre connexion est coupée. Vous pouvez utiliser n'importe quel port.
 - Pour la sécurité, vous pouvez limiter les IP qui peuvent accéder aux IP Cloudflare accessibles [ici](https://www.cloudflare.com/fr-fr/ips/)
 
