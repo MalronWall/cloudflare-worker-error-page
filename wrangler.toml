@@ -16,7 +16,7 @@ LANGUAGE = "FR"
 
 # For 503 errors when maintenance is activated
 TEXT_MAINTENANCE_TYPE = "Maintenance serveur"
-TEXT_MAINTENANCE_MESSAGE = "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗"
+TEXT_MAINTENANCE_MESSAGE = "Je fais de nouvelles expériences !! <br> Promis je me dépêche ! 😗"
 TEXT_MAINTENANCE_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare-worker-error-page/refs/heads/main/assets/maintenance.gif"
 
 # For 504 errors when internet connection is down

@@ -8,12 +8,10 @@ const REDIRECT = {
    * @returns {string} The HTML with injected URL
    */
   generateErrorPage: (ERROR_CODE, ERROR_TYPE, ERROR_MESSAGE, ERROR_GIF) => {
-    // Remplace \n par <br> dans le message d'erreur
-    const formattedMessage = ERROR_MESSAGE.replace(/\\n/g, '<br>');
     return errorTemplate
     .replace('ERROR_CODE', ERROR_CODE)
     .replace('ERROR_TYPE', ERROR_TYPE)
-    .replace('ERROR_MESSAGE', formattedMessage)
+    .replace('ERROR_MESSAGE', ERROR_MESSAGE)
     .replace('ERROR_GIF', ERROR_GIF);
   }
 };
@@ -153,3 +151,5 @@ export async function c_redirect(request, response, thrownError = null, isMainte
 
   return null;
 }
+  return null;
+
