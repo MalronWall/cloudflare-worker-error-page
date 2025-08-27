@@ -66,7 +66,7 @@ async function handleTunnelError(env) {
   }
   
   const npmUp = await HELPER.isNpmUp().catch(() => false);
-  if (npmUp) {
+  if (!npmUp) {
     return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), STATUS.CONTAINER);
   }
   return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_GENERIC_ERROR_TYPE, env.TEXT_GENERIC_ERRORR_MESSAGE, env.TEXT_GENERIC_ERROR_GIF), STATUS.SERVER);
@@ -88,8 +88,8 @@ async function handleCloudflareError(response, env) {
 
   if (cfCode === 1033 || [502, 521, 522, 524, 525, 526].includes(response.status)) {
     const npmUp = await HELPER.isNpmUp().catch(() => false);
-    if (npmUp) {
-      return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERRORE_GIF), STATUS.CONTAINER);
+    if (!npmUp) {
+      return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), STATUS.CONTAINER);
     }
     return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_BOX_ERROR_TYPE, env.TEXT_BOX_ERROR_MESSAGE, env.TEXT_BOX_ERROR_GIF), STATUS.BOX);
   }
@@ -114,7 +114,7 @@ async function handleOriginError(response, env) {
   }
 
   const npmUp = await HELPER.isNpmUp().catch(() => false);
-  if (npmUp) {
+  if (!npmUp) {
     return makeResponse(REDIRECT.generateErrorPage("503", env.TEXT_CONTAINER_ERROR_TYPE, env.TEXT_CONTAINER_ERROR_MESSAGE, env.TEXT_CONTAINER_ERROR_GIF), STATUS.CONTAINER);
   }
   
