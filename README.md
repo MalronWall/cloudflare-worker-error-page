@@ -158,6 +158,7 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 
 - Définissez votre langue (FR ou EN)
 - Modifiez le texte des différents messages d'erreur
+- Si vous n'avez pas de backup 4g sur votre serveur il faut mettre ```ENABLE_4G_BANNER = false ``` dans `wrangler.toml`.
 
 ### 3. Créez un espace de noms KV
 
