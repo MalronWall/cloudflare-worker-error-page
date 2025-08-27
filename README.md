@@ -197,9 +197,9 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 - Cliquez sur Route et sélectionnez votre domaine dans Zone
 - Ajoutez ceci dans Route : ``` *domain.fr/* ``` Ne mettez pas le . après le premier * sinon cela ne fonctionnera que pour le sous-domaine. Vous pouvez ajouter plusieurs routes avec plusieurs domaines.
 - Selectionner Fail open (Cela permet de quand même accéder au site si le Worker ne fonctionne plus à cause d'un bug ou du quota qui est atteint)
-- Dans Variables and Secrets ajoutez MAINTENANCE_DOMAIN avec le domaine créé précédemment
-- Dans Variables and Secrets NPM_HEALTH_URL avec le domaine de test créé précédemment
-- Dans Variables and Secrets ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment
+- Dans Variables and Secrets ajoutez MAINTENANCE_DOMAIN avec le domaine créé précédemment (Ex: maintenance.domain.fr)
+- Dans Variables and Secrets NPM_HEALTH_URL avec le domaine de test créé précédemment (Ex: test.domain.fr)
+- Dans Variables and Secrets ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment (Ex: 172.18.95.145:5055)
 
 ![Créer worker](images/create_worker/create_worker_1.png)
 ![Créer worker](images/create_worker/create_worker_2.png)
