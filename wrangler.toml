@@ -14,6 +14,8 @@ kv_namespaces = [
 # Language setting (FR or EN)
 LANGUAGE = "FR"
 
+# FOR HAVE A RETURN TO THE LINE USE <br> IN MESSAGE
+
 # For 503 errors when maintenance is activated
 TEXT_MAINTENANCE_TYPE = "Maintenance serveur"
 TEXT_MAINTENANCE_MESSAGE = "Je fais de nouvelles expériences !! <br> Promis je me dépêche ! 😗"
