@@ -161,12 +161,11 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 
 ### 3. Créez un espace de noms KV
 
-- Sur Cloudflare, allez dans **Workers > KV**.
-- Créez un espace de noms nommé : ``` cloudflare-worker-error-page ```
-- Copiez l'ID de l'espace de noms et ajoutez-le au champ `id` dans la section `kv_namespaces` du fichier `wrangler.toml`.
-
+- Sur Cloudflare, allez dans **Storage & Databases > KV**.
 ![Créer KV](images/create_kv/create_kv.png)
+- Créez un espace de noms nommé : ``` cloudflare-worker-error-page ```
 ![Ajouter nom](images/create_kv/create_kv_add_name.png)
+- Copiez l'ID du KV et ajoutez-le au champ `id` dans la section `kv_namespaces` du fichier `wrangler.toml`.
 ![Copier id](images/create_kv/create_kv_copy_id.png)
 
 ### 4. Configurez le sous-domaine

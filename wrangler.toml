@@ -29,7 +29,7 @@ TEXT_GENERIC_ERROR_TYPE = "Erreur serveur"
 TEXT_GENERIC_ERRORR_MESSAGE = "Le serveur a sûrement dû crash... N'hésitez pas à me le signaler !"
 TEXT_GENERIC_ERROR_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare-worker-error-page/refs/heads/main/assets/generic_error.gif"
 
-# For 503 errors when service is down
+# For 503 errors when a service is down
 TEXT_CONTAINER_ERROR_TYPE = "Service indisponible"
 TEXT_CONTAINER_ERROR_MESSAGE = "Service non démarré ou planté ! N’hésitez pas à me le signaler au cas où !"
 TEXT_CONTAINER_ERROR_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare-worker-error-page/refs/heads/main/assets/container_error.gif"
