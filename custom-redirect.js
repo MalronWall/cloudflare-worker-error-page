@@ -51,6 +51,14 @@ function makeResponse(content, status) {
  * @returns {Promise<Response|null>} Appropriate error response or null
  */
 async function handleError(request, response, thrownError, isMaintenance, env) {
+  console.log("handleError called with:", {
+    request,
+    response,
+    thrownError,
+    isMaintenance,
+    env
+  });
+
   if (isMaintenance) {
     return makeResponse(
       REDIRECT.generateErrorPage(
