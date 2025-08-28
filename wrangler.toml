@@ -44,3 +44,5 @@ TEXT_CONTAINER_ERROR_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudf
 ENABLE_4G_BANNER = true
 # Message for 4G banner when fiber is down
 TEXT_4G_BANNER_MESSAGE = "Attention des lenteurs peuvent survenir, ma fibre est H.S. Le serveur fonctionne en 4G !"
+
+NPM_HEALTH_URL = "https://test.domaine.fr"
