@@ -22,6 +22,7 @@ async function fetchWithMethodFallback(url, { signal, ...options } = {}) {
     cf: { cacheTtl: 0, cacheEverything: false },
     ...options
   });
+  console.log("COUCOU fetchWithMethodFallback response.status: " + response.status);
 
   if (response.status === 405) {
     response = await fetch(url, {
