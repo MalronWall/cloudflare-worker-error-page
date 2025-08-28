@@ -16,57 +16,45 @@ function createTimeoutController(timeoutMs) {
  * @returns {Promise<Response>} Request response
  */
 async function fetchWithMethodFallback(url, { signal, ...options } = {}) {
-  console.log(`fetchWithMethodFallback START url=${url} timeoutSignalPresent=${!!signal}`);
   // Try HEAD first (with cf if provided)
   try {
-    console.log(`fetchWithMethodFallback: attempting HEAD ${url}`);
     let response = await fetch(url, {
       method: 'HEAD',
       signal,
       cf: { cacheTtl: 0, cacheEverything: false },
       ...options
     });
-    console.log("COUCOU fetchWithMethodFallback response.status: " + response.status);
 
     if (response.status === 405) {
-      console.log(`fetchWithMethodFallback: HEAD returned 405, trying GET (with cf) ${url}`);
       response = await fetch(url, {
         method: 'GET',
         signal,
         cf: { cacheTtl: 0, cacheEverything: false },
         ...options
       });
-      console.log("fetchWithMethodFallback GET-with-cf status: " + response.status);
     }
 
     return response;
   } catch (err) {
-    console.log(`fetchWithMethodFallback: HEAD or GET-with-cf failed for ${url} -> ${err?.message || err}`);
     // Try GET with cf if HEAD failed, then GET without cf as a last resort
     try {
-      console.log(`fetchWithMethodFallback: attempting GET (with cf) as fallback ${url}`);
       const response = await fetch(url, {
         method: 'GET',
         signal,
         cf: { cacheTtl: 0, cacheEverything: false },
         ...options
       });
-      console.log("fetchWithMethodFallback fallback GET-with-cf status: " + response.status);
       return response;
     } catch (err2) {
-      console.log(`fetchWithMethodFallback: GET-with-cf also failed for ${url} -> ${err2?.message || err2}`);
       // Final attempt: GET without cf (some runtimes / dev envs reject cf option)
       try {
-        console.log(`fetchWithMethodFallback: attempting GET (no cf) final fallback ${url}`);
         const response = await fetch(url, {
           method: 'GET',
           signal,
           ...options
         });
-        console.log("fetchWithMethodFallback fallback GET-no-cf status: " + response.status);
         return response;
       } catch (err3) {
-        console.log(`fetchWithMethodFallback: final GET-no-cf failed for ${url} -> ${err3?.message || err3}`);
         // rethrow the original error to be handled by callers
         throw err3;
       }
@@ -81,28 +69,19 @@ export const HELPER = {
    * @returns {Promise<boolean>} true if NPM is accessible
    */
   async isNpmUp({ timeoutMs = 10000 } = {}, env) {
-    console.log("COUCOU1");
     if (!env?.NPM_HEALTH_URL) {
-      console.log("NPM_HEALTH_URL missing");
       return false;
     }
     const [controller, id] = createTimeoutController(timeoutMs);
     try {
-      console.log("COUCOU2");
-      console.log("COUCOU8 NPM_HEALTH_URL: " + env.NPM_HEALTH_URL);
       const response = await fetchWithMethodFallback(env.NPM_HEALTH_URL, { signal: controller.signal });
-      console.log("COUCOU3");
       if (HELPER.isCloudflareError(response) && response.status >= 520 && response.status <= 529) {
-        console.log("COUCOU4");
         return false;
       }
-      console.log("COUCOU5 response.status:: " + response.status);
       return response.status > 0 && response.status < 500;
     } catch (err) {
-      console.log("COUCOU6 error in isNpmUp:", err?.message || err);
       return false;
     } finally {
-      console.log("COUCOU7");
       clearTimeout(id);
     }
   },
@@ -117,13 +96,9 @@ export const HELPER = {
     
     const [controller, id] = createTimeoutController(timeoutMs);
     try {
-      console.log("COUCOU1 isOriginReachable");
-      console.log("isOriginReachable PING_URL:", env.ORIGIN_PING_URL);
       const response = await fetchWithMethodFallback(env.ORIGIN_PING_URL, { signal: controller.signal });
-      console.log("COUCOU1 isOriginReachable response:: " + (response?.status ?? 'no-response'));
       return response && response.status > 0 && response.status < 500;
     } catch (err) {
-      console.log("isOriginReachable error:", err?.message || err);
       return false;
     } finally {
       clearTimeout(id);
