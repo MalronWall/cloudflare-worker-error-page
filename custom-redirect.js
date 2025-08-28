@@ -104,6 +104,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
   // 5xx error response
   else if (response && response.status >= 500) {
     const originUp = await HELPER.isOriginReachable(undefined, env).catch(() => null);
+    console.log("COUCOU1 originUp:: " + originUp);
     if (originUp === false) {
       return makeResponse(
         REDIRECT.generateErrorPage(
