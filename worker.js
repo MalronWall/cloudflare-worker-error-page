@@ -1,4 +1,4 @@
-import { handleError } from './custom-redirect.js';
+import { c_redirect } from './custom-redirect.js'
 import maintenanceHtml from './html/maintenance.js'
 import { handleApi } from './handle-api.js'
 
@@ -62,19 +62,16 @@ export default {
     // Custom error/redirect handling
     let response;
     try {
-      console.log("Fetching request:", request);
       response = await fetch(request);
-      console.log("Fetch response:", response);
       
     } catch (err) {
-      console.error("Error during fetch:", err);
-      const redirectResponse = await handleError(request, null, err, isMaintenance, env);
+      const redirectResponse = await c_redirect(request, null, err, isMaintenance, env);
       if (redirectResponse) return redirectResponse;
       return new Response('Upstream unreachable', { status: 502 });
     }
 
     // Custom error page
-    const redirectResponse = await handleError(request, response, null, isMaintenance, env);
+    const redirectResponse = await c_redirect(request, response, null, isMaintenance, env);
     if (redirectResponse) return redirectResponse;
 
     // Banner injection - check for 4G mode or regular banner
