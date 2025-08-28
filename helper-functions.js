@@ -75,7 +75,9 @@ export const HELPER = {
     
     const [controller, id] = createTimeoutController(timeoutMs);
     try {
+      console.log("COUCOU1 isOriginReachable");
       const response = await fetchWithMethodFallback(env.ORIGIN_PING_URL, { signal: controller.signal });
+      console.log("COUCOU1 isOriginReachable response:: " + response.status);
       return response.status > 0 && response.status < 500;
     } catch {
       return false;
