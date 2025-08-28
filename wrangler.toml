@@ -9,6 +9,10 @@ kv_namespaces = [
   { binding = "MAINTENANCE_KV", id = "57a8af4a40c64e889cfacb226bf1ece4" }
 ]
 
+# Enable logs in cloudflare for debug
+[observability]
+enabled = true
+
 [vars]
 
 # Language setting (FR or EN)
