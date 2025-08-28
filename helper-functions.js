@@ -46,6 +46,7 @@ export const HELPER = {
     const [controller, id] = createTimeoutController(timeoutMs);
     try {
       console.log("COUCOU2");
+      console.log("COUCOU8 NPM_HEALTH_URL: " + NPM_HEALTH_URL);
       const response = await fetchWithMethodFallback(env.NPM_HEALTH_URL, { signal: controller.signal });
       console.log("COUCOU3");
       if (this.isCloudflareError(response) && response.status >= 520 && response.status <= 529) {
