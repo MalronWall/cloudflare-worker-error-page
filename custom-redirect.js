@@ -104,6 +104,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
   // 5xx error response
   else if (response && response.status >= 500) {
     const originUp = await HELPER.isOriginReachable().catch(() => null);
+    console.log(" COUCOUOrigin status:", originUp);
     if (originUp === false) {
       return makeResponse(
         REDIRECT.generateErrorPage(
@@ -118,8 +119,10 @@ export async function c_redirect(request, response, thrownError = null, isMainte
 
     if (HELPER.isCloudflareError(response)) {
       const cfCode = await HELPER.getCloudflareErrorCode(response);
+      console.log("COUCOU response.status:", response.status);
       if (cfCode === 1033 || [502, 521, 522, 524, 525, 526].includes(response.status)) {
         const npmUp = await HELPER.isNpmUp().catch(() => false);
+        console.log("COUCOU npmUp:", npmUp);
         if (!npmUp) {
           return makeResponse(
             REDIRECT.generateErrorPage(
