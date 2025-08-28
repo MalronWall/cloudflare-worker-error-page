@@ -46,10 +46,12 @@ export const HELPER = {
     try {
       const response = await fetchWithMethodFallback(env.NPM_HEALTH_URL, { signal: controller.signal });
       if (this.isCloudflareError(response) && response.status >= 520 && response.status <= 529) {
+        console.log("COUCOU NPM is down ERROR");
         return false;
       }
       return response.status > 0 && response.status < 500;
     } catch {
+      console.log("COUCOU NPM is down CATCH");
       return false;
     } finally {
       clearTimeout(id);
