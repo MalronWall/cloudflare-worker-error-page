@@ -96,20 +96,6 @@ export async function c_redirect(request, response, thrownError = null, isMainte
     // it's the default message so no need to change anything
   }
 
-  //console.log("thrownError:", thrownError);
-  //console.log("thrownError.code:", thrownError.code);
-  //console.log("response.status:", response.status);
-
-  // Handle zero trust errors
-  if(thrownError && (thrownError == 1033 || thrownError.code == 1033)) {
-    getErrorDetailsFromCfCode(504, env);
-    return makeResponse(REDIRECT.generateErrorPage());
-  }
-  if(thrownError && (thrownError == 1101 || thrownError.code == 1101)) {
-    getErrorDetailsFromCfCode(502, env);
-    return makeResponse(REDIRECT.generateErrorPage());
-  }
-
   // Handle server errors (5xx)
   if(response && response.status >= 500) {
     getErrorDetailsFromCfCode(response.status, env);
