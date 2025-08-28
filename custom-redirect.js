@@ -1,44 +1,59 @@
 import errorTemplate from './html/error-template.html'
 import { HELPER } from './helper-functions.js'
 
+let errorCode = "500";
+let errorType = TEXT_GENERIC_ERROR_TYPE;
+let errorMessage = TEXT_GENERIC_ERRORR_MESSAGE;
+let errorGif = TEXT_GENERIC_ERROR_GIF;
+
 const REDIRECT = {
   /**
    * Generates HTML content with appropriate Canva URL
-   * @param {string} canvaUrl - The Canva embed URL
    * @returns {string} The HTML with injected URL
    */
-  generateErrorPage: (ERROR_CODE, ERROR_TYPE, ERROR_MESSAGE, ERROR_GIF) => {
+  generateErrorPage: () => {
     return errorTemplate
-    .replace('ERROR_CODE', ERROR_CODE)
-    .replace('ERROR_TYPE', ERROR_TYPE)
-    .replace('ERROR_MESSAGE', ERROR_MESSAGE)
-    .replace('ERROR_GIF', ERROR_GIF);
+    .replace('ERROR_CODE', this.errorCode)
+    .replace('ERROR_TYPE', this.errorType)
+    .replace('ERROR_MESSAGE', this.errorMessage)
+    .replace('ERROR_GIF', this.errorGif);
   }
 };
 
-// Constants for HTTP statuses
-const STATUS = {
-  BOX_NO_IP: 504,
-  CONTAINER: 504,
-  BOX: 502,
-  SERVER: 500,
-  MAINTENANCE: 503
-};
 
 /**
- * Creates an HTTP response with specified content and status
+ * Creates an HTTP response with specified content
  * @param {string} content - HTML content for the response
- * @param {number} status - HTTP status code
  * @returns {Response} The formatted response
  */
-function makeResponse(content, status) {
+function makeResponse(content) {
   return new Response(content, {
-    status,
+    status: this.errorCode,
     headers: {
       'Content-Type': 'text/html',
       'X-Worker-Handled': 'true'
     }
   });
+}
+
+function getErrorDetailsFromCfCode(cfCode, env) {
+  if(cfCode == "MAINTENANCE") {
+    this.errorCode = "503";
+    this.errorType = env.TEXT_MAINTENANCE_TYPE;
+    this.errorMessage = env.TEXT_MAINTENANCE_MESSAGE;
+    this.errorGif = env.TEXT_MAINTENANCE_GIF;
+    return;
+  }
+  this.errorCode = cfCode ? cfCode.toString() : "500";
+  if (env.TEXT_CONTAINER_ERROR_CODE.includes(cfCode)) {
+    this.errorType = env.TEXT_CONTAINER_ERROR_TYPE;
+    this.errorMessage = env.TEXT_CONTAINER_ERROR_MESSAGE;
+    this.errorGif = env.TEXT_CONTAINER_ERROR_GIF;
+  } else if (env.TEXT_BOX_ERROR_CODE.includes(cfCode)) {
+    this.errorType = env.TEXT_BOX_ERROR_TYPE;
+    this.errorMessage = env.TEXT_BOX_ERROR_MESSAGE;
+    this.errorGif = env.TEXT_BOX_ERROR_GIF;
+  }
 }
 
 /**
@@ -53,130 +68,39 @@ function makeResponse(content, status) {
 export async function c_redirect(request, response, thrownError = null, isMaintenance = false, env) {
   // Maintenance mode
   if (isMaintenance) {
-    return makeResponse(
-      REDIRECT.generateErrorPage(
-        "503",
-        env.TEXT_MAINTENANCE_TYPE,
-        env.TEXT_MAINTENANCE_MESSAGE+ "<br> isMaintenance: " + isMaintenance + "<br> COUCOU1",
-        env.TEXT_MAINTENANCE_GIF
-      ),
-      STATUS.MAINTENANCE
-    );
+    getErrorDetailsFromCfCode("MAINTENANCE", env, true);
+    return makeResponse(REDIRECT.generateErrorPage());
   }
 
-  // Tunnel error (thrownError)
-  else if (thrownError) {
-    const originUp = await HELPER.isOriginReachable(undefined, env).catch(() => null);
-    if (originUp === false) {
-      return makeResponse(
-        REDIRECT.generateErrorPage(
-          "503",
-          env.TEXT_BOX_ERROR_TYPE,
-          env.TEXT_BOX_ERROR_MESSAGE+ "<br> originUp: " + originUp + "<br> COUCOU2",
-          env.TEXT_BOX_ERROR_GIF
-        ),
-        STATUS.BOX_NO_IP
-      );
-    }
-    const npmUp = await HELPER.isNpmUp(undefined, env).catch(() => false);
-    if (!npmUp) {
-      return makeResponse(
-        REDIRECT.generateErrorPage(
-          "503",
-          env.TEXT_CONTAINER_ERROR_TYPE,
-          env.TEXT_CONTAINER_ERROR_MESSAGE+ "<br> originUp: " + originUp+ "<br> npmUp: " + npmUp + "<br> COUCOU3",
-          env.TEXT_CONTAINER_ERROR_GIF
-        ),
-        STATUS.CONTAINER
-      );
-    }
-    return makeResponse(
-      REDIRECT.generateErrorPage(
-        "503",
-        env.TEXT_GENERIC_ERROR_TYPE,
-        env.TEXT_GENERIC_ERRORR_MESSAGE+ "<br> originUp: " + originUp+ "<br> npmUp: " + npmUp + "<br> COUCOU4",
-        env.TEXT_GENERIC_ERROR_GIF
-      ),
-      STATUS.SERVER
-    );
+  const originUp = await HELPER.isOriginReachable(undefined, env).catch(() => null);
+  const npmUp = await HELPER.isNpmUp(undefined, env).catch(() => false);
+
+  // Internet down
+  if(!originUp) {
+    getErrorDetailsFromCfCode(504, env);
+    return makeResponse(REDIRECT.generateErrorPage());
   }
 
-  // 5xx error response
-  else if (response && response.status >= 500) {
-    const originUp = await HELPER.isOriginReachable(undefined, env).catch(() => null);
-    console.log("COUCOU1 originUp:: " + originUp);
-    if (originUp === false) {
-      return makeResponse(
-        REDIRECT.generateErrorPage(
-          "503",
-          env.TEXT_BOX_ERROR_TYPE,
-          env.TEXT_BOX_ERROR_MESSAGE + "<br> originUp: " + originUp + "<br> COUCOU5",
-          env.TEXT_BOX_ERROR_GIF
-        ),
-        STATUS.BOX_NO_IP
-      );
-    }
+  // NPM down so all services down
+  if(npmUp) {
+    // it's the default message so no need to change anything
+  }
 
+  // Handle zero trust errors
+  if(thrownError && thrownError == 1033) {
+    getErrorDetailsFromCfCode(502, env);
+    return makeResponse(REDIRECT.generateErrorPage());
+  }
+
+  // Handle server errors (5xx)
+  if(response && response.status >= 500) {
     if (HELPER.isCloudflareError(response)) {
       const cfCode = await HELPER.getCloudflareErrorCode(response);
-      if (response.status === 502) {
-        return makeResponse(
-          REDIRECT.generateErrorPage(
-            response.status.toString(),
-            env.TEXT_CONTAINER_ERROR_TYPE,
-            env.TEXT_CONTAINER_ERROR_MESSAGE + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp + "<br> COUCOU8",
-            env.TEXT_CONTAINER_ERROR_GIF
-          ),
-          STATUS.BOX
-        );
-      }
-      if (response.status === 523) {
-        return makeResponse(
-          REDIRECT.generateErrorPage(
-            "503",
-            env.TEXT_BOX_ERROR_TYPE,
-            env.TEXT_BOX_ERROR_MESSAGE + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp + "<br> COUCOU8",
-            env.TEXT_BOX_ERROR_GIF
-          ),
-          STATUS.BOX
-        );
-      }
-      return makeResponse(
-        REDIRECT.generateErrorPage(
-          "503",
-          env.TEXT_GENERIC_ERROR_TYPE,
-          env.TEXT_GENERIC_ERRORR_MESSAGE + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp + "<br> COUCOU9",
-          env.TEXT_GENERIC_ERROR_GIF
-        ),
-        STATUS.SERVER
-      );
-    } else {
-      const npmUp = await HELPER.isNpmUp(undefined, env).catch(() => false);
-      if (!npmUp) {
-        return makeResponse(
-          REDIRECT.generateErrorPage(
-            "503",
-            env.TEXT_CONTAINER_ERROR_TYPE,
-            env.TEXT_CONTAINER_ERROR_MESSAGE + "<br> npmUp: " + npmUp+ "<br> originUp: " + originUp + "<br> COUCOU10",
-            env.TEXT_CONTAINER_ERROR_GIF
-          ),
-          STATUS.CONTAINER
-        );
-      }
-      return makeResponse(
-        REDIRECT.generateErrorPage(
-          "503",
-          env.TEXT_GENERIC_ERROR_TYPE,
-          env.TEXT_GENERIC_ERRORR_MESSAGE + "<br> npmUp: " + npmUp + "<br> originUp: " + originUp + "<br> COUCOU11",
-          env.TEXT_GENERIC_ERROR_GIF
-        ),
-        STATUS.SERVER
-      );
+      getErrorDetailsFromCfCode(cfCode, env);
     }
+    return makeResponse(REDIRECT.generateErrorPage());
   }
 
-  // No error
-  else {
-    return null;
-  }
+
+  return null;
 }
