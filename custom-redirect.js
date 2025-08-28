@@ -123,7 +123,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
         if (!npmUp) {
           return makeResponse(
             REDIRECT.generateErrorPage(
-              "503",
+              "502",
               env.TEXT_CONTAINER_ERROR_TYPE,
               env.TEXT_CONTAINER_ERROR_MESSAGE + "<br> npmUp: " + npmUp + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp + "<br> COUCOU6",
               env.TEXT_CONTAINER_ERROR_GIF

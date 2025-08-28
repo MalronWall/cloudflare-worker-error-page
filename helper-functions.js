@@ -41,7 +41,7 @@ export const HELPER = {
    * @param {Object} options - Request options
    * @returns {Promise<boolean>} true if NPM is accessible
    */
-  async isNpmUp({ timeoutMs = 2000 } = {}, env) {
+  async isNpmUp({ timeoutMs = 10000 } = {}, env) {
     const [controller, id] = createTimeoutController(timeoutMs);
     try {
       const response = await fetchWithMethodFallback(env.NPM_HEALTH_URL, { signal: controller.signal });
