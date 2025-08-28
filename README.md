@@ -197,7 +197,7 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 - Ajoutez le nom du projet : ``` cloudflare-worker-error-page ```
 - Ajoutez la commande de build : ``` npx wrangler deploy --assets=./ ```
 - Cliquez sur Créer et déployer
-![Créer worker](images/create_worker/create_worker_5.png)
+- ![Créer worker](images/create_worker/create_worker_5.png)
 - Attendez la fin du build et cliquez sur continuer vers le projet
 ![Créer worker](images/create_worker/create_worker_6.png)
 - Allez dans Paramètres -> Domaines & Routes -> Ajouter
