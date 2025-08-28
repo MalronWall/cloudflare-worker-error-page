@@ -66,7 +66,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
 
   // Tunnel error (thrownError)
   else if (thrownError) {
-    const originUp = await HELPER.isOriginReachable().catch(() => null);
+    const originUp = await HELPER.isOriginReachable(undefined, env).catch(() => null);
     if (originUp === false) {
       return makeResponse(
         REDIRECT.generateErrorPage(
@@ -78,7 +78,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
         STATUS.BOX_NO_IP
       );
     }
-    const npmUp = await HELPER.isNpmUp().catch(() => false);
+    const npmUp = await HELPER.isNpmUp(undefined, env).catch(() => false);
     if (!npmUp) {
       return makeResponse(
         REDIRECT.generateErrorPage(
@@ -103,7 +103,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
 
   // 5xx error response
   else if (response && response.status >= 500) {
-    const originUp = await HELPER.isOriginReachable().catch(() => null);
+    const originUp = await HELPER.isOriginReachable(undefined, env).catch(() => null);
     if (originUp === false) {
       return makeResponse(
         REDIRECT.generateErrorPage(
@@ -119,7 +119,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
     if (HELPER.isCloudflareError(response)) {
       const cfCode = await HELPER.getCloudflareErrorCode(response);
       if (cfCode === 1033 || [502, 521, 522, 524, 525, 526].includes(response.status)) {
-        const npmUp = await HELPER.isNpmUp().catch(() => false);
+        const npmUp = await HELPER.isNpmUp(undefined, env).catch(() => false);
         if (!npmUp) {
           return makeResponse(
             REDIRECT.generateErrorPage(
@@ -162,7 +162,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
         STATUS.SERVER
       );
     } else {
-      const npmUp = await HELPER.isNpmUp().catch(() => false);
+      const npmUp = await HELPER.isNpmUp(undefined, env).catch(() => false);
       if (!npmUp) {
         return makeResponse(
           REDIRECT.generateErrorPage(
