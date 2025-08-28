@@ -119,16 +119,14 @@ export async function c_redirect(request, response, thrownError = null, isMainte
 
     if (HELPER.isCloudflareError(response)) {
       const cfCode = await HELPER.getCloudflareErrorCode(response);
-      console.log("COUCOU response.status:", response.status);
       if (cfCode === 1033 || [502, 521, 522, 524, 525, 526].includes(response.status)) {
         const npmUp = await HELPER.isNpmUp().catch(() => false);
-        console.log("COUCOU npmUp:", npmUp);
         if (!npmUp) {
           return makeResponse(
             REDIRECT.generateErrorPage(
               "503",
               env.TEXT_CONTAINER_ERROR_TYPE,
-              env.TEXT_CONTAINER_ERROR_MESSAGE,
+              env.TEXT_CONTAINER_ERROR_MESSAGE + " npmUp: " + npmUp + " cfCode: " + cfCode + " response.status: " + response.status,
               env.TEXT_CONTAINER_ERROR_GIF
             ),
             STATUS.CONTAINER
