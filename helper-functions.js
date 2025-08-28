@@ -16,24 +16,41 @@ function createTimeoutController(timeoutMs) {
  * @returns {Promise<Response>} Request response
  */
 async function fetchWithMethodFallback(url, { signal, ...options } = {}) {
-  let response = await fetch(url, {
-    method: 'HEAD',
-    signal,
-    cf: { cacheTtl: 0, cacheEverything: false },
-    ...options
-  });
-  console.log("COUCOU fetchWithMethodFallback response.status: " + response.status);
-
-  if (response.status === 405) {
-    response = await fetch(url, {
-      method: 'GET',
+  try {
+    let response = await fetch(url, {
+      method: 'HEAD',
       signal,
       cf: { cacheTtl: 0, cacheEverything: false },
       ...options
     });
-  }
+    console.log("COUCOU fetchWithMethodFallback response.status: " + response.status);
 
-  return response;
+    if (response.status === 405) {
+      // server doesn't allow HEAD -> try GET
+      response = await fetch(url, {
+        method: 'GET',
+        signal,
+        cf: { cacheTtl: 0, cacheEverything: false },
+        ...options
+      });
+    }
+
+    return response;
+  } catch (err) {
+    // If HEAD throws (network error or blocked), try GET as a fallback
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        signal,
+        cf: { cacheTtl: 0, cacheEverything: false },
+        ...options
+      });
+      return response;
+    } catch (err2) {
+      // rethrow the original error to be handled by callers
+      throw err;
+    }
+  }
 }
 
 export const HELPER = {
@@ -44,13 +61,17 @@ export const HELPER = {
    */
   async isNpmUp({ timeoutMs = 10000 } = {}, env) {
     console.log("COUCOU1");
+    if (!env?.NPM_HEALTH_URL) {
+      console.log("NPM_HEALTH_URL missing");
+      return false;
+    }
     const [controller, id] = createTimeoutController(timeoutMs);
     try {
       console.log("COUCOU2");
-      console.log("COUCOU8 NPM_HEALTH_URL: " + env.NPM_HEALTH_URL); // Correction ici
+      console.log("COUCOU8 NPM_HEALTH_URL: " + env.NPM_HEALTH_URL);
       const response = await fetchWithMethodFallback(env.NPM_HEALTH_URL, { signal: controller.signal });
       console.log("COUCOU3");
-      if (this.isCloudflareError(response) && response.status >= 520 && response.status <= 529) {
+      if (HELPER.isCloudflareError(response) && response.status >= 520 && response.status <= 529) {
         console.log("COUCOU4");
         return false;
       }
@@ -71,7 +92,7 @@ export const HELPER = {
    * @returns {Promise<boolean|null>} Reachability state
    */
   async isOriginReachable({ timeoutMs = 1500 } = {}, env) {
-    if (!env.ORIGIN_PING_URL) return null;
+    if (!env?.ORIGIN_PING_URL) return null;
     
     const [controller, id] = createTimeoutController(timeoutMs);
     try {
