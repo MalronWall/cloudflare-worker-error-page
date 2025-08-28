@@ -92,7 +92,8 @@ export async function c_redirect(request, response, thrownError = null, isMainte
     // it's the default message so no need to change anything
   }
 
-  console.log("thrownError:", thrownError?.message + thrownError?.name + thrownError?.cause + thrownError?.stack);
+  console.log("thrownError:", thrownError);
+  console.log("response.status:", response.status);
 
   // Handle zero trust errors
   if(thrownError && thrownError == 1033) {
@@ -107,10 +108,6 @@ export async function c_redirect(request, response, thrownError = null, isMainte
   // Handle server errors (5xx)
   if(response && response.status >= 500) {
     getErrorDetailsFromCfCode(response.status, env);
-    if (HELPER.isCloudflareError(response)) {
-      const cfCode = await HELPER.getCloudflareErrorCode(response);
-      getErrorDetailsFromCfCode(cfCode, env);
-    }
     return makeResponse(REDIRECT.generateErrorPage());
   }
 
