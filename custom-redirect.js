@@ -119,25 +119,13 @@ export async function c_redirect(request, response, thrownError = null, isMainte
 
     if (HELPER.isCloudflareError(response)) {
       const cfCode = await HELPER.getCloudflareErrorCode(response);
-      if (cfCode === 1033 || [502, 521, 522, 524, 525, 526].includes(response.status)) {
-        const npmUp = await HELPER.isNpmUp(undefined, env).catch(() => false);
-        if (!npmUp) {
-          return makeResponse(
-            REDIRECT.generateErrorPage(
-              "502",
-              env.TEXT_CONTAINER_ERROR_TYPE,
-              env.TEXT_CONTAINER_ERROR_MESSAGE + "<br> npmUp: " + npmUp + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp + "<br> COUCOU6",
-              env.TEXT_CONTAINER_ERROR_GIF
-            ),
-            STATUS.CONTAINER
-          );
-        }
+      if (response.status === 502) {
         return makeResponse(
           REDIRECT.generateErrorPage(
             "503",
-            env.TEXT_BOX_ERROR_TYPE,
-            env.TEXT_BOX_ERROR_MESSAGE + "<br> npmUp: " + npmUp + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp + "<br> COUCOU7",
-            env.TEXT_BOX_ERROR_GIF
+            env.TEXT_CONTAINER_ERROR_TYPE,
+            env.TEXT_CONTAINER_ERROR_MESSAGE + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp + "<br> COUCOU8",
+            env.TEXT_CONTAINER_ERROR_GIF
           ),
           STATUS.BOX
         );
