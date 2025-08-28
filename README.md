@@ -187,32 +187,33 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 - Connectez-vous à votre tableau de bord Cloudflare.
 - Allez dans la section **Workers Routes**.
 - Allez dans Gérer les Workers.
+![Créer worker](images/create_worker/create_worker_1.png)
 - Cliquez sur Créer
+![Créer worker](images/create_worker/create_worker_2.png)
 - Sélectionnez importer un dépôt
+![Créer worker](images/create_worker/create_worker_3.png)
 - Liez votre compte Github à Cloudflare et sélectionnez le dépôt forké
+![Créer worker](images/create_worker/create_worker_4.png)
 - Ajoutez le nom du projet : ``` cloudflare-worker-error-page ```
 - Ajoutez la commande de build : ``` npx wrangler deploy --assets=./ ```
 - Cliquez sur Créer et déployer
+![Créer worker](images/create_worker/create_worker_5.png)
 - Attendez la fin du build et cliquez sur continuer vers le projet
+![Créer worker](images/create_worker/create_worker_6.png)
 - Allez dans Paramètres -> Domaines & Routes -> Ajouter
+![Créer worker](images/create_worker/create_worker_7.png)
 - Cliquez sur Route et sélectionnez votre domaine dans Zone
+![Créer worker](images/create_worker/create_worker_8.png)
 - Ajoutez ceci dans Route : ``` *domain.fr/* ``` Ne mettez pas le . après le premier * sinon cela ne fonctionnera que pour le sous-domaine. Vous pouvez ajouter plusieurs routes avec plusieurs domaines.
 - Selectionner Fail open (Cela permet de quand même accéder au site si le Worker ne fonctionne plus à cause d'un bug ou du quota qui est atteint)
+![Créer worker](images/create_worker/create_worker_9.png)
 - Dans Variables and Secrets ajoutez MAINTENANCE_DOMAIN avec le domaine créé précédemment (Ex: maintenance.domain.fr)
 - Dans Variables and Secrets NPM_HEALTH_URL avec le domaine de test créé précédemment (Ex: test.domain.fr)
 - ⚠️ Pour ceux qui utilisent un tunnel Cloudflare (Zero trust) vous devez faire l'étape ci-dessous  en plus.
 - Dans Variables and Secrets ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment (Ex: 172.18.95.145:5055)
-
-![Créer worker](images/create_worker/create_worker_1.png)
-![Créer worker](images/create_worker/create_worker_2.png)
-![Créer worker](images/create_worker/create_worker_3.png)
-![Créer worker](images/create_worker/create_worker_4.png)
-![Créer worker](images/create_worker/create_worker_5.png)
-![Créer worker](images/create_worker/create_worker_6.png)
-![Créer worker](images/create_worker/create_worker_7.png)
-![Créer worker](images/create_worker/create_worker_8.png)
-![Créer worker](images/create_worker/create_worker_9.png)
 ![Créer worker](images/create_worker/create_worker_10.png)
+
+
 
 ### 6. OPTIONNEL : Ajoutez un conteneur Docker sur votre serveur pour envoyer l'info à Cloudflare lorsque votre backup 4G/5G est actif
 
