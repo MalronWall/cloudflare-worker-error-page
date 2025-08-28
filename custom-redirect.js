@@ -92,7 +92,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
   }
 
   // NPM down so all services down
-  if(npmUp) {
+  if(!npmUp) {
     // it's the default message so no need to change anything
   }
 
