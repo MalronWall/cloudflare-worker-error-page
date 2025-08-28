@@ -211,7 +211,7 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 - Dans Variables and Secrets NPM_HEALTH_URL avec le domaine de test créé précédemment (Ex: test.domain.fr)
 - ⚠️ Pour ceux qui utilisent un tunnel Cloudflare (Zero trust) vous devez faire l'étape ci-dessous  en plus.
 - Dans Variables and Secrets ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment (Ex: 172.18.95.145:5055)
-![Créer worker](images/create_worker/create_worker_10.png)
+- ![Créer worker](images/create_worker/create_worker_10.png)
 
 
 
