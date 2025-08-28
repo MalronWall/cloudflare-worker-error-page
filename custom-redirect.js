@@ -14,10 +14,10 @@ const REDIRECT = {
    */
   generateErrorPage: () => {
     return errorTemplate
-    .replace('ERROR_CODE', this.errorCode)
-    .replace('ERROR_TYPE', this.errorType)
-    .replace('ERROR_MESSAGE', this.errorMessage)
-    .replace('ERROR_GIF', this.errorGif);
+    .replace('ERROR_CODE', errorCode)
+    .replace('ERROR_TYPE', errorType)
+    .replace('ERROR_MESSAGE', errorMessage)
+    .replace('ERROR_GIF', errorGif);
   }
 };
 
@@ -29,7 +29,7 @@ const REDIRECT = {
  */
 function makeResponse(content) {
   return new Response(content, {
-    status: this.errorCode,
+    status: errorCode,
     headers: {
       'Content-Type': 'text/html',
       'X-Worker-Handled': 'true'
@@ -39,21 +39,21 @@ function makeResponse(content) {
 
 function getErrorDetailsFromCfCode(cfCode, env) {
   if(cfCode == "MAINTENANCE") {
-    this.errorCode = "503";
-    this.errorType = env.TEXT_MAINTENANCE_TYPE;
-    this.errorMessage = env.TEXT_MAINTENANCE_MESSAGE;
-    this.errorGif = env.TEXT_MAINTENANCE_GIF;
+    errorCode = "503";
+    errorType = env.TEXT_MAINTENANCE_TYPE;
+    errorMessage = env.TEXT_MAINTENANCE_MESSAGE;
+    errorGif = env.TEXT_MAINTENANCE_GIF;
     return;
   }
-  this.errorCode = cfCode ? cfCode.toString() : "500";
+  errorCode = cfCode ? cfCode.toString() : "500";
   if (env.TEXT_CONTAINER_ERROR_CODE.includes(cfCode)) {
-    this.errorType = env.TEXT_CONTAINER_ERROR_TYPE;
-    this.errorMessage = env.TEXT_CONTAINER_ERROR_MESSAGE;
-    this.errorGif = env.TEXT_CONTAINER_ERROR_GIF;
+    errorType = env.TEXT_CONTAINER_ERROR_TYPE;
+    errorMessage = env.TEXT_CONTAINER_ERROR_MESSAGE;
+    errorGif = env.TEXT_CONTAINER_ERROR_GIF;
   } else if (env.TEXT_BOX_ERROR_CODE.includes(cfCode)) {
-    this.errorType = env.TEXT_BOX_ERROR_TYPE;
-    this.errorMessage = env.TEXT_BOX_ERROR_MESSAGE;
-    this.errorGif = env.TEXT_BOX_ERROR_GIF;
+    errorType = env.TEXT_BOX_ERROR_TYPE;
+    errorMessage = env.TEXT_BOX_ERROR_MESSAGE;
+    errorGif = env.TEXT_BOX_ERROR_GIF;
   }
 }
 
@@ -74,7 +74,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
 
   // Maintenance mode
   if (isMaintenance) {
-    getErrorDetailsFromCfCode("MAINTENANCE", env, true);
+    getErrorDetailsFromCfCode("MAINTENANCE", env);
     return makeResponse(REDIRECT.generateErrorPage());
   }
 
@@ -96,11 +96,11 @@ export async function c_redirect(request, response, thrownError = null, isMainte
   console.log("response.status:", response.status);
 
   // Handle zero trust errors
-  if(thrownError && thrownError == 1033) {
+  if(thrownError && (thrownError == 1033 || thrownError.code == 1033)) {
     getErrorDetailsFromCfCode(502, env);
     return makeResponse(REDIRECT.generateErrorPage());
   }
-  if(thrownError && thrownError == 1101) {
+  if(thrownError && (thrownError == 1101 || thrownError.code == 1101)) {
     getErrorDetailsFromCfCode(502, env);
     return makeResponse(REDIRECT.generateErrorPage());
   }
