@@ -36,7 +36,8 @@ TEXT_BOX_ERROR_TYPE = "Erreur de connexion"
 TEXT_BOX_ERROR_MESSAGE = "On dirait que ma box fibre et 4G ont décidé de faire une pause, <br> il va falloir patienter... 😩 N’hésitez pas à me le signaler quand même !"
 TEXT_BOX_ERROR_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare-worker-error-page/refs/heads/main/assets/box_error.gif"
 
-# For 530 errors when the cloudflare tunnel doesn work ONLY FOR ZERO TRUST USER
+ #ONLY FOR ZERO TRUST USER
+# For 530 errors when the cloudflare tunnel doesnt work
 TEXT_TUNNEL_ERROR_CODE = [530]
 TEXT_TUNNEL_ERROR_TYPE = "Erreur Zero Trust"
 TEXT_TUNNEL_ERROR_MESSAGE = "On dirait qu'il y a un soucis avec le tunnel cloudflare Zero Trust... <br> N'hésitez pas à me le signaler !"

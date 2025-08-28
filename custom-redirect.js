@@ -96,9 +96,9 @@ export async function c_redirect(request, response, thrownError = null, isMainte
     // it's the default message so no need to change anything
   }
 
-  console.log("thrownError:", thrownError);
-  console.log("thrownError.code:", thrownError.code);
-  console.log("response.status:", response.status);
+  //console.log("thrownError:", thrownError);
+  //console.log("thrownError.code:", thrownError.code);
+  //console.log("response.status:", response.status);
 
   // Handle zero trust errors
   if(thrownError && (thrownError == 1033 || thrownError.code == 1033)) {
