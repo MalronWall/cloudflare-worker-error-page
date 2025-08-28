@@ -97,7 +97,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
 
   // Handle zero trust errors
   if(thrownError && (thrownError == 1033 || thrownError.code == 1033)) {
-    getErrorDetailsFromCfCode(502, env);
+    getErrorDetailsFromCfCode(504, env);
     return makeResponse(REDIRECT.generateErrorPage());
   }
   if(thrownError && (thrownError == 1101 || thrownError.code == 1101)) {
