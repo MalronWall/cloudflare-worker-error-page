@@ -42,18 +42,15 @@ export const HELPER = {
    * @returns {Promise<boolean>} true if NPM is accessible
    */
   async isNpmUp({ timeoutMs = 10000 } = {}, env) {
+    console.log("COUCOU");
     const [controller, id] = createTimeoutController(timeoutMs);
     try {
       const response = await fetchWithMethodFallback(env.NPM_HEALTH_URL, { signal: controller.signal });
       if (this.isCloudflareError(response) && response.status >= 520 && response.status <= 529) {
-        console.log("COUCOU NPM is down ERROR1 NPM_HEALTH_URL: " + env.NPM_HEALTH_URL);
-        console.log("COUCOU NPM is down ERROR2 NPM_HEALTH_URL: ");
         return false;
       }
       return response.status > 0 && response.status < 500;
     } catch {
-      console.log("COUCOU NPM is down CATCH NPM_HEALTH_URL: " + env.NPM_HEALTH_URL);
-      console.log("COUCOU NPM is down CATCH2 NPM_HEALTH_URL: ");
       return false;
     } finally {
       clearTimeout(id);
