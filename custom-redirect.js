@@ -122,7 +122,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
       if (response.status === 502) {
         return makeResponse(
           REDIRECT.generateErrorPage(
-            "503",
+            response.status.toString(),
             env.TEXT_CONTAINER_ERROR_TYPE,
             env.TEXT_CONTAINER_ERROR_MESSAGE + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp + "<br> COUCOU8",
             env.TEXT_CONTAINER_ERROR_GIF
