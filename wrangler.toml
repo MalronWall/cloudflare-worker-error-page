@@ -27,7 +27,7 @@ TEXT_MAINTENANCE_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare
 
 # For 500 errors when server probably crashed
 TEXT_GENERIC_ERROR_TYPE = "Erreur serveur"
-TEXT_GENERIC_ERRORR_MESSAGE = "Le serveur a sûrement dû crash... <br> N'hésitez pas à me le signaler !"
+TEXT_GENERIC_ERROR_MESSAGE = "Le serveur a sûrement dû crash... <br> N'hésitez pas à me le signaler !"
 TEXT_GENERIC_ERROR_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare-worker-error-page/refs/heads/main/assets/generic_error.gif"
 
 # For 504 errors when internet connection is down
