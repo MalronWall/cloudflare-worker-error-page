@@ -2,9 +2,9 @@ import errorTemplate from './html/error-template.html'
 import { HELPER } from './helper-functions.js'
 
 let errorCode = "500";
-let errorType = TEXT_GENERIC_ERROR_TYPE;
-let errorMessage = TEXT_GENERIC_ERRORR_MESSAGE;
-let errorGif = TEXT_GENERIC_ERROR_GIF;
+let errorType = env.TEXT_GENERIC_ERROR_TYPE;
+let errorMessage = env.TEXT_GENERIC_ERRORR_MESSAGE;
+let errorGif = env.TEXT_GENERIC_ERROR_GIF;
 
 const REDIRECT = {
   /**
