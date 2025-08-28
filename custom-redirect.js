@@ -97,6 +97,10 @@ export async function c_redirect(request, response, thrownError = null, isMainte
     getErrorDetailsFromCfCode(502, env);
     return makeResponse(REDIRECT.generateErrorPage());
   }
+  if(thrownError && thrownError == 1101) {
+    getErrorDetailsFromCfCode(502, env);
+    return makeResponse(REDIRECT.generateErrorPage());
+  }
 
   // Handle server errors (5xx)
   if(response && response.status >= 500) {
