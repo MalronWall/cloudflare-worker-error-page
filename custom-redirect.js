@@ -168,16 +168,3 @@ async function handleError(request, response, thrownError, isMaintenance, env) {
 
   return null;
 }
-
-/**
- * Main redirection and error handling function
- * @param {Request} request - Incoming request
- * @param {Response|null} response - Server response if available
- * @param {Error|null} thrownError - Thrown error if present
- * @param {boolean} isMaintenance - Maintenance mode state
- * @param {Object} env - Environment variables
- * @returns {Promise<Response|null>} Appropriate error response or null
- */
-export async function c_redirect(request, response, thrownError = null, isMaintenance = false, env) {
-  return handleError(request, response, thrownError, isMaintenance, env);
-}
