@@ -54,6 +54,10 @@ function getErrorDetailsFromCfCode(cfCode, env) {
     errorType = env.TEXT_BOX_ERROR_TYPE;
     errorMessage = env.TEXT_BOX_ERROR_MESSAGE;
     errorGif = env.TEXT_BOX_ERROR_GIF;
+  } else if (env.TEXT_TUNNEL_ERROR_CODE.includes(cfCode)) {
+    errorType = env.TEXT_TUNNEL_ERROR_TYPE;
+    errorMessage = env.TEXT_TUNNEL_ERROR_MESSAGE;
+    errorGif = env.TEXT_TUNNEL_ERROR_GIF;
   }
 }
 
@@ -93,6 +97,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
   }
 
   console.log("thrownError:", thrownError);
+  console.log("thrownError.code:", thrownError.code);
   console.log("response.status:", response.status);
 
   // Handle zero trust errors
