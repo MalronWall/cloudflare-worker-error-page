@@ -106,6 +106,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
 
   // Handle server errors (5xx)
   if(response && response.status >= 500) {
+    getErrorDetailsFromCfCode(response.status, env);
     if (HELPER.isCloudflareError(response)) {
       const cfCode = await HELPER.getCloudflareErrorCode(response);
       getErrorDetailsFromCfCode(cfCode, env);
