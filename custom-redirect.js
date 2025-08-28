@@ -57,7 +57,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
       REDIRECT.generateErrorPage(
         "503",
         env.TEXT_MAINTENANCE_TYPE,
-        env.TEXT_MAINTENANCE_MESSAGE,
+        env.TEXT_MAINTENANCE_MESSAGE+ "<br> isMaintenance: " + isMaintenance,
         env.TEXT_MAINTENANCE_GIF
       ),
       STATUS.MAINTENANCE
@@ -72,7 +72,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
         REDIRECT.generateErrorPage(
           "503",
           env.TEXT_BOX_ERROR_TYPE,
-          env.TEXT_BOX_ERROR_MESSAGE,
+          env.TEXT_BOX_ERROR_MESSAGE+ "<br> originUp: " + originUp,
           env.TEXT_BOX_ERROR_GIF
         ),
         STATUS.BOX_NO_IP
@@ -84,7 +84,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
         REDIRECT.generateErrorPage(
           "503",
           env.TEXT_CONTAINER_ERROR_TYPE,
-          env.TEXT_CONTAINER_ERROR_MESSAGE,
+          env.TEXT_CONTAINER_ERROR_MESSAGE+ "<br> originUp: " + originUp+ "<br> npmUp: " + npmUp,
           env.TEXT_CONTAINER_ERROR_GIF
         ),
         STATUS.CONTAINER
@@ -94,7 +94,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
       REDIRECT.generateErrorPage(
         "503",
         env.TEXT_GENERIC_ERROR_TYPE,
-        env.TEXT_GENERIC_ERRORR_MESSAGE,
+        env.TEXT_GENERIC_ERRORR_MESSAGE+ "<br> originUp: " + originUp+ "<br> npmUp: " + npmUp,
         env.TEXT_GENERIC_ERROR_GIF
       ),
       STATUS.SERVER
@@ -104,13 +104,12 @@ export async function c_redirect(request, response, thrownError = null, isMainte
   // 5xx error response
   else if (response && response.status >= 500) {
     const originUp = await HELPER.isOriginReachable().catch(() => null);
-    console.log(" COUCOUOrigin status:", originUp);
     if (originUp === false) {
       return makeResponse(
         REDIRECT.generateErrorPage(
           "503",
           env.TEXT_BOX_ERROR_TYPE,
-          env.TEXT_BOX_ERROR_MESSAGE,
+          env.TEXT_BOX_ERROR_MESSAGE + "<br> originUp: " + originUp,
           env.TEXT_BOX_ERROR_GIF
         ),
         STATUS.BOX_NO_IP
@@ -126,7 +125,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
             REDIRECT.generateErrorPage(
               "503",
               env.TEXT_CONTAINER_ERROR_TYPE,
-              env.TEXT_CONTAINER_ERROR_MESSAGE + " npmUp: " + npmUp + " cfCode: " + cfCode + " response.status: " + response.status,
+              env.TEXT_CONTAINER_ERROR_MESSAGE + "<br> npmUp: " + npmUp + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp,
               env.TEXT_CONTAINER_ERROR_GIF
             ),
             STATUS.CONTAINER
@@ -136,7 +135,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
           REDIRECT.generateErrorPage(
             "503",
             env.TEXT_BOX_ERROR_TYPE,
-            env.TEXT_BOX_ERROR_MESSAGE,
+            env.TEXT_BOX_ERROR_MESSAGE + "<br> npmUp: " + npmUp + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp,
             env.TEXT_BOX_ERROR_GIF
           ),
           STATUS.BOX
@@ -147,7 +146,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
           REDIRECT.generateErrorPage(
             "503",
             env.TEXT_BOX_ERROR_TYPE,
-            env.TEXT_BOX_ERROR_MESSAGE,
+            env.TEXT_BOX_ERROR_MESSAGE + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp,
             env.TEXT_BOX_ERROR_GIF
           ),
           STATUS.BOX
@@ -157,7 +156,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
         REDIRECT.generateErrorPage(
           "503",
           env.TEXT_GENERIC_ERROR_TYPE,
-          env.TEXT_GENERIC_ERRORR_MESSAGE,
+          env.TEXT_GENERIC_ERRORR_MESSAGE + "<br> cfCode: " + cfCode + "<br> response.status: " + response.status+ "<br> originUp: " + originUp,
           env.TEXT_GENERIC_ERROR_GIF
         ),
         STATUS.SERVER
@@ -169,7 +168,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
           REDIRECT.generateErrorPage(
             "503",
             env.TEXT_CONTAINER_ERROR_TYPE,
-            env.TEXT_CONTAINER_ERROR_MESSAGE,
+            env.TEXT_CONTAINER_ERROR_MESSAGE + "<br> npmUp: " + npmUp+ "<br> originUp: " + originUp,
             env.TEXT_CONTAINER_ERROR_GIF
           ),
           STATUS.CONTAINER
@@ -179,7 +178,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
         REDIRECT.generateErrorPage(
           "503",
           env.TEXT_GENERIC_ERROR_TYPE,
-          env.TEXT_GENERIC_ERRORR_MESSAGE,
+          env.TEXT_GENERIC_ERRORR_MESSAGE + "<br> npmUp: " + npmUp + "<br> originUp: " + originUp,
           env.TEXT_GENERIC_ERROR_GIF
         ),
         STATUS.SERVER
