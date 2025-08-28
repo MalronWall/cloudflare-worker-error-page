@@ -96,7 +96,7 @@ export const HELPER = {
         console.log("COUCOU4");
         return false;
       }
-      console.log("COUCOU5");
+      console.log("COUCOU5 response.status:: " + response.status);
       return response.status > 0 && response.status < 500;
     } catch (err) {
       console.log("COUCOU6 error in isNpmUp:", err?.message || err);
