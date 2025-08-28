@@ -1,10 +1,11 @@
 import errorTemplate from './html/error-template.html'
 import { HELPER } from './helper-functions.js'
 
+// Default error values, will be set in c_redirect using env
 let errorCode = "500";
-let errorType = env.TEXT_GENERIC_ERROR_TYPE;
-let errorMessage = env.TEXT_GENERIC_ERRORR_MESSAGE;
-let errorGif = env.TEXT_GENERIC_ERROR_GIF;
+let errorType = "";
+let errorMessage = "";
+let errorGif = "";
 
 const REDIRECT = {
   /**
@@ -66,6 +67,11 @@ function getErrorDetailsFromCfCode(cfCode, env) {
  * @returns {Promise<Response|null>} Appropriate error response or null
  */
 export async function c_redirect(request, response, thrownError = null, isMaintenance = false, env) {
+  // Set default error details using env inside the function
+  errorType = env.TEXT_GENERIC_ERROR_TYPE;
+  errorMessage = env.TEXT_GENERIC_ERRORR_MESSAGE;
+  errorGif = env.TEXT_GENERIC_ERROR_GIF;
+
   // Maintenance mode
   if (isMaintenance) {
     getErrorDetailsFromCfCode("MAINTENANCE", env, true);
@@ -100,7 +106,6 @@ export async function c_redirect(request, response, thrownError = null, isMainte
     }
     return makeResponse(REDIRECT.generateErrorPage());
   }
-
 
   return null;
 }
