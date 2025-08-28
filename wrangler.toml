@@ -14,9 +14,11 @@ kv_namespaces = [
 # Language setting (FR or EN)
 LANGUAGE = "FR"
 
+# FOR HAVE A RETURN TO THE LINE USE <br> IN MESSAGE
+
 # For 503 errors when maintenance is activated
 TEXT_MAINTENANCE_TYPE = "Maintenance serveur"
-TEXT_MAINTENANCE_MESSAGE = "Je fais de nouvelles expériences !! \n Promis je me dépêche ! 😗"
+TEXT_MAINTENANCE_MESSAGE = "Je fais de nouvelles expériences !! <br> Promis je me dépêche ! 😗"
 TEXT_MAINTENANCE_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare-worker-error-page/refs/heads/main/assets/maintenance.gif"
 
 # For 504 errors when internet connection is down
@@ -26,15 +28,15 @@ TEXT_BOX_ERROR_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare-w
 
 # For 500 errors when server probably crashed
 TEXT_GENERIC_ERROR_TYPE = "Erreur serveur"
-TEXT_GENERIC_ERRORR_MESSAGE = "Le serveur a sûrement dû crash... N'hésitez pas à me le signaler !"
+TEXT_GENERIC_ERRORR_MESSAGE = "Le serveur a sûrement dû crash... <br> N'hésitez pas à me le signaler !"
 TEXT_GENERIC_ERROR_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare-worker-error-page/refs/heads/main/assets/generic_error.gif"
 
 # For 503 errors when specific service is down
 TEXT_CONTAINER_ERROR_TYPE = "Service indisponible"
-TEXT_CONTAINER_ERROR_MESSAGE = "Service non démarré ou planté ! N’hésitez pas à me le signaler au cas où !"
+TEXT_CONTAINER_ERROR_MESSAGE = "Service non démarré ou planté ! <br> N’hésitez pas à me le signaler au cas où !"
 TEXT_CONTAINER_ERROR_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare-worker-error-page/refs/heads/main/assets/container_error.gif"
 
 # Enable or disable 4G banner functionality
-ENABLE_4G_BANNER = true
+ENABLE_4G_BANNER = false
 # Message for 4G banner when fiber is down
 TEXT_4G_BANNER_MESSAGE = "Attention des lenteurs peuvent survenir, ma fibre est H.S. Le serveur fonctionne en 4G !"

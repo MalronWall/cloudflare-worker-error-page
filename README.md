@@ -158,21 +158,23 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 
 - Définissez votre langue (FR ou EN)
 - Modifiez le texte des différents messages d'erreur
+- Si vous n'avez pas de backup 4g sur votre serveur il faut mettre ```ENABLE_4G_BANNER = false ``` dans `wrangler.toml`.
 
 ### 3. Créez un espace de noms KV
 
-- Sur Cloudflare, allez dans **Workers > KV**.
-- Créez un espace de noms nommé : ``` cloudflare-worker-error-page ```
-- Copiez l'ID de l'espace de noms et ajoutez-le au champ `id` dans la section `kv_namespaces` du fichier `wrangler.toml`.
-
+- Sur Cloudflare, allez dans **Storage & Databases > KV**.
 ![Créer KV](images/create_kv/create_kv.png)
+- Créez un espace de noms nommé : ``` cloudflare-worker-error-page ```
 ![Ajouter nom](images/create_kv/create_kv_add_name.png)
+- Copiez l'ID du KV et ajoutez-le au champ `id` dans la section `kv_namespaces` du fichier `wrangler.toml`.
 ![Copier id](images/create_kv/create_kv_copy_id.png)
 
 ### 4. Configurez le sous-domaine
 
 - Créez un sous-domaine ``` maintenance.domain.fr ``` et redirigez-le vers votre reverse proxy
 - Créez un autre sous-domaine pour vérifier si le worker peut accéder à votre reverse proxy pour vérifier les erreurs ``` test.domain.fr ```
+
+⚠️ Pour ceux qui utilisent un tunnel Cloudflare (Zero trust) vous devez faire ces 2 étapes en plus.
 - Ouvrez un port sur votre serveur qui sera utilisé par le worker pour déterminer si votre serveur est hors ligne ou si votre connexion est coupée. Vous pouvez utiliser n'importe quel port.
 - Pour la sécurité, vous pouvez limiter les IP qui peuvent accéder aux IP Cloudflare accessibles [ici](https://www.cloudflare.com/fr-fr/ips/)
 
@@ -195,9 +197,11 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 - Allez dans Paramètres -> Domaines & Routes -> Ajouter
 - Cliquez sur Route et sélectionnez votre domaine dans Zone
 - Ajoutez ceci dans Route : ``` *domain.fr/* ``` Ne mettez pas le . après le premier * sinon cela ne fonctionnera que pour le sous-domaine. Vous pouvez ajouter plusieurs routes avec plusieurs domaines.
-- Ajoutez le secret MAINTENANCE_DOMAIN avec le domaine créé précédemment
-- Ajoutez le secret NPM_HEALTH_URL avec le domaine de test créé précédemment
-- Ajoutez le secret ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment
+- Selectionner Fail open (Cela permet de quand même accéder au site si le Worker ne fonctionne plus à cause d'un bug ou du quota qui est atteint)
+- Dans Variables and Secrets ajoutez MAINTENANCE_DOMAIN avec le domaine créé précédemment (Ex: maintenance.domain.fr)
+- Dans Variables and Secrets NPM_HEALTH_URL avec le domaine de test créé précédemment (Ex: test.domain.fr)
+- ⚠️ Pour ceux qui utilisent un tunnel Cloudflare (Zero trust) vous devez faire l'étape ci-dessous  en plus.
+- Dans Variables and Secrets ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment (Ex: 172.18.95.145:5055)
 
 ![Créer worker](images/create_worker/create_worker_1.png)
 ![Créer worker](images/create_worker/create_worker_2.png)
