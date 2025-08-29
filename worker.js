@@ -7,34 +7,17 @@ function safeJsonParse(str, fallback) {
   try { return JSON.parse(str || '[]'); } catch { return fallback; }
 }
 
-// Cache for KV data
-const kvCache = {
-  data: null,
-  timestamp: 0,
-  ttl: 300000 // Cache TTL in milliseconds (5 minutes)
-};
-
-// Read maintenance and banner states from KV with caching
+// Read maintenance and banner states from KV
 async function getMaintenanceState(env, host) {
-  const now = Date.now();
-
-  // Return cached data if valid
-  if (kvCache.data && (now - kvCache.timestamp < kvCache.ttl)) {
-    return kvCache.data;
-  }
-
-  // Fetch fresh data from KV
   const globalMaintenance = await env.MAINTENANCE_KV.get('MAINTENANCE_GLOBAL');
   const subdomainsMaintenanceRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_SUBDOMAINS');
+  const subdomainsMaintenance = safeJsonParse(subdomainsMaintenanceRaw, []);
   const bannerSubdomainsRaw = await env.MAINTENANCE_KV.get('BANNER_SUBDOMAINS');
   const bannerMessage = await env.MAINTENANCE_KV.get('BANNER_MESSAGE');
-  const is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
-
-  const subdomainsMaintenance = safeJsonParse(subdomainsMaintenanceRaw, []);
   const bannerSubdomains = safeJsonParse(bannerSubdomainsRaw, []);
-
-  // Update cache
-  kvCache.data = {
+  const is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
+  
+  return {
     isGlobalMaintenance: globalMaintenance === 'true',
     subdomainsMaintenance,
     isSubdomainMaintenance: subdomainsMaintenance.includes(host),
@@ -42,9 +25,6 @@ async function getMaintenanceState(env, host) {
     bannerMessage: typeof bannerMessage === 'string' ? bannerMessage : '',
     is4gMode: is4gMode === 'true'
   };
-  kvCache.timestamp = now;
-
-  return kvCache.data;
 }
 
 // Inject banner into HTML response
