@@ -15,10 +15,14 @@ const cache = {
 
 // Read maintenance and banner states from KV (single key) with optional cache
 async function getMaintenanceState(env, host, useCache = true) {
+  // Read cache config from env
+  const cacheEnabled = env.ENABLE_CACHE === undefined ? true : env.ENABLE_CACHE === true || env.ENABLE_CACHE === 'true';
+  const cacheTtl = env.CACHE_TTL_MS ? parseInt(env.CACHE_TTL_MS, 10) : 60000;
+
   const now = Date.now();
   let stateObj;
-  if (useCache) {
-    if (cache.maintenance.value && (now - cache.maintenance.ts < 60000)) {
+  if (useCache && cacheEnabled) {
+    if (cache.maintenance.value && (now - cache.maintenance.ts < cacheTtl)) {
       stateObj = cache.maintenance.value;
     } else {
       const stateRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
@@ -43,8 +47,8 @@ async function getMaintenanceState(env, host, useCache = true) {
 
   // Cache for wan-is-4g
   let is4gMode;
-  if (useCache) {
-    if (cache.is4g.value !== null && (now - cache.is4g.ts < 60000)) {
+  if (useCache && cacheEnabled) {
+    if (cache.is4g.value !== null && (now - cache.is4g.ts < cacheTtl)) {
       is4gMode = cache.is4g.value;
     } else {
       is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
