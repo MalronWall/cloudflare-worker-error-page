@@ -82,6 +82,7 @@ export default {
 
     // Read state (cache by default)
     let state = await getMaintenanceState(env, host);
+    const isMaintenance = state.isGlobalMaintenance || state.isSubdomainMaintenance;
 
     // Maintenance control interface (admin) - NO CACHE
     if (host === env.MAINTENANCE_DOMAIN && url.pathname === '/') {
@@ -101,8 +102,8 @@ export default {
     let response;
     try {
       response = await fetch(request);
-      
     } catch (err) {
+      // isMaintenance is now always defined above
       const redirectResponse = await c_redirect(request, null, err, isMaintenance, env);
       if (redirectResponse) return redirectResponse;
       return new Response('Upstream unreachable', { status: 502 });
