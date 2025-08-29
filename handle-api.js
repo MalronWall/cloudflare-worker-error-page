@@ -22,7 +22,7 @@ function invalidateCache(env) {
 }
 
 // Helper to fetch Unifi API data
-async function fetchUnifiData(env) {
+export async function fetchUnifiData(env) {
   const apiKey = await env.UNIFI_API_KEY; // Secret API key
   const response = await fetch('https://api.ui.com/v1/sites?pageSize=1', {
     method: 'GET',
