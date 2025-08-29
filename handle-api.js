@@ -3,7 +3,8 @@ async function getStateObj(env) {
 }
 
 async function setStateObj(env, obj) {
-  globalState.maintenanceState = obj;
+  // Met à jour l'état global en mémoire
+  globalState.maintenanceState = { ...globalState.maintenanceState, ...obj };
   invalidateCache(env);
 }
 
@@ -14,7 +15,6 @@ function invalidateCache(env) {
     globalThis.cache.maintenance = { value: null, ts: 0 };
     globalThis.cache.is4g = { value: null, ts: 0 };
   }
-  globalState.is4gMode = globalState.is4gMode; // No-op to simulate cache invalidation
 }
 
 export async function handleApi(request, url, host, env, state) {

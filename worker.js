@@ -26,57 +26,17 @@ const globalState = {
 
 // Read maintenance and banner states from in-memory storage
 async function getMaintenanceState(env, host, useCache = true) {
-  // Read cache config from env
-  const cacheEnabled = env.ENABLE_CACHE === undefined ? true : env.ENABLE_CACHE === true || env.ENABLE_CACHE === 'true';
-  const cacheTtl = env.CACHE_TTL_MS ? parseInt(env.CACHE_TTL_MS, 10) : 60000;
-
-  const now = Date.now();
-  let stateObj;
-  if (useCache && cacheEnabled) {
-    if (cache.maintenance.value && (now - cache.maintenance.ts < cacheTtl)) {
-      stateObj = cache.maintenance.value;
-    } else {
-      const stateRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
-      stateObj = safeJsonParse(stateRaw, {
-        isGlobalMaintenance: false,
-        subdomainsMaintenance: [],
-        bannerSubdomains: [],
-        bannerMessage: ''
-      });
-      cache.maintenance.value = stateObj;
-      cache.maintenance.ts = now;
-    }
-  } else {
-    const stateRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
-    stateObj = safeJsonParse(stateRaw, {
-      isGlobalMaintenance: false,
-      subdomainsMaintenance: [],
-      bannerSubdomains: [],
-      bannerMessage: ''
-    });
-  }
-
-  // Cache for wan-is-4g
-  let is4gMode;
-  if (useCache && cacheEnabled) {
-    if (cache.is4g.value !== null && (now - cache.is4g.ts < cacheTtl)) {
-      is4gMode = cache.is4g.value;
-    } else {
-      is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
-      cache.is4g.value = is4gMode;
-      cache.is4g.ts = now;
-    }
-  } else {
-    is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
-  }
+  // Utilise l'état global en mémoire
+  const stateObj = globalState.maintenanceState;
+  const is4gMode = globalState.is4gMode;
 
   return {
-    isGlobalMaintenance: stateObj.isGlobalMaintenance === true || stateObj.isGlobalMaintenance === 'true',
-    subdomainsMaintenance: Array.isArray(stateObj.subdomainsMaintenance) ? stateObj.subdomainsMaintenance : [],
-    isSubdomainMaintenance: Array.isArray(stateObj.subdomainsMaintenance) ? stateObj.subdomainsMaintenance.includes(host) : false,
-    bannerSubdomains: Array.isArray(stateObj.bannerSubdomains) ? stateObj.bannerSubdomains : [],
-    bannerMessage: typeof stateObj.bannerMessage === 'string' ? stateObj.bannerMessage : '',
-    is4gMode: is4gMode === 'true'
+    isGlobalMaintenance: stateObj.isGlobalMaintenance,
+    subdomainsMaintenance: stateObj.subdomainsMaintenance,
+    isSubdomainMaintenance: stateObj.subdomainsMaintenance.includes(host),
+    bannerSubdomains: stateObj.bannerSubdomains,
+    bannerMessage: stateObj.bannerMessage,
+    is4gMode,
   };
 }
 
