@@ -13,12 +13,24 @@ const cache = {
   is4g: { value: null, ts: 0 }
 };
 
-// Read maintenance and banner states from KV (single key) with cache
-async function getMaintenanceState(env, host) {
+// Read maintenance and banner states from KV (single key) with optional cache
+async function getMaintenanceState(env, host, useCache = true) {
   const now = Date.now();
-  // 1 minute = 60000 ms
-  if (cache.maintenance.value && (now - cache.maintenance.ts < 60000)) {
-    var stateObj = cache.maintenance.value;
+  let stateObj;
+  if (useCache) {
+    if (cache.maintenance.value && (now - cache.maintenance.ts < 60000)) {
+      stateObj = cache.maintenance.value;
+    } else {
+      const stateRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
+      stateObj = safeJsonParse(stateRaw, {
+        isGlobalMaintenance: false,
+        subdomainsMaintenance: [],
+        bannerSubdomains: [],
+        bannerMessage: ''
+      });
+      cache.maintenance.value = stateObj;
+      cache.maintenance.ts = now;
+    }
   } else {
     const stateRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
     stateObj = safeJsonParse(stateRaw, {
@@ -27,18 +39,20 @@ async function getMaintenanceState(env, host) {
       bannerSubdomains: [],
       bannerMessage: ''
     });
-    cache.maintenance.value = stateObj;
-    cache.maintenance.ts = now;
   }
 
   // Cache for wan-is-4g
   let is4gMode;
-  if (cache.is4g.value !== null && (now - cache.is4g.ts < 60000)) {
-    is4gMode = cache.is4g.value;
+  if (useCache) {
+    if (cache.is4g.value !== null && (now - cache.is4g.ts < 60000)) {
+      is4gMode = cache.is4g.value;
+    } else {
+      is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
+      cache.is4g.value = is4gMode;
+      cache.is4g.ts = now;
+    }
   } else {
     is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
-    cache.is4g.value = is4gMode;
-    cache.is4g.ts = now;
   }
 
   return {
@@ -66,12 +80,12 @@ export default {
     const host = request.headers.get('host');
     const url = new URL(request.url);
 
-    // Read state
-    const state = await getMaintenanceState(env, host);
-    const isMaintenance = state.isGlobalMaintenance || state.isSubdomainMaintenance;
+    // Read state (cache by default)
+    let state = await getMaintenanceState(env, host);
 
-    // Maintenance control interface (admin)
+    // Maintenance control interface (admin) - NO CACHE
     if (host === env.MAINTENANCE_DOMAIN && url.pathname === '/') {
+      state = await getMaintenanceState(env, host, false);
       return new Response(
         maintenanceHtml(state.isGlobalMaintenance, state.subdomainsMaintenance, state.bannerSubdomains, state.bannerMessage, env.LANGUAGE || 'EN'),
         { headers: { 'content-type': 'text/html' } }
