@@ -6,7 +6,8 @@ export async function handleApi(request, url, host, env, state) {
 
   // Toggle global maintenance mode
   if (url.pathname === '/worker/api/toggle-maintenance/global' && request.method === 'POST') {
-    await env.MAINTENANCE_KV.put('MAINTENANCE_GLOBAL', state.isGlobalMaintenance ? 'false' : 'true');
+    const newState = { ...state, isGlobalMaintenance: !state.isGlobalMaintenance };
+    await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
     return new Response('Maintenance globale mise à jour');
   }
 
@@ -15,7 +16,8 @@ export async function handleApi(request, url, host, env, state) {
     const { subdomain } = await request.json();
     if (!state.subdomainsMaintenance.includes(subdomain)) {
       state.subdomainsMaintenance.push(subdomain);
-      await env.MAINTENANCE_KV.put('MAINTENANCE_SUBDOMAINS', JSON.stringify(state.subdomainsMaintenance));
+      const newState = { ...state, subdomainsMaintenance: state.subdomainsMaintenance };
+      await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
     }
     return new Response('Sous-domaine ajouté');
   }
@@ -24,7 +26,8 @@ export async function handleApi(request, url, host, env, state) {
   if (url.pathname === '/worker/api/maintenance/subdomain/remove' && request.method === 'POST') {
     const { subdomain } = await request.json();
     const newList = state.subdomainsMaintenance.filter(d => d !== subdomain);
-    await env.MAINTENANCE_KV.put('MAINTENANCE_SUBDOMAINS', JSON.stringify(newList));
+    const newState = { ...state, subdomainsMaintenance: newList };
+    await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
     return new Response('Sous-domaine retiré');
   }
 
@@ -45,7 +48,8 @@ export async function handleApi(request, url, host, env, state) {
     if (typeof subdomain !== 'string') return new Response('Format attendu: { subdomain: "..." }', { status: 400 });
     if (!state.bannerSubdomains.includes(subdomain)) {
       state.bannerSubdomains.push(subdomain);
-      await env.MAINTENANCE_KV.put('BANNER_SUBDOMAINS', JSON.stringify(state.bannerSubdomains));
+      const newState = { ...state, bannerSubdomains: state.bannerSubdomains };
+      await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
     }
     return new Response('Sous-domaine ajouté au bandeau');
   }
@@ -55,7 +59,8 @@ export async function handleApi(request, url, host, env, state) {
     const { subdomain } = await request.json();
     if (typeof subdomain !== 'string') return new Response('Format attendu: { subdomain: "..." }', { status: 400 });
     const newList = state.bannerSubdomains.filter(d => d !== subdomain);
-    await env.MAINTENANCE_KV.put('BANNER_SUBDOMAINS', JSON.stringify(newList));
+    const newState = { ...state, bannerSubdomains: newList };
+    await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
     return new Response('Sous-domaine retiré du bandeau');
   }
 
@@ -63,7 +68,8 @@ export async function handleApi(request, url, host, env, state) {
   if (url.pathname === '/worker/api/banner/message' && request.method === 'POST') {
     const { message } = await request.json();
     if (typeof message === 'string') {
-      await env.MAINTENANCE_KV.put('BANNER_MESSAGE', message);
+      const newState = { ...state, bannerMessage: message };
+      await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
       return new Response('Message du bandeau mis à jour');
     } else {
       return new Response('Format attendu: { message: "..." }', { status: 400 });
