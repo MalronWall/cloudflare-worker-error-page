@@ -10,11 +10,6 @@ async function getStateObj(env) {
 async function setStateObj(env, obj) {
   await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(obj));
   invalidateCache(env);
-
-  // Push the updated maintenance state to the queue
-  if (env.UPDATE_QUEUE) {
-    await env.UPDATE_QUEUE.send(JSON.stringify(obj));
-  }
 }
 
 // Invalidate cache helper
