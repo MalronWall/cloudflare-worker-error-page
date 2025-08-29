@@ -4,25 +4,27 @@ import { handleApi } from './handle-api.js'
 
 // Helper to safely parse JSON
 function safeJsonParse(str, fallback) {
-  try { return JSON.parse(str || '[]'); } catch { return fallback; }
+  try { return JSON.parse(str || ''); } catch { return fallback; }
 }
 
-// Read maintenance and banner states from KV
+// Read maintenance and banner states from KV (single key)
 async function getMaintenanceState(env, host) {
-  const globalMaintenance = await env.MAINTENANCE_KV.get('MAINTENANCE_GLOBAL');
-  const subdomainsMaintenanceRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_SUBDOMAINS');
-  const subdomainsMaintenance = safeJsonParse(subdomainsMaintenanceRaw, []);
-  const bannerSubdomainsRaw = await env.MAINTENANCE_KV.get('BANNER_SUBDOMAINS');
-  const bannerMessage = await env.MAINTENANCE_KV.get('BANNER_MESSAGE');
-  const bannerSubdomains = safeJsonParse(bannerSubdomainsRaw, []);
+  const stateRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
+  const stateObj = safeJsonParse(stateRaw, {
+    isGlobalMaintenance: false,
+    subdomainsMaintenance: [],
+    bannerSubdomains: [],
+    bannerMessage: ''
+  });
+
   const is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
-  
+
   return {
-    isGlobalMaintenance: globalMaintenance === 'true',
-    subdomainsMaintenance,
-    isSubdomainMaintenance: subdomainsMaintenance.includes(host),
-    bannerSubdomains,
-    bannerMessage: typeof bannerMessage === 'string' ? bannerMessage : '',
+    isGlobalMaintenance: stateObj.isGlobalMaintenance === true || stateObj.isGlobalMaintenance === 'true',
+    subdomainsMaintenance: Array.isArray(stateObj.subdomainsMaintenance) ? stateObj.subdomainsMaintenance : [],
+    isSubdomainMaintenance: Array.isArray(stateObj.subdomainsMaintenance) ? stateObj.subdomainsMaintenance.includes(host) : false,
+    bannerSubdomains: Array.isArray(stateObj.bannerSubdomains) ? stateObj.bannerSubdomains : [],
+    bannerMessage: typeof stateObj.bannerMessage === 'string' ? stateObj.bannerMessage : '',
     is4gMode: is4gMode === 'true'
   };
 }
