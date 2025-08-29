@@ -6,18 +6,16 @@ export async function handleApi(request, url, host, env, state) {
 
   // Toggle global maintenance mode
   if (url.pathname === '/worker/api/toggle-maintenance/global' && request.method === 'POST') {
-    const newState = { ...state, isGlobalMaintenance: !state.isGlobalMaintenance };
-    await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
+    await env.MAINTENANCE_KV.put('MAINTENANCE_GLOBAL', state.isGlobalMaintenance ? 'false' : 'true');
     return new Response('Maintenance globale mise à jour');
   }
 
   // Add a subdomain to maintenance list
   if (url.pathname === '/worker/api/maintenance/subdomain/add' && request.method === 'POST') {
     const { subdomain } = await request.json();
-    if (typeof subdomain === 'string' && subdomain.trim() && !state.subdomainsMaintenance.includes(subdomain)) {
+    if (!state.subdomainsMaintenance.includes(subdomain)) {
       state.subdomainsMaintenance.push(subdomain);
-      const newState = { ...state, subdomainsMaintenance: state.subdomainsMaintenance };
-      await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
+      await env.MAINTENANCE_KV.put('MAINTENANCE_SUBDOMAINS', JSON.stringify(state.subdomainsMaintenance));
     }
     return new Response('Sous-domaine ajouté');
   }
@@ -25,11 +23,8 @@ export async function handleApi(request, url, host, env, state) {
   // Remove a subdomain from maintenance list
   if (url.pathname === '/worker/api/maintenance/subdomain/remove' && request.method === 'POST') {
     const { subdomain } = await request.json();
-    if (typeof subdomain === 'string' && subdomain.trim()) {
-      const newList = state.subdomainsMaintenance.filter(d => d !== subdomain);
-      const newState = { ...state, subdomainsMaintenance: newList };
-      await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
-    }
+    const newList = state.subdomainsMaintenance.filter(d => d !== subdomain);
+    await env.MAINTENANCE_KV.put('MAINTENANCE_SUBDOMAINS', JSON.stringify(newList));
     return new Response('Sous-domaine retiré');
   }
 
@@ -47,10 +42,10 @@ export async function handleApi(request, url, host, env, state) {
   // Add a subdomain to the banner list
   if (url.pathname === '/worker/api/banner/subdomains/add' && request.method === 'POST') {
     const { subdomain } = await request.json();
-    if (typeof subdomain === 'string' && subdomain.trim() && !state.bannerSubdomains.includes(subdomain)) {
+    if (typeof subdomain !== 'string') return new Response('Format attendu: { subdomain: "..." }', { status: 400 });
+    if (!state.bannerSubdomains.includes(subdomain)) {
       state.bannerSubdomains.push(subdomain);
-      const newState = { ...state, bannerSubdomains: state.bannerSubdomains };
-      await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
+      await env.MAINTENANCE_KV.put('BANNER_SUBDOMAINS', JSON.stringify(state.bannerSubdomains));
     }
     return new Response('Sous-domaine ajouté au bandeau');
   }
@@ -58,11 +53,9 @@ export async function handleApi(request, url, host, env, state) {
   // Remove a subdomain from the banner list
   if (url.pathname === '/worker/api/banner/subdomains/remove' && request.method === 'POST') {
     const { subdomain } = await request.json();
-    if (typeof subdomain === 'string' && subdomain.trim()) {
-      const newList = state.bannerSubdomains.filter(d => d !== subdomain);
-      const newState = { ...state, bannerSubdomains: newList };
-      await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
-    }
+    if (typeof subdomain !== 'string') return new Response('Format attendu: { subdomain: "..." }', { status: 400 });
+    const newList = state.bannerSubdomains.filter(d => d !== subdomain);
+    await env.MAINTENANCE_KV.put('BANNER_SUBDOMAINS', JSON.stringify(newList));
     return new Response('Sous-domaine retiré du bandeau');
   }
 
@@ -70,8 +63,7 @@ export async function handleApi(request, url, host, env, state) {
   if (url.pathname === '/worker/api/banner/message' && request.method === 'POST') {
     const { message } = await request.json();
     if (typeof message === 'string') {
-      const newState = { ...state, bannerMessage: message };
-      await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
+      await env.MAINTENANCE_KV.put('BANNER_MESSAGE', message);
       return new Response('Message du bandeau mis à jour');
     } else {
       return new Response('Format attendu: { message: "..." }', { status: 400 });

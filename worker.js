@@ -9,22 +9,21 @@ function safeJsonParse(str, fallback) {
 
 // Read maintenance and banner states from KV
 async function getMaintenanceState(env, host) {
-  const rawState = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
-  const state = safeJsonParse(rawState, {
-    globalMaintenance: false,
-    subdomainsMaintenance: [],
-    bannerSubdomains: [],
-    bannerMessage: '',
-    is4gMode: false
-  });
-
+  const globalMaintenance = await env.MAINTENANCE_KV.get('MAINTENANCE_GLOBAL');
+  const subdomainsMaintenanceRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_SUBDOMAINS');
+  const subdomainsMaintenance = safeJsonParse(subdomainsMaintenanceRaw, []);
+  const bannerSubdomainsRaw = await env.MAINTENANCE_KV.get('BANNER_SUBDOMAINS');
+  const bannerMessage = await env.MAINTENANCE_KV.get('BANNER_MESSAGE');
+  const bannerSubdomains = safeJsonParse(bannerSubdomainsRaw, []);
+  const is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
+  
   return {
-    isGlobalMaintenance: !!state.globalMaintenance,
-    subdomainsMaintenance: Array.isArray(state.subdomainsMaintenance) ? state.subdomainsMaintenance : [],
-    isSubdomainMaintenance: Array.isArray(state.subdomainsMaintenance) && state.subdomainsMaintenance.includes(host),
-    bannerSubdomains: Array.isArray(state.bannerSubdomains) ? state.bannerSubdomains : [],
-    bannerMessage: typeof state.bannerMessage === 'string' ? state.bannerMessage : '',
-    is4gMode: !!state.is4gMode
+    isGlobalMaintenance: globalMaintenance === 'true',
+    subdomainsMaintenance,
+    isSubdomainMaintenance: subdomainsMaintenance.includes(host),
+    bannerSubdomains,
+    bannerMessage: typeof bannerMessage === 'string' ? bannerMessage : '',
+    is4gMode: is4gMode === 'true'
   };
 }
 
