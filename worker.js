@@ -19,12 +19,12 @@ async function getMaintenanceState(env, host) {
   });
 
   return {
-    isGlobalMaintenance: state.globalMaintenance,
-    subdomainsMaintenance: state.subdomainsMaintenance,
-    isSubdomainMaintenance: state.subdomainsMaintenance.includes(host),
-    bannerSubdomains: state.bannerSubdomains,
-    bannerMessage: state.bannerMessage,
-    is4gMode: state.is4gMode
+    isGlobalMaintenance: !!state.globalMaintenance,
+    subdomainsMaintenance: Array.isArray(state.subdomainsMaintenance) ? state.subdomainsMaintenance : [],
+    isSubdomainMaintenance: Array.isArray(state.subdomainsMaintenance) && state.subdomainsMaintenance.includes(host),
+    bannerSubdomains: Array.isArray(state.bannerSubdomains) ? state.bannerSubdomains : [],
+    bannerMessage: typeof state.bannerMessage === 'string' ? state.bannerMessage : '',
+    is4gMode: !!state.is4gMode
   };
 }
 

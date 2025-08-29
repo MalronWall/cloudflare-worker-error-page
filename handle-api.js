@@ -14,7 +14,7 @@ export async function handleApi(request, url, host, env, state) {
   // Add a subdomain to maintenance list
   if (url.pathname === '/worker/api/maintenance/subdomain/add' && request.method === 'POST') {
     const { subdomain } = await request.json();
-    if (!state.subdomainsMaintenance.includes(subdomain)) {
+    if (typeof subdomain === 'string' && subdomain.trim() && !state.subdomainsMaintenance.includes(subdomain)) {
       state.subdomainsMaintenance.push(subdomain);
       const newState = { ...state, subdomainsMaintenance: state.subdomainsMaintenance };
       await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
@@ -25,9 +25,11 @@ export async function handleApi(request, url, host, env, state) {
   // Remove a subdomain from maintenance list
   if (url.pathname === '/worker/api/maintenance/subdomain/remove' && request.method === 'POST') {
     const { subdomain } = await request.json();
-    const newList = state.subdomainsMaintenance.filter(d => d !== subdomain);
-    const newState = { ...state, subdomainsMaintenance: newList };
-    await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
+    if (typeof subdomain === 'string' && subdomain.trim()) {
+      const newList = state.subdomainsMaintenance.filter(d => d !== subdomain);
+      const newState = { ...state, subdomainsMaintenance: newList };
+      await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
+    }
     return new Response('Sous-domaine retiré');
   }
 
@@ -45,8 +47,7 @@ export async function handleApi(request, url, host, env, state) {
   // Add a subdomain to the banner list
   if (url.pathname === '/worker/api/banner/subdomains/add' && request.method === 'POST') {
     const { subdomain } = await request.json();
-    if (typeof subdomain !== 'string') return new Response('Format attendu: { subdomain: "..." }', { status: 400 });
-    if (!state.bannerSubdomains.includes(subdomain)) {
+    if (typeof subdomain === 'string' && subdomain.trim() && !state.bannerSubdomains.includes(subdomain)) {
       state.bannerSubdomains.push(subdomain);
       const newState = { ...state, bannerSubdomains: state.bannerSubdomains };
       await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
@@ -57,10 +58,11 @@ export async function handleApi(request, url, host, env, state) {
   // Remove a subdomain from the banner list
   if (url.pathname === '/worker/api/banner/subdomains/remove' && request.method === 'POST') {
     const { subdomain } = await request.json();
-    if (typeof subdomain !== 'string') return new Response('Format attendu: { subdomain: "..." }', { status: 400 });
-    const newList = state.bannerSubdomains.filter(d => d !== subdomain);
-    const newState = { ...state, bannerSubdomains: newList };
-    await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
+    if (typeof subdomain === 'string' && subdomain.trim()) {
+      const newList = state.bannerSubdomains.filter(d => d !== subdomain);
+      const newState = { ...state, bannerSubdomains: newList };
+      await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(newState));
+    }
     return new Response('Sous-domaine retiré du bandeau');
   }
 
