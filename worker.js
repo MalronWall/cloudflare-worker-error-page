@@ -134,5 +134,19 @@ export default {
     }
 
     return response;
+  },
+
+  async queue(batch, env, ctx) {
+    for (const message of batch.messages) {
+      if (message.body) {
+        try {
+          const maintenanceState = JSON.parse(message.body);
+          cache.maintenance.value = maintenanceState;
+          cache.maintenance.ts = Date.now();
+        } catch (err) {
+          console.error('Failed to parse maintenance state from queue:', err);
+        }
+      }
+    }
   }
-}
+};
