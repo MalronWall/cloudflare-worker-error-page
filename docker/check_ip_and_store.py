@@ -59,7 +59,7 @@ def main():
                 last_is_4g = is_4g
         except Exception as e:
             log(str(e), level="ERROR")
-        time.sleep(SLEEP_SECONDS)
+        time.sleep(60)
 
 if __name__ == "__main__":
     main()
