@@ -41,6 +41,7 @@ def main():
     last_is_4g = None
     while True:
         try:
+            log(f"Last IP: {last_ip}")
             ip = get_wan_ip()
             log(f"Retrieved IP: {ip}")
             is_4g = is_mobile_ip(ip)
@@ -58,7 +59,7 @@ def main():
                 last_is_4g = is_4g
         except Exception as e:
             log(str(e), level="ERROR")
-        time.sleep(60)
+        time.sleep(SLEEP_SECONDS)
 
 if __name__ == "__main__":
     main()
