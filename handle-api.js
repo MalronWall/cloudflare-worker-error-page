@@ -21,6 +21,28 @@ function invalidateCache(env) {
   }
 }
 
+// Helper to fetch Unifi API data
+async function fetchUnifiData(env) {
+  const apiKey = await env.UNIFI_API_KEY; // Secret API key
+  const response = await fetch('https://api.ui.com/v1/sites?pageSize=1', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'X-API-Key': apiKey
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Unifi API call failed with status ${response.status}`);
+  }
+
+  const data = await response.json();
+  const wanLTEFailover = data?.data?.[0]?.statistics?.wans?.WAN_LTE_FAILOVER;
+  const wanUptime = wanLTEFailover?.wanUptime;
+
+  return wanUptime !== undefined && wanUptime < 100; // 4G is active if uptime < 100
+}
+
 export async function handleApi(request, url, host, env, state) {
   // Restrict API access to the maintenance domain
   if (host !== env.MAINTENANCE_DOMAIN) {

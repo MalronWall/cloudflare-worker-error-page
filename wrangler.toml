@@ -23,6 +23,15 @@ ENABLE_CACHE = true
 # Cache duration in ms (default: 60000 = 1 minute)
 CACHE_TTL_MS = 60000
 
+# Enable or disable 4G banner functionality
+ENABLE_4G_BANNER = true
+# Message for 4G banner when fiber is down
+TEXT_4G_BANNER_MESSAGE = "Attention des lenteurs peuvent survenir, ma fibre est H.S. Le serveur fonctionne en 4G !"
+
+
+# Enable/disable Unifi integration (true/false)
+UNIFI_USER = false
+
 
 
 
@@ -57,7 +66,3 @@ TEXT_CONTAINER_ERROR_TYPE = "Service indisponible"
 TEXT_CONTAINER_ERROR_MESSAGE = "Service non démarré ou planté ! <br> N’hésitez pas à me le signaler au cas où !"
 TEXT_CONTAINER_ERROR_GIF = "https://raw.githubusercontent.com/JamesDAdams/cloudflare-worker-error-page/refs/heads/main/assets/container_error.gif"
 
-# Enable or disable 4G banner functionality
-ENABLE_4G_BANNER = true
-# Message for 4G banner when fiber is down
-TEXT_4G_BANNER_MESSAGE = "Attention des lenteurs peuvent survenir, ma fibre est H.S. Le serveur fonctionne en 4G !"
