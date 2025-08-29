@@ -1,14 +1,9 @@
 async function getStateObj(env) {
-  const raw = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
-  try {
-    return JSON.parse(raw || '') || {};
-  } catch {
-    return {};
-  }
+  return globalState.maintenanceState;
 }
 
 async function setStateObj(env, obj) {
-  await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(obj));
+  globalState.maintenanceState = obj;
   invalidateCache(env);
 }
 
@@ -19,6 +14,7 @@ function invalidateCache(env) {
     globalThis.cache.maintenance = { value: null, ts: 0 };
     globalThis.cache.is4g = { value: null, ts: 0 };
   }
+  globalState.is4gMode = globalState.is4gMode; // No-op to simulate cache invalidation
 }
 
 export async function handleApi(request, url, host, env, state) {

@@ -13,7 +13,18 @@ const cache = {
   is4g: { value: null, ts: 0 }
 };
 
-// Read maintenance and banner states from KV (single key) with optional cache
+// Global in-memory storage
+const globalState = {
+  maintenanceState: {
+    isGlobalMaintenance: false,
+    subdomainsMaintenance: [],
+    bannerSubdomains: [],
+    bannerMessage: '',
+  },
+  is4gMode: false,
+};
+
+// Read maintenance and banner states from in-memory storage
 async function getMaintenanceState(env, host, useCache = true) {
   // Read cache config from env
   const cacheEnabled = env.ENABLE_CACHE === undefined ? true : env.ENABLE_CACHE === true || env.ENABLE_CACHE === 'true';
