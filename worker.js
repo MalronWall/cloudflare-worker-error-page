@@ -49,11 +49,26 @@ async function getMaintenanceState(env, host, useCache = true) {
   let is4gMode = false;
   if (env.ENABLE_4G_BANNER === true || env.ENABLE_4G_BANNER === 'true') {
     if (env.UNIFI_USER === true || env.UNIFI_USER === 'true') {
-      try {
-        is4gMode = await fetchUnifiData(env);
-      } catch (err) {
-        console.error('Failed to fetch Unifi data:', err);
-        is4gMode = false; // Default to false if API call fails
+      if (useCache && cacheEnabled) {
+        if (cache.is4g.value !== null && (now - cache.is4g.ts < cacheTtl)) {
+          is4gMode = cache.is4g.value;
+        } else {
+          try {
+            is4gMode = await fetchUnifiData(env);
+            cache.is4g.value = is4gMode;
+            cache.is4g.ts = now;
+          } catch (err) {
+            console.error('Failed to fetch Unifi data:', err);
+            is4gMode = false; // Default to false if API call fails
+          }
+        }
+      } else {
+        try {
+          is4gMode = await fetchUnifiData(env);
+        } catch (err) {
+          console.error('Failed to fetch Unifi data:', err);
+          is4gMode = false; // Default to false if API call fails
+        }
       }
     } else {
       if (useCache && cacheEnabled) {
