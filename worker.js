@@ -7,17 +7,39 @@ function safeJsonParse(str, fallback) {
   try { return JSON.parse(str || ''); } catch { return fallback; }
 }
 
-// Read maintenance and banner states from KV (single key)
-async function getMaintenanceState(env, host) {
-  const stateRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
-  const stateObj = safeJsonParse(stateRaw, {
-    isGlobalMaintenance: false,
-    subdomainsMaintenance: [],
-    bannerSubdomains: [],
-    bannerMessage: ''
-  });
+// Simple in-memory cache (per worker instance)
+const cache = {
+  maintenance: { value: null, ts: 0 },
+  is4g: { value: null, ts: 0 }
+};
 
-  const is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
+// Read maintenance and banner states from KV (single key) with cache
+async function getMaintenanceState(env, host) {
+  const now = Date.now();
+  // 1 minute = 60000 ms
+  if (cache.maintenance.value && (now - cache.maintenance.ts < 60000)) {
+    var stateObj = cache.maintenance.value;
+  } else {
+    const stateRaw = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
+    stateObj = safeJsonParse(stateRaw, {
+      isGlobalMaintenance: false,
+      subdomainsMaintenance: [],
+      bannerSubdomains: [],
+      bannerMessage: ''
+    });
+    cache.maintenance.value = stateObj;
+    cache.maintenance.ts = now;
+  }
+
+  // Cache for wan-is-4g
+  let is4gMode;
+  if (cache.is4g.value !== null && (now - cache.is4g.ts < 60000)) {
+    is4gMode = cache.is4g.value;
+  } else {
+    is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
+    cache.is4g.value = is4gMode;
+    cache.is4g.ts = now;
+  }
 
   return {
     isGlobalMaintenance: stateObj.isGlobalMaintenance === true || stateObj.isGlobalMaintenance === 'true',

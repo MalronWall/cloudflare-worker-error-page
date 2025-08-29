@@ -9,6 +9,15 @@ async function getStateObj(env) {
 
 async function setStateObj(env, obj) {
   await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(obj));
+  invalidateCache();
+}
+
+// Invalidate cache helper
+function invalidateCache() {
+  if (globalThis.cache) {
+    globalThis.cache.maintenance = { value: null, ts: 0 };
+    globalThis.cache.is4g = { value: null, ts: 0 };
+  }
 }
 
 export async function handleApi(request, url, host, env, state) {
@@ -103,6 +112,7 @@ export async function handleApi(request, url, host, env, state) {
       return new Response('Fonctionnalité 4G désactivée', { status: 403 });
     }
     await env.MAINTENANCE_KV.put('wan-is-4g', state.is4gMode ? 'false' : 'true');
+    invalidateCache();
     return new Response('Mode 4G mis à jour');
   }
 
@@ -114,6 +124,7 @@ export async function handleApi(request, url, host, env, state) {
     const { enabled } = await request.json();
     if (typeof enabled === 'boolean') {
       await env.MAINTENANCE_KV.put('wan-is-4g', enabled ? 'true' : 'false');
+      invalidateCache();
       return new Response('Mode 4G mis à jour');
     } else {
       return new Response('Format attendu: { enabled: true/false }', { status: 400 });
