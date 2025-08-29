@@ -83,7 +83,7 @@ export async function c_redirect(request, response, thrownError = null, isMainte
   }
 
   const originUp = await HELPER.isOriginReachable(undefined, env).catch(() => null);
-  const npmUp = await HELPER.isNpmUp(undefined, env).catch(() => false);
+  //const npmUp = await HELPER.isNpmUp(undefined, env).catch(() => false);
 
   // Internet down
   if(!originUp) {
@@ -91,10 +91,11 @@ export async function c_redirect(request, response, thrownError = null, isMainte
     return makeResponse(REDIRECT.generateErrorPage());
   }
 
+  /*
   // NPM down so all services down
   if(!npmUp) {
     // it's the default message so no need to change anything
-  }
+  } */
 
   // Handle server errors (5xx)
   if(response && response.status >= 500) {
