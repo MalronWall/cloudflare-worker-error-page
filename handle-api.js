@@ -1,10 +1,14 @@
 async function getStateObj(env) {
-  return globalState.maintenanceState;
+  const raw = await env.MAINTENANCE_KV.get('MAINTENANCE_STATE');
+  try {
+    return JSON.parse(raw || '') || {};
+  } catch {
+    return {};
+  }
 }
 
 async function setStateObj(env, obj) {
-  // Met à jour l'état global en mémoire
-  globalState.maintenanceState = { ...globalState.maintenanceState, ...obj };
+  await env.MAINTENANCE_KV.put('MAINTENANCE_STATE', JSON.stringify(obj));
   invalidateCache(env);
 }
 
