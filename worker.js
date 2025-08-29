@@ -1,6 +1,6 @@
 import { c_redirect } from './custom-redirect.js'
 import maintenanceHtml from './html/maintenance.js'
-import { handleApi, fetchUnifiData } from './handle-api.js'
+import { handleApi } from './handle-api.js'
 
 // Helper to safely parse JSON
 function safeJsonParse(str, fallback) {
@@ -45,44 +45,18 @@ async function getMaintenanceState(env, host, useCache = true) {
     });
   }
 
-  // Determine 4G mode only if ENABLE_4G_BANNER is true
-  let is4gMode = false;
-  if (env.ENABLE_4G_BANNER === true || env.ENABLE_4G_BANNER === 'true') {
-    if (env.UNIFI_USER === true || env.UNIFI_USER === 'true') {
-      if (useCache && cacheEnabled) {
-        if (cache.is4g.value !== null && (now - cache.is4g.ts < cacheTtl)) {
-          is4gMode = cache.is4g.value;
-        } else {
-          try {
-            is4gMode = await fetchUnifiData(env);
-            cache.is4g.value = is4gMode;
-            cache.is4g.ts = now;
-          } catch (err) {
-            console.error('Failed to fetch Unifi data:', err);
-            is4gMode = false; // Default to false if API call fails
-          }
-        }
-      } else {
-        try {
-          is4gMode = await fetchUnifiData(env);
-        } catch (err) {
-          console.error('Failed to fetch Unifi data:', err);
-          is4gMode = false; // Default to false if API call fails
-        }
-      }
+  // Cache for wan-is-4g
+  let is4gMode;
+  if (useCache && cacheEnabled) {
+    if (cache.is4g.value !== null && (now - cache.is4g.ts < cacheTtl)) {
+      is4gMode = cache.is4g.value;
     } else {
-      if (useCache && cacheEnabled) {
-        if (cache.is4g.value !== null && (now - cache.is4g.ts < cacheTtl)) {
-          is4gMode = cache.is4g.value;
-        } else {
-          is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
-          cache.is4g.value = is4gMode;
-          cache.is4g.ts = now;
-        }
-      } else {
-        is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
-      }
+      is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
+      cache.is4g.value = is4gMode;
+      cache.is4g.ts = now;
     }
+  } else {
+    is4gMode = await env.MAINTENANCE_KV.get('wan-is-4g');
   }
 
   return {
