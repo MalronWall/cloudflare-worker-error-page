@@ -185,7 +185,7 @@
         .then(res => res.json())
         .then(env => {
           const isEnabled = env.ENABLE_REPORTING_ERRORS === true || env.ENABLE_REPORTING_ERRORS === 'true';
-          btn.setAttribute('data-enabled', isEnabled);
+          btn.setAttribute('data-enabled', isEnabled ? 'true' : 'false'); // Explicitly set "true" or "false"
           if (isEnabled) {
             btn.addEventListener('click', e => {
               e.preventDefault();
@@ -197,7 +197,7 @@
           }
         })
         .catch(() => {
-          btn.setAttribute('data-enabled', false);
+          btn.setAttribute('data-enabled', 'false'); // Fallback to "false" on error
         });
     };
 
