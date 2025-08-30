@@ -174,8 +174,8 @@ TO DO
 
 # Page d'erreur Cloudflare Worker
 
-Ce projet vous permet de déployer une page d'erreur personnalisée à l'aide d'un Cloudflare Worker.
-Avec :
+Ce projet vous permet de déployer des pages d'erreur personnalisée à l'aide d'un Cloudflare Worker
+
 - Un mode maintenance, 
 - Ajouter une bannière à un ou plusieurs domaines spécifiques
 - Afficher une bannière lorsque votre backup LTE est actif.
