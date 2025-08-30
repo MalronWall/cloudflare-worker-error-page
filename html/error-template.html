@@ -88,13 +88,13 @@
       title.style.margin = '0 0 12px 0'
       title.style.fontSize = '20px'
       const label = document.createElement('label')
-      label.textContent = 'REPORT_ERROR_LABEL_PLACEHOLDER'
+      label.textContent = "REPORT_ERROR_LABEL_PLACEHOLDER"
       label.style.display = 'block'
       label.style.fontSize = '14px'
       label.style.marginBottom = '6px'
       const input = document.createElement('input')
       input.type = 'text'
-      input.placeholder = 'REPORT_ERROR_MODAL_NAME_PLACEHOLDER'
+      input.placeholder = "REPORT_ERROR_MODAL_NAME_PLACEHOLDER"
       input.required = true
       input.style.width = '100%'
       input.style.boxSizing = 'border-box'
@@ -109,7 +109,7 @@
       actions.style.marginTop = '16px'
       const cancel = document.createElement('button')
       cancel.type = 'button'
-      cancel.textContent = 'REPORT_ERROR_CANCEL_BUTTON_TEXT'
+      cancel.textContent = "REPORT_ERROR_CANCEL_BUTTON_TEXT"
       cancel.style.flex = '1'
       cancel.style.padding = '10px 12px'
       cancel.style.border = '1px solid #d1d5db'
@@ -118,7 +118,7 @@
       cancel.onclick = () => hideModal()
       const submit = document.createElement('button')
       submit.type = 'button'
-      submit.textContent = 'REPORT_ERROR_SUBMIT_BUTTON_TEXT'
+      submit.textContent = "REPORT_ERROR_SUBMIT_BUTTON_TEXT"
       submit.style.flex = '1'
       submit.style.padding = '10px 12px'
       submit.style.border = '0'
@@ -147,10 +147,10 @@
           const data = await res.json().catch(() => ({}))
           if (!res.ok || !data.ok) throw new Error(data.error || 'send failed')
           hideModal()
-          showTopAlert('REPORT_ERROR_SUCCESS_MESSAGE')
+          showTopAlert("REPORT_ERROR_SUCCESS_MESSAGE")
         } catch (e) {
           hideModal()
-          showTopAlert('REPORT_ERROR_FAILURE_MESSAGE')
+          showTopAlert("REPORT_ERROR_FAILURE_MESSAGE")
           console.error('Discord webhook failed', e)
         }
       }
