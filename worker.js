@@ -81,8 +81,41 @@ async function injectBanner(response, bannerMessage) {
 
 export default {
   async fetch(request, env, ctx) {
-    const url = new URL(request.url);
     const host = request.headers.get('host');
+    const url = new URL(request.url);
+
+    // New: Handle /report-error POST for Discord webhook
+    if (url.pathname === '/report-error' && request.method === 'POST') {
+      try {
+        const { fullName, errorCode, siteName, redirectUrl } = await request.json();
+        if (!fullName || !errorCode || !siteName || !redirectUrl) {
+          return new Response(JSON.stringify({ ok: false, error: 'Missing required fields' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+        }
+        const embed = {
+          title: '🆘 Erreur Signalée',
+          color: 0xef4444, // Red color
+          fields: [
+            { name: 'Nom / Prénom', value: fullName, inline: true },
+            { name: 'Code d\'Erreur', value: errorCode, inline: true },
+            { name: 'Site', value: siteName, inline: true },
+            { name: 'URL', value: redirectUrl, inline: false }
+          ],
+          timestamp: new Date().toISOString()
+        };
+        const webhookResponse = await fetch(env.DISCORD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ embeds: [embed] })
+        });
+        if (!webhookResponse.ok) {
+          throw new Error(`Webhook failed: ${webhookResponse.status}`);
+        }
+        return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (error) {
+        console.error('Report error handling failed:', error);
+        return new Response(JSON.stringify({ ok: false, error: 'Internal error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
 
     // Read state (cache by default)
     let state = await getMaintenanceState(env, host);
@@ -131,40 +164,6 @@ export default {
     
     if (showBanner && response.headers.get('content-type')?.includes('text/html')) {
       return await injectBanner(response, bannerMessage);
-    }
-
-    // Report error endpoint
-    if (url.pathname === '/report-error' && request.method === 'POST') {
-      try {
-        const { fullName, errorCode, siteName, redirectUrl } = await request.json();
-        const webhookUrl = env.DISCORD_WEBHOOK_URL;
-
-        if (!webhookUrl) {
-          console.error('Webhook URL not configured');
-          return new Response(JSON.stringify({ ok: false, error: 'Webhook URL not configured' }), { status: 500 });
-        }
-
-        const payload = {
-          content: `🚨 **Erreur signalée**\n- **Nom**: ${fullName}\n- **Code d'erreur**: ${errorCode}\n- **Site**: ${siteName}\n- **URL**: ${redirectUrl}`
-        };
-
-        const res = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error('Discord webhook failed:', res.status, errorText);
-          return new Response(JSON.stringify({ ok: false, error: 'Failed to send webhook', details: errorText }), { status: 502 });
-        }
-
-        return new Response(JSON.stringify({ ok: true }), { status: 200 });
-      } catch (err) {
-        console.error('Error handling /report-error:', err);
-        return new Response(JSON.stringify({ ok: false, error: 'Internal Server Error' }), { status: 500 });
-      }
     }
 
     return response;
