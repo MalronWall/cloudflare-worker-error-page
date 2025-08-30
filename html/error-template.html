@@ -19,6 +19,156 @@
     <div class="error-type">ERROR_TYPE</div>
     <div id="error-message" class="error-message">ERROR_MESSAGE</div>
     <img class="gif" src="ERROR_GIF" alt="Error illustration">
+    <button id="open-report-modal" data-site="MySite" data-link="https://example.com">Signaler une erreur</button>
   </div>
+  <script>
+    // Front script - creates modal, grabs data, calls the worker, shows banner
+    // ====== helpers ======
+    const getErrorCodeFromPage = () => {
+      const idEl = document.querySelector('#error-code');
+      if (idEl && idEl.textContent.trim()) return idEl.textContent.trim();
+      const bodyAttr = document.body?.getAttribute('data-error-code');
+      if (bodyAttr) return bodyAttr.trim();
+      const meta = document.querySelector('meta[name="error-code"]');
+      if (meta && meta.getAttribute('content')) return meta.getAttribute('content').trim();
+      const p = new URLSearchParams(location.search).get('errorCode');
+      if (p) return p.trim();
+      return 'N/A';
+    };
+    const showTopAlert = msg => {
+      const bar = document.createElement('div');
+      bar.textContent = msg;
+      bar.setAttribute('role', 'status');
+      bar.style.position = 'fixed';
+      bar.style.top = '0';
+      bar.style.left = '0';
+      bar.style.right = '0';
+      bar.style.padding = '12px 16px';
+      bar.style.textAlign = 'center';
+      bar.style.fontWeight = '600';
+      bar.style.background = '#16a34a';
+      bar.style.color = 'white';
+      bar.style.zIndex = '2147483647';
+      document.body.appendChild(bar);
+      setTimeout(() => bar.remove(), 4000);
+    };
+    const ensureModal = () => {
+      if (document.getElementById('report-error-modal')) return;
+      const overlay = document.createElement('div');
+      overlay.id = 'report-error-modal';
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.background = 'rgba(0,0,0,0.4)';
+      overlay.style.display = 'none';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = '2147483646';
+      const box = document.createElement('div');
+      box.style.background = 'white';
+      box.style.borderRadius = '12px';
+      box.style.padding = '20px';
+      box.style.width = 'min(92vw, 420px)';
+      box.style.boxShadow = '0 10px 30px rgba(0,0,0,0.25)';
+      box.style.fontFamily = 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+      const title = document.createElement('h2');
+      title.textContent = '🆘 Erreur signalée';
+      title.style.margin = '0 0 12px 0';
+      title.style.fontSize = '20px';
+      const label = document.createElement('label');
+      label.textContent = 'Nom / Prénom';
+      label.style.display = 'block';
+      label.style.fontSize = '14px';
+      label.style.marginBottom = '6px';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Ex: Jane Doe';
+      input.required = true;
+      input.style.width = '100%';
+      input.style.boxSizing = 'border-box';
+      input.style.padding = '10px 12px';
+      input.style.fontSize = '16px';
+      input.style.border = '1px solid #d1d5db';
+      input.style.borderRadius = '8px';
+      input.id = 'reporter-fullname';
+      const actions = document.createElement('div');
+      actions.style.display = 'flex';
+      actions.style.gap = '8px';
+      actions.style.marginTop = '16px';
+      const cancel = document.createElement('button');
+      cancel.type = 'button';
+      cancel.textContent = 'Annuler';
+      cancel.style.flex = '1';
+      cancel.style.padding = '10px 12px';
+      cancel.style.border = '1px solid #d1d5db';
+      cancel.style.borderRadius = '8px';
+      cancel.style.background = 'white';
+      cancel.onclick = () => hideModal();
+      const submit = document.createElement('button');
+      submit.type = 'button';
+      submit.textContent = 'Signaler';
+      submit.style.flex = '1';
+      submit.style.padding = '10px 12px';
+      submit.style.border = '0';
+      submit.style.borderRadius = '8px';
+      submit.style.background = '#ef4444';
+      submit.style.color = 'white';
+      submit.style.fontWeight = '600';
+      submit.onclick = async () => {
+        const fullName = input.value.trim();
+        if (!fullName) {
+          input.focus();
+          return;
+        }
+        const trigger = document.getElementById('open-report-modal');
+        const redirectUrl = trigger?.getAttribute('data-link') || location.href;
+        const siteName = trigger?.getAttribute('data-site') || location.hostname;
+        const errorCode = getErrorCodeFromPage();
+        try {
+          const res = await fetch('/report-error', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ fullName, errorCode, siteName, redirectUrl })
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) throw new Error(data.error || 'send failed');
+          hideModal();
+          showTopAlert('Erreur signalée !');
+        } catch (e) {
+          hideModal();
+          showTopAlert('Envoi impossible');
+          console.error('Discord webhook failed', e);
+        }
+      };
+      actions.appendChild(cancel);
+      actions.appendChild(submit);
+      box.appendChild(title);
+      box.appendChild(label);
+      box.appendChild(input);
+      box.appendChild(actions);
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+    };
+    const showModal = () => {
+      ensureModal();
+      const overlay = document.getElementById('report-error-modal');
+      const input = document.getElementById('reporter-fullname');
+      overlay.style.display = 'flex';
+      setTimeout(() => input?.focus(), 0);
+    };
+    const hideModal = () => {
+      const overlay = document.getElementById('report-error-modal');
+      if (overlay) overlay.style.display = 'none';
+    };
+    const wireButton = () => {
+      ensureModal();
+      const btn = document.getElementById('open-report-modal');
+      if (!btn) return;
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        showModal();
+      });
+    };
+    document.addEventListener('DOMContentLoaded', wireButton);
+  </script>
 </body>
 </html>

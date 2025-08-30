@@ -81,8 +81,8 @@ async function injectBanner(response, bannerMessage) {
 
 export default {
   async fetch(request, env, ctx) {
-    const host = request.headers.get('host');
     const url = new URL(request.url);
+    const host = request.headers.get('host');
 
     // Read state (cache by default)
     let state = await getMaintenanceState(env, host);
@@ -131,6 +131,27 @@ export default {
     
     if (showBanner && response.headers.get('content-type')?.includes('text/html')) {
       return await injectBanner(response, bannerMessage);
+    }
+
+    // Report error endpoint
+    if (url.pathname === '/report-error' && request.method === 'POST') {
+      const { fullName, errorCode, siteName, redirectUrl } = await request.json();
+      const webhookUrl = env.DISCORD_WEBHOOK_URL;
+      if (!webhookUrl) {
+        return new Response(JSON.stringify({ ok: false, error: 'Webhook URL not configured' }), { status: 500 });
+      }
+      const payload = {
+        content: `🚨 **Erreur signalée**\n- **Nom**: ${fullName}\n- **Code d'erreur**: ${errorCode}\n- **Site**: ${siteName}\n- **URL**: ${redirectUrl}`
+      };
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        return new Response(JSON.stringify({ ok: false, error: 'Failed to send webhook' }), { status: 500 });
+      }
+      return new Response(JSON.stringify({ ok: true }), { status: 200 });
     }
 
     return response;
