@@ -25,11 +25,16 @@ CACHE_TTL_MS = 60000
 
 # Enable or disable the error reporting functionality
 ENABLE_REPORT_ERROR = true
-
-# New: Discord webhook URL for error reports
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1411329377538674870/Y4ikyN_RCGFCu5DfRbGuxhIdA8mqLFckpu_zmHY5t6ewEehd9VRHxuz-VeGTE6t6bssC"
-
-
+# Discord webhook URL for error reports
+REPORT_ERROR_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1411329377538674870/Y4ikyN_RCGFCu5DfRbGuxhIdA8mqLFckpu_zmHY5t6ewEehd9VRHxuz-VeGTE6t6bssC"
+REPORT_ERROR_BUTTON_TEXT = "Signaler cette erreur"
+REPORT_ERROR_MODAL_HEADER_TEXT = "🆘 Signalez-moi l'erreur"
+REPORT_ERROR_LABEL_PLACEHOLDER = "Nom / Pseudo"
+REPORT_ERROR_MODAL_NAME_PLACEHOLDER = "Ex : Jane Doe"
+REPORT_ERROR_CANCEL_BUTTON_TEXT = "Annuler"
+REPORT_ERROR_SUBMIT_BUTTON_TEXT = "Signaler"
+REPORT_ERROR_SUCCESS_MESSAGE = "Merci pour votre signalement ! 🙏"
+REPORT_ERROR_FAILURE_MESSAGE = "Une erreur est survenue lors de l'envoi du signalement. 😞"
 
 # FOR HAVE A RETURN TO THE LINE USE <br> IN MESSAGE
 

@@ -102,7 +102,7 @@ async function handleReportError(request, env) {
       ],
       timestamp: new Date().toISOString()
     };
-    const webhookResponse = await fetch(env.DISCORD_WEBHOOK_URL, {
+    const webhookResponse = await fetch(env.REPORT_ERROR_DISCORD_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ embeds: [embed] })

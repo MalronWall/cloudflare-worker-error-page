@@ -7,6 +7,14 @@ let errorType = "";
 let errorMessage = "";
 let errorGif = "";
 let enableReportError = false;
+let reportErrorButtonText = 'Signaler cette erreur';
+let reportErrorModalHeaderText  = "🆘 Signalez-moi l'erreur"
+let reportErrorLabelPlaceholder  = "Nom / Pseudo"
+let reportErrorModalNamePlaceholder  = "Ex : Jane Doe"
+let reportErrorCancelButtonText  = "Annuler"
+let reportErrorSubmitButtonText  = "Signaler"
+let reportErrorSuccessMessage  = "Merci pour votre signalement ! 🙏"
+let reportErrorFailureMessage  = "Une erreur est survenue lors de l'envoi du signalement. 😞"
 
 const REDIRECT = {
   /**
@@ -19,7 +27,15 @@ const REDIRECT = {
     .replace('ERROR_TYPE', errorType)
     .replace('ERROR_MESSAGE', errorMessage)
     .replace('ERROR_GIF', errorGif)
-    .replace('ENABLE_REPORT_ERROR', enableReportError);
+    .replace('ENABLE_REPORT_ERROR', enableReportError)
+    .replace('REPORT_ERROR_BUTTON_TEXT', reportErrorButtonText)
+    .replace('REPORT_ERROR_MODAL_HEADER_TEXT', reportErrorModalHeaderText)
+    .replace('REPORT_ERROR_LABEL_PLACEHOLDER', reportErrorLabelPlaceholder)
+    .replace('REPORT_ERROR_MODAL_NAME_PLACEHOLDER', reportErrorModalNamePlaceholder)
+    .replace('REPORT_ERROR_CANCEL_BUTTON_TEXT', reportErrorCancelButtonText)
+    .replace('REPORT_ERROR_SUBMIT_BUTTON_TEXT', reportErrorSubmitButtonText)
+    .replace('REPORT_ERROR_SUCCESS_MESSAGE', reportErrorSuccessMessage)
+    .replace('REPORT_ERROR_FAILURE_MESSAGE', reportErrorFailureMessage);
   }
 };
 
@@ -49,6 +65,17 @@ function getErrorDetailsFromCfCode(cfCode, env) {
   }
   errorCode = cfCode ? cfCode.toString() : "500";
   enableReportError = env.ENABLE_REPORT_ERROR;
+  if(enableReportError) {
+    reportErrorButtonText = env.REPORT_ERROR_BUTTON_TEXT
+    reportErrorModalHeaderText  = env.REPORT_ERROR_MODAL_HEADER_TEXT
+    reportErrorLabelPlaceholder  = env.REPORT_ERROR_LABEL_PLACEHOLDER
+    reportErrorModalNamePlaceholder  = env.REPORT_ERROR_MODAL_NAME_PLACEHOLDER
+    reportErrorCancelButtonText  = env.REPORT_ERROR_CANCEL_BUTTON_TEXT
+    reportErrorSubmitButtonText  = env.REPORT_ERROR_SUBMIT_BUTTON_TEXT
+    reportErrorSuccessMessage  = env.REPORT_ERROR_SUCCESS_MESSAGE
+    reportErrorFailureMessage  = env.REPORT_ERROR_FAILURE_MESSAGE
+  }
+
   if (env.TEXT_CONTAINER_ERROR_CODE.includes(cfCode)) {
     errorType = env.TEXT_CONTAINER_ERROR_TYPE;
     errorMessage = env.TEXT_CONTAINER_ERROR_MESSAGE;
