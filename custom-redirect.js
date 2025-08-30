@@ -6,6 +6,7 @@ let errorCode = "500";
 let errorType = "";
 let errorMessage = "";
 let errorGif = "";
+let enableReportError = false;
 
 const REDIRECT = {
   /**
@@ -17,7 +18,8 @@ const REDIRECT = {
     .replace('ERROR_CODE', errorCode)
     .replace('ERROR_TYPE', errorType)
     .replace('ERROR_MESSAGE', errorMessage)
-    .replace('ERROR_GIF', errorGif);
+    .replace('ERROR_GIF', errorGif)
+    .replace('ENABLE_REPORT_ERROR', enableReportError);
   }
 };
 
@@ -46,6 +48,7 @@ function getErrorDetailsFromCfCode(cfCode, env) {
     return;
   }
   errorCode = cfCode ? cfCode.toString() : "500";
+  enableReportError = env.ENABLE_REPORT_ERROR;
   if (env.TEXT_CONTAINER_ERROR_CODE.includes(cfCode)) {
     errorType = env.TEXT_CONTAINER_ERROR_TYPE;
     errorMessage = env.TEXT_CONTAINER_ERROR_MESSAGE;

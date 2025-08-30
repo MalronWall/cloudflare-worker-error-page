@@ -21,15 +21,12 @@
     <div class="error-type">ERROR_TYPE</div>
     <div id="error-message" class="error-message">ERROR_MESSAGE</div>
     <img class="gif" src="ERROR_GIF" alt="Error illustration">
-    <!-- Conditionally render the report button -->
-    <!-- If ENABLE_REPORT_ERROR is true, render the button -->
-    <!-- Placeholder for server-side rendering -->
-    <!-- BEGIN_REPORT_BUTTON -->
     <button id="open-report-modal" class="report-btn" data-link="" data-site="">Signaler cette erreur</button>
-    <!-- END_REPORT_BUTTON -->
   </div>
   <!-- Embedded front-end script for modal and reporting -->
   <script>
+    const enableReportError = ENABLE_REPORT_ERROR; // Set this variable to control the button visibility
+
     // Front script - creates modal, grabs data, calls the worker, shows banner
     // ====== helpers ======
     // Try to extract an error code from the page
@@ -190,7 +187,15 @@
       btn.setAttribute('data-link', location.href)
       btn.setAttribute('data-site', location.hostname)
     }
-    document.addEventListener('DOMContentLoaded', wireButton)
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!enableReportError) {
+        const reportButton = document.getElementById('open-report-modal');
+        if (reportButton) {
+          reportButton.style.display = 'none';
+        }
+      }
+      wireButton();
+    });
   </script>
 </body>
 </html>
