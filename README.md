@@ -244,6 +244,7 @@ Ce projet vous permet de déployer des pages d'erreur personnalisée à l'aide d
 ![Créer worker](images/create_worker/create_worker_9.png)
 - Dans Variables and Secrets ajoutez MAINTENANCE_DOMAIN avec le domaine créé précédemment (Ex: maintenance.domain.fr)
 - Dans Variables and Secrets ajoutez ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment (Ex: 172.18.95.145:5055)
+- Dans Variables and Secrets si vous avez activez l'envoie de notif discord ajouter votre webhook discord `REPORT_ERROR_DISCORD_WEBHOOK_URL`
 - Cliquer sur Deploy
 - ![Créer worker](images/create_worker/create_worker_10.png)
 
