@@ -194,9 +194,10 @@ Avec :
 ### 2. Modifiez les variables dans wrangler.toml
 
 - Définissez votre langue (FR ou EN)
-- Modifiez le texte des différents messages d'erreur si vous voulez
+- Si vous ne voulez pas avoir le fonctionaliter pour signaler une erreur qui permet d'envoyer un message discord faite ceci : ```ENABLE_REPORT_ERROR = false```
 - Si vous n'avez pas de backup 4g sur votre serveur il faut mettre `ENABLE_4G_BANNER` a `false` ```ENABLE_4G_BANNER = false ``` dans `wrangler.toml`.
-
+- Normalement ce n'est pas necessaire de modifier mais vous pouvez pour chaque message d'erreur ajouter son code d'erreur pour `TEXT_BOX_ERROR_CODE`, `TEXT_TUNNEL_ERROR_CODE` et `TEXT_CONTAINER_ERROR_CODE`
+- Modifiez le texte des différents messages d'erreur si vous voulez
 ### 3. Créez un espace de noms KV
 
 - Sur Cloudflare, allez dans **Storage & Databases > KV**.

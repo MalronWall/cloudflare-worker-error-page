@@ -11,7 +11,7 @@ kv_namespaces = [
 
 # Enable logs in cloudflare for debug
 [observability]
-enabled = true
+enabled = false
 
 [vars]
 
