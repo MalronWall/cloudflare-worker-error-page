@@ -27,25 +27,7 @@
   <script>
     const enableReportError = ENABLE_REPORT_ERROR; // Set this variable to control the button visibility
 
-    // Front script - creates modal, grabs data, calls the worker, shows banner
-    // ====== helpers ======
-    // Try to extract an error code from the page
-    const getErrorCodeFromPage = () => {
-      // #error-code element text
-      const idEl = document.querySelector('#error-code')
-      if (idEl && idEl.textContent.trim()) return idEl.textContent.trim()
-      // body[data-error-code]
-      const bodyAttr = document.body?.getAttribute('data-error-code')
-      if (bodyAttr) return bodyAttr.trim()
-      // <meta name="error-code" content="...">
-      const meta = document.querySelector('meta[name="error-code"]')
-      if (meta && meta.getAttribute('content')) return meta.getAttribute('content').trim()
-      // ?errorCode=XYZ
-      const p = new URLSearchParams(location.search).get('errorCode')
-      if (p) return p.trim()
-      // fallback
-      return 'N/A'
-    }
+
     // Create a top-of-page success alert
     const showTopAlert = msg => {
       const bar = document.createElement('div')
@@ -136,7 +118,7 @@
         const trigger = document.getElementById('open-report-modal')
         const redirectUrl = trigger?.getAttribute('data-link') || location.href
         const siteName = trigger?.getAttribute('data-site') || location.hostname
-        const errorCode = getErrorCodeFromPage()
+        const errorCode = "ERROR_CODE"
         // Call the worker endpoint
         try {
           const res = await fetch('/report-error', {
