@@ -92,13 +92,13 @@ async function handleReportError(request, env) {
       return new Response(JSON.stringify({ ok: false, error: 'Missing required fields' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
     const embed = {
-      title: env.REPORT_ERROR_DISWCORD_CARD_TITLE, // Ensure proper Markdown link formatting
+      title: env.REPORT_ERROR_DISCORD_CARD_TITLE, // Ensure proper Markdown link formatting
       url: redirectUrl,
       color: 0xef4444, // Red color
       fields: [
         { name: env.REPORT_ERROR_LABEL_PLACEHOLDER, value: fullName, inline: true },
-        { name: env.REPORT_ERROR_DISWCORD_CARD_CODE_FIELD_NAME, value: errorCode, inline: true },
-        { name: env.REPORT_ERROR_DISWCORD_CARD_SITE_FIELD_NAME, value: siteName, inline: true },
+        { name: env.REPORT_ERROR_DISCORD_CARD_CODE_FIELD_NAME, value: errorCode, inline: true },
+        { name: env.REPORT_ERROR_DISCORD_CARD_SITE_FIELD_NAME, value: siteName, inline: true },
       ],
       timestamp: new Date().toISOString()
     };
