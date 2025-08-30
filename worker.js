@@ -96,12 +96,12 @@ async function handleReportError(request, env) {
       url: redirectUrl,
       color: 14557473,
       fields: [
-        { "name": "🔎 Service", "value": "Plex", "inline": true },
+        { "name": env.REPORT_ERROR_DISCORD_CARD_SERVICE_FIELD_NAME, "value": "Plex", "inline": true },
         { "name": "​", "value": "​", "inline": true },
-        { "name": "⚠️ Code d'erreur​", "value": "502", "inline": true },
-        { "name": "🤓 Signalée par", "value": "Tomate-Onion", "inline": true },
+        { "name": env.REPORT_ERROR_DISCORD_CARD_CODE_FIELD_NAME, "value": "502", "inline": true },
+        { "name": env.REPORT_ERROR_DISCORD_CARD_REPORT_BY_FIELD_NAME, "value": "Tomate-Onion", "inline": true },
         { "name": "​", "value": "​", "inline": true },
-        { "name": "🕓 Signalée le", "value": "30/08/2025 16:36", "inline": true }
+        { "name": env.REPORT_ERROR_DISCORD_CARD_REPORT_DATE_FIELD_NAME, "value": "30/08/2025 16:36", "inline": true }
       ],
       timestamp: new Date().toISOString()
     };
