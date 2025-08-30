@@ -23,6 +23,9 @@ ENABLE_CACHE = true
 # Cache duration in ms (default: 60000 = 1 minute)
 CACHE_TTL_MS = 60000
 
+# Enable or disable the error reporting functionality
+ENABLE_REPORT_ERROR = true
+
 # New: Discord webhook URL for error reports
 DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1411329377538674870/Y4ikyN_RCGFCu5DfRbGuxhIdA8mqLFckpu_zmHY5t6ewEehd9VRHxuz-VeGTE6t6bssC"
 
