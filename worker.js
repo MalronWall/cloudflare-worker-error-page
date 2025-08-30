@@ -92,7 +92,7 @@ async function handleReportError(request, env) {
       return new Response(JSON.stringify({ ok: false, error: 'Missing required fields' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
     const embed = {
-      title: env.REPORT_ERROR_DISWCORD_CARD_TITLE,
+      title: '[' + env.REPORT_ERROR_DISWCORD_CARD_TITLE + '](' + redirectUrl + ')',
       color: 0xef4444, // Red color
       fields: [
         { name: env.REPORT_ERROR_LABEL_PLACEHOLDER, value: fullName, inline: true },

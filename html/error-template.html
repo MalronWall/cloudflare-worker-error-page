@@ -118,7 +118,7 @@
         const trigger = document.getElementById('open-report-modal')
         const redirectUrl = trigger?.getAttribute('data-link') || location.href
         const siteName = trigger?.getAttribute('data-site') || location.hostname
-        const errorCode = "ERROR_CODE"
+        const errorCode = "REPORT_ERROR_CODE"
         // Call the worker endpoint
         try {
           const res = await fetch('/report-error', {
