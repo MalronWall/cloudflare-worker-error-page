@@ -36,6 +36,11 @@ REPORT_ERROR_SUBMIT_BUTTON_TEXT = "Signaler"
 REPORT_ERROR_SUCCESS_MESSAGE = "Merci pour votre signalement ! 🙏"
 REPORT_ERROR_FAILURE_MESSAGE = "Une erreur est survenue lors de l'envoi du signalement. 😞"
 
+
+
+
+
+
 # FOR HAVE A RETURN TO THE LINE USE <br> IN MESSAGE
 
 # For 503 errors when maintenance is activated
