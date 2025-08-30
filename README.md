@@ -198,11 +198,11 @@ Ce projet vous permet de déployer des pages d'erreur personnalisée à l'aide d
 - Si vous n'avez pas de backup 4g sur votre serveur, faite ceci : ```ENABLE_4G_BANNER = false ```
 - Normalement, ce n'est pas nécessaire de modifier, mais vous pouvez pour chaque message d'erreur ajouter son code d'erreur pour `TEXT_BOX_ERROR_CODE`, `TEXT_TUNNEL_ERROR_CODE` et `TEXT_CONTAINER_ERROR_CODE`
 - Modifiez le texte des différents messages d'erreur si vous le voulez
-### 3. Créez un espace de noms KV
+### 3. Créez un namespace KV
 
 - Sur Cloudflare, allez dans **Storage & Databases > KV**.
 ![Créer KV](images/create_kv/create_kv.png)
-- Créez un espace de noms nommé : ``` cloudflare-worker-error-page ```
+- Créez un namespace nommé : ``` cloudflare-worker-error-page ```
 ![Ajouter nom](images/create_kv/create_kv_add_name.png)
 - Copiez l'ID du KV et ajoutez-le au champ `id` dans la section `kv_namespaces` du fichier `wrangler.toml`.
 ![Copier id](images/create_kv/create_kv_copy_id.png)
@@ -243,9 +243,8 @@ Ce projet vous permet de déployer des pages d'erreur personnalisée à l'aide d
 - Selectionner Fail open (Cela permet de quand même accéder au site si le Worker ne fonctionne plus à cause d'un bug ou du quota qui est atteint)
 ![Créer worker](images/create_worker/create_worker_9.png)
 - Dans Variables and Secrets ajoutez MAINTENANCE_DOMAIN avec le domaine créé précédemment (Ex: maintenance.domain.fr)
-- Dans Variables and Secrets NPM_HEALTH_URL avec le domaine de test créé précédemment (Ex: test.domain.fr)
-- ⚠️ Pour ceux qui utilisent un tunnel Cloudflare (Zero trust) vous devez faire l'étape ci-dessous  en plus.
-- Dans Variables and Secrets ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment (Ex: 172.18.95.145:5055)
+- Dans Variables and Secrets ajoutez ORIGIN_PING_URL avec l'IP de votre serveur et le port ouvert précédemment (Ex: 172.18.95.145:5055)
+- Cliquer sur Deploy
 - ![Créer worker](images/create_worker/create_worker_10.png)
 
 
