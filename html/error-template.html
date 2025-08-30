@@ -13,7 +13,6 @@
     .footer { color: #aaa; font-size: 14px; margin-top: 40px; }
     .report-btn { background: #ef4444; color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 16px; cursor: pointer; margin-top: 20px; }
     .report-btn:hover { background: #dc2626; }
-    .report-btn[data-enabled="false"] { display: none; } /* Hide button if reporting is disabled */
   </style>
 </head>
 <body>
@@ -23,7 +22,7 @@
     <div id="error-message" class="error-message">ERROR_MESSAGE</div>
     <img class="gif" src="ERROR_GIF" alt="Error illustration">
     <!-- New report button -->
-    <button id="open-report-modal" class="report-btn" data-link="" data-site="" data-enabled="false">Signaler cette erreur</button>
+    <button id="open-report-modal" class="report-btn" data-link="" data-site="">Signaler cette erreur</button>
   </div>
   <!-- Embedded front-end script for modal and reporting -->
   <script>
@@ -176,32 +175,18 @@
     }
     // ====== wire the button ======
     const wireButton = () => {
-      ensureModal();
-      const btn = document.getElementById('open-report-modal');
-      if (!btn) return;
-
-      // Dynamically set the button's visibility based on ENABLE_REPORTING_ERRORS
-      fetch('/worker/api/env')
-        .then(res => res.json())
-        .then(env => {
-          const isEnabled = env.ENABLE_REPORTING_ERRORS === true || env.ENABLE_REPORTING_ERRORS === 'true';
-          btn.setAttribute('data-enabled', isEnabled ? 'true' : 'false'); // Explicitly set "true" or "false"
-          if (isEnabled) {
-            btn.addEventListener('click', e => {
-              e.preventDefault();
-              showModal();
-            });
-            // Set dynamic attributes
-            btn.setAttribute('data-link', location.href);
-            btn.setAttribute('data-site', location.hostname);
-          }
-        })
-        .catch(() => {
-          btn.setAttribute('data-enabled', 'false'); // Fallback to "false" on error
-        });
-    };
-
-    document.addEventListener('DOMContentLoaded', wireButton);
+      ensureModal()
+      const btn = document.getElementById('open-report-modal')
+      if (!btn) return
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        showModal()
+      })
+      // Set dynamic attributes
+      btn.setAttribute('data-link', location.href)
+      btn.setAttribute('data-site', location.hostname)
+    }
+    document.addEventListener('DOMContentLoaded', wireButton)
   </script>
 </body>
 </html>
