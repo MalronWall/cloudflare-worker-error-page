@@ -135,14 +135,51 @@ TO DO
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## <a name="français"></a>🇫🇷 Français
 
 # Page d'erreur Cloudflare Worker
 
 Ce projet vous permet de déployer une page d'erreur personnalisée à l'aide d'un Cloudflare Worker.
-Avec une option pour activer le mode maintenance, ajouter une bannière à un ou plusieurs domaines spécifiques et afficher une bannière lorsque votre backup LTE est actif.
-
-⚠️ Pour l'instant, fonctionne uniquement avec le tunnel Cloudflare (Zero trust)
+Avec :
+- Un mode maintenance, 
+- Ajouter une bannière à un ou plusieurs domaines spécifiques
+- Afficher une bannière lorsque votre backup LTE est actif.
+- Un bouton pour vous signaler une erreur qui envoie une notification sur Discord
 
 ![Créer worker](images/other/presentation.png)
 ![Créer worker](images/other/connection_error.png)
@@ -157,8 +194,8 @@ Avec une option pour activer le mode maintenance, ajouter une bannière à un ou
 ### 2. Modifiez les variables dans wrangler.toml
 
 - Définissez votre langue (FR ou EN)
-- Modifiez le texte des différents messages d'erreur
-- Si vous n'avez pas de backup 4g sur votre serveur il faut mettre ```ENABLE_4G_BANNER = false ``` dans `wrangler.toml`.
+- Modifiez le texte des différents messages d'erreur si vous voulez
+- Si vous n'avez pas de backup 4g sur votre serveur il faut mettre `ENABLE_4G_BANNER` a `false` ```ENABLE_4G_BANNER = false ``` dans `wrangler.toml`.
 
 ### 3. Créez un espace de noms KV
 
