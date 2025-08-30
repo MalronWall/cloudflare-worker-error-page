@@ -24,8 +24,7 @@ ENABLE_CACHE = true
 CACHE_TTL_MS = 60000
 
 # New: Discord webhook URL for error reports
-ENABLE_REPORTING_ERRORS = true
-REPORTING_ERRORS_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1411329377538674870/Y4ikyN_RCGFCu5DfRbGuxhIdA8mqLFckpu_zmHY5t6ewEehd9VRHxuz-VeGTE6t6bssC"
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1411329377538674870/Y4ikyN_RCGFCu5DfRbGuxhIdA8mqLFckpu_zmHY5t6ewEehd9VRHxuz-VeGTE6t6bssC"
 
 
 
