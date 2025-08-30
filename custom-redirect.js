@@ -35,7 +35,8 @@ const REDIRECT = {
     .replace('REPORT_ERROR_CANCEL_BUTTON_TEXT', reportErrorCancelButtonText)
     .replace('REPORT_ERROR_SUBMIT_BUTTON_TEXT', reportErrorSubmitButtonText)
     .replace('REPORT_ERROR_SUCCESS_MESSAGE', reportErrorSuccessMessage)
-    .replace('REPORT_ERROR_FAILURE_MESSAGE', reportErrorFailureMessage);
+    .replace('REPORT_ERROR_FAILURE_MESSAGE', reportErrorFailureMessage)
+    .replace('REPORT_ERROR_CODE', errorCode);
   }
 };
 
