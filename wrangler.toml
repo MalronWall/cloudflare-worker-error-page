@@ -32,7 +32,6 @@ TEXT_4G_BANNER_MESSAGE = "Attention des lenteurs peuvent survenir, ma fibre est 
 # Enable or disable the error reporting functionality
 ENABLE_REPORT_ERROR = true
 # Discord webhook URL for error reports
-REPORT_ERROR_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1411329377538674870/Y4ikyN_RCGFCu5DfRbGuxhIdA8mqLFckpu_zmHY5t6ewEehd9VRHxuz-VeGTE6t6bssC"
 REPORT_ERROR_DISCORD_CARD_TITLE = "🆘 Nouvelle erreur signalée"
 REPORT_ERROR_DISCORD_CARD_CODE_FIELD_NAME = "⚠️ Code d'Erreur"
 REPORT_ERROR_DISCORD_CARD_REPORT_BY_FIELD_NAME = "🤓 Signalée par"
