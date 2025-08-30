@@ -22,10 +22,9 @@
     <div id="error-message" class="error-message">ERROR_MESSAGE</div>
     <img class="gif" src="ERROR_GIF" alt="Error illustration">
     <!-- Conditionally render the report button -->
-    <!-- If ENABLE_REPORT_ERROR is true, render the button -->
-    <!-- Placeholder for server-side rendering -->
     <!-- BEGIN_REPORT_BUTTON -->
-    <button id="open-report-modal" class="report-btn" data-link="" data-site="">Signaler cette erreur</button>
+    <!-- The button will only be rendered if ENABLE_REPORT_ERROR is true -->
+    <!-- This placeholder will be dynamically replaced server-side -->
     <!-- END_REPORT_BUTTON -->
   </div>
   <!-- Embedded front-end script for modal and reporting -->
@@ -193,4 +192,5 @@
     document.addEventListener('DOMContentLoaded', wireButton)
   </script>
 </body>
+</html>
 </html>
