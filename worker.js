@@ -94,7 +94,7 @@ async function handleReportError(request, env) {
     const embed = {
       title: env.REPORT_ERROR_DISCORD_CARD_TITLE, // Ensure proper Markdown link formatting
       url: redirectUrl,
-      color: 0xef4444, // Red color
+      color: 5814783,
       fields: [
         { name: env.REPORT_ERROR_LABEL_PLACEHOLDER, value: fullName, inline: true },
         { name: env.REPORT_ERROR_DISCORD_CARD_CODE_FIELD_NAME, value: errorCode, inline: true },
