@@ -94,11 +94,14 @@ async function handleReportError(request, env) {
     const embed = {
       title: env.REPORT_ERROR_DISCORD_CARD_TITLE, // Ensure proper Markdown link formatting
       url: redirectUrl,
-      color: 5814783,
+      color: 14557473,
       fields: [
-        { name: env.REPORT_ERROR_LABEL_PLACEHOLDER, value: fullName, inline: true },
-        { name: env.REPORT_ERROR_DISCORD_CARD_CODE_FIELD_NAME, value: errorCode, inline: true },
-        { name: env.REPORT_ERROR_DISCORD_CARD_SITE_FIELD_NAME, value: siteName, inline: true },
+        { "name": "🔎 Service", "value": "Plex", "inline": true },
+        { "name": "​", "value": "​", "inline": true },
+        { "name": "⚠️ Code d'erreur​", "value": "502", "inline": true },
+        { "name": "🤓 Signalée par", "value": "Tomate-Onion", "inline": true },
+        { "name": "​", "value": "​", "inline": true },
+        { "name": "🕓 Signalée le", "value": "30/08/2025 16:36", "inline": true }
       ],
       timestamp: new Date().toISOString()
     };
