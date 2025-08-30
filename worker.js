@@ -135,23 +135,36 @@ export default {
 
     // Report error endpoint
     if (url.pathname === '/report-error' && request.method === 'POST') {
-      const { fullName, errorCode, siteName, redirectUrl } = await request.json();
-      const webhookUrl = env.DISCORD_WEBHOOK_URL;
-      if (!webhookUrl) {
-        return new Response(JSON.stringify({ ok: false, error: 'Webhook URL not configured' }), { status: 500 });
+      try {
+        const { fullName, errorCode, siteName, redirectUrl } = await request.json();
+        const webhookUrl = env.DISCORD_WEBHOOK_URL;
+
+        if (!webhookUrl) {
+          console.error('Webhook URL not configured');
+          return new Response(JSON.stringify({ ok: false, error: 'Webhook URL not configured' }), { status: 500 });
+        }
+
+        const payload = {
+          content: `🚨 **Erreur signalée**\n- **Nom**: ${fullName}\n- **Code d'erreur**: ${errorCode}\n- **Site**: ${siteName}\n- **URL**: ${redirectUrl}`
+        };
+
+        const res = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('Discord webhook failed:', res.status, errorText);
+          return new Response(JSON.stringify({ ok: false, error: 'Failed to send webhook', details: errorText }), { status: 502 });
+        }
+
+        return new Response(JSON.stringify({ ok: true }), { status: 200 });
+      } catch (err) {
+        console.error('Error handling /report-error:', err);
+        return new Response(JSON.stringify({ ok: false, error: 'Internal Server Error' }), { status: 500 });
       }
-      const payload = {
-        content: `🚨 **Erreur signalée**\n- **Nom**: ${fullName}\n- **Code d'erreur**: ${errorCode}\n- **Site**: ${siteName}\n- **URL**: ${redirectUrl}`
-      };
-      const res = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) {
-        return new Response(JSON.stringify({ ok: false, error: 'Failed to send webhook' }), { status: 500 });
-      }
-      return new Response(JSON.stringify({ ok: true }), { status: 200 });
     }
 
     return response;
