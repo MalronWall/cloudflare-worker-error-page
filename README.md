@@ -266,12 +266,14 @@ docker run -e CF_ACCOUNT_ID=Votre_id_compte_cloudflare \
 ```
 
 - Vous pouvez obtenir votre id de compte sur le [dashboard](https://dash.cloudflare.com/login), cliquez sur les 3 points à droite de votre mail
+- ![Créer worker](images/backup4g/backup4g_1.png)
 - Vous pouvez obtenir votre id de namespace dans votre wrangler.toml `{ binding = "MAINTENANCE_KV", id = "VOTREID" }`
 - Pour générer un nouveau token API, allez dans votre profil -> API Tokens -> Créer un token -> cliquez sur Utiliser le template pour Edit Cloudflare Workers
+- ![Créer worker](images/backup4g/backup4g_2.png)
 - Retirez toutes les permissions sauf **Workers KV Storage** et mettez-la sur Edit
 - Dans Account Resources, sélectionnez votre compte Cloudflare
-- Dans Zone Resources, sélectionnez Inclure et Toutes les zones
 - Cliquez sur **Continuer vers le résumé** et **Créer le token**
+- ![Créer worker](images/backup4g/backup4g_3.png)
 - SLEEP_SECONDS définit la fréquence à laquelle le conteneur vérifiera l'adresse IP du serveur.
 
 ### 7. Ajoutez une authentification sur votre page de maintenance
