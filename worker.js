@@ -158,13 +158,7 @@ export default {
 
     // Custom error page
     const redirectResponse = await c_redirect(request, response, null, isMaintenance, env);
-    if (redirectResponse) {
-      const enableReportError = env.ENABLE_REPORT_ERROR === true;
-      return new Response(REDIRECT.generateErrorPage(enableReportError), {
-        status: response?.status || 500,
-        headers: { 'Content-Type': 'text/html' }
-      });
-    }
+    if (redirectResponse) return redirectResponse;
 
     // Banner injection - check for 4G mode or regular banner
     let showBanner = false;

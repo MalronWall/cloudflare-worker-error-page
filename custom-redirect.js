@@ -10,24 +10,14 @@ let errorGif = "";
 const REDIRECT = {
   /**
    * Generates HTML content with appropriate Canva URL
-   * @param {boolean} enableReportError - Whether to include the report button
    * @returns {string} The HTML with injected URL
    */
-  generateErrorPage: (enableReportError = false) => {
-    let page = errorTemplate
-      .replace('ERROR_CODE', errorCode)
-      .replace('ERROR_TYPE', errorType)
-      .replace('ERROR_MESSAGE', errorMessage)
-      .replace('ERROR_GIF', errorGif);
-
-    if (!enableReportError) {
-      page = page.replace(
-        /<!-- BEGIN_REPORT_BUTTON -->.*?<!-- END_REPORT_BUTTON -->/s,
-        ''
-      );
-    }
-
-    return page;
+  generateErrorPage: () => {
+    return errorTemplate
+    .replace('ERROR_CODE', errorCode)
+    .replace('ERROR_TYPE', errorType)
+    .replace('ERROR_MESSAGE', errorMessage)
+    .replace('ERROR_GIF', errorGif);
   }
 };
 
