@@ -210,9 +210,6 @@ Avec :
 ### 4. Configurez le sous-domaine
 
 - Créez un sous-domaine ``` maintenance.domain.fr ``` et redirigez-le vers votre reverse proxy
-- Créez un autre sous-domaine pour vérifier si le worker peut accéder à votre reverse proxy pour vérifier les erreurs ``` test.domain.fr ```
-
-⚠️ Pour ceux qui utilisent un tunnel Cloudflare (Zero trust) vous devez faire ces 2 étapes en plus.
 - Ouvrez un port sur votre serveur qui sera utilisé par le worker pour déterminer si votre serveur est hors ligne ou si votre connexion est coupée. Vous pouvez utiliser n'importe quel port.
 - Pour la sécurité, vous pouvez limiter les IP qui peuvent accéder aux IP Cloudflare accessibles [ici](https://www.cloudflare.com/fr-fr/ips/)
 
@@ -257,12 +254,8 @@ Avec :
 
 - Dans wrangler.toml, mettez ``` ENABLE_4G_BANNER = true ```
 
-#### Option 1 : Utiliser l'image Docker pré-construite (Recommandé)
-
-⚠️ Si vous avez forké mon dépôt, vous pouvez modifier le ``` ghcr.io/jamesdadams/cloudflare-worker-error-page:latest ```
-avec votre nom Github -> ``` ghcr.io/VotreNomGithub/cloudflare-worker-error-page:latest ```
-
 - Utilisez l'image pré-construite depuis GitHub Container Registry :
+
 ```bash
 docker run -e CF_ACCOUNT_ID=Votre_id_compte_cloudflare \
            -e CF_NAMESPACE_ID=Votre_id_namespace_cloudflare \
@@ -271,20 +264,6 @@ docker run -e CF_ACCOUNT_ID=Votre_id_compte_cloudflare \
            -e KV_4G_KEY=wan-is-4g \
            -e SLEEP_SECONDS=60 \
            ghcr.io/jamesdadams/cloudflare-worker-error-page:latest
-```
-
-#### Option 2 : Construisez l'image vous-même
-
-- Clonez ce dépôt sur votre serveur
-- Exécutez ``` docker build -t wan-ip-checker ./docker ``` pour construire l'image docker
-- Lancez le conteneur docker avec cette commande :
-```bash
-docker run -e CF_ACCOUNT_ID=Votre_id_compte_cloudflare \
-           -e CF_NAMESPACE_ID=Votre_id_namespace_cloudflare \
-           -e CF_API_TOKEN=Votre_token_api_cloudflare \
-           -e KV_IP_KEY=wan-ip \
-           -e KV_4G_KEY=wan-is-4g \
-           wan-ip-checker
 ```
 
 - Vous pouvez obtenir votre id de compte sur le [dashboard](https://dash.cloudflare.com/login), cliquez sur les 3 points à droite de votre mail
