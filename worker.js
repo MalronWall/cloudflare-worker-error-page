@@ -91,28 +91,38 @@ async function handleReportError(request, env) {
     if (!fullName || !errorCode || !siteName || !redirectUrl) {
       return new Response(JSON.stringify({ ok: false, error: 'Missing required fields' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
+
+    // Generate current date and time in DD/MM/YYYY HH:mm format
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('fr-FR'); // Format as DD/MM/YYYY
+    const formattedTime = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); // Format as HH:mm
+    const reportDate = `${formattedDate} ${formattedTime}`;
+
     const embed = {
-      title: env.REPORT_ERROR_DISCORD_CARD_TITLE, // Ensure proper Markdown link formatting
+      title: env.REPORT_ERROR_DISCORD_CARD_TITLE,
       url: redirectUrl,
       color: 14557473,
       fields: [
-        { "name": env.REPORT_ERROR_DISCORD_CARD_SERVICE_FIELD_NAME, "value": "Plex", "inline": true },
-        { "name": "​", "value": "​", "inline": true },
-        { "name": env.REPORT_ERROR_DISCORD_CARD_CODE_FIELD_NAME, "value": "502", "inline": true },
-        { "name": env.REPORT_ERROR_DISCORD_CARD_REPORT_BY_FIELD_NAME, "value": "Tomate-Onion", "inline": true },
-        { "name": "​", "value": "​", "inline": true },
-        { "name": env.REPORT_ERROR_DISCORD_CARD_REPORT_DATE_FIELD_NAME, "value": "30/08/2025 16:36", "inline": true }
+        { name: env.REPORT_ERROR_DISCORD_CARD_SERVICE_FIELD_NAME, value: "Plex", inline: true },
+        { name: "​", value: "​", inline: true },
+        { name: env.REPORT_ERROR_DISCORD_CARD_CODE_FIELD_NAME, value: errorCode, inline: true },
+        { name: env.REPORT_ERROR_DISCORD_CARD_REPORT_BY_FIELD_NAME, value: fullName, inline: true },
+        { name: "​", value: "​", inline: true },
+        { name: env.REPORT_ERROR_DISCORD_CARD_REPORT_DATE_FIELD_NAME, value: reportDate, inline: true } // Use dynamically generated date and time
       ],
       timestamp: new Date().toISOString()
     };
+
     const webhookResponse = await fetch(env.REPORT_ERROR_DISCORD_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ embeds: [embed] })
     });
+
     if (!webhookResponse.ok) {
       throw new Error(`Webhook failed: ${webhookResponse.status}`);
     }
+
     return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
     console.error('Report error handling failed:', error);
