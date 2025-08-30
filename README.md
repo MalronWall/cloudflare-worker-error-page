@@ -181,11 +181,12 @@ Ce projet vous permet de déployer des pages d'erreur personnalisée à l'aide d
 - Afficher une bannière lorsque votre backup LTE est actif.
 - Un bouton pour vous signaler une erreur qui envoie une notification sur Discord
 
-![Créer worker](images/other/presentation.png)
-![Créer worker](images/other/connection_error.png)
-![Créer worker](images/other/server_error.png)
-![Créer worker](images/other/banner_4g.png)
-![Créer worker](images/other/maintenance.png)
+![presentation](images/other/presentation.png)
+![presentation](images/other/connection_error.png)
+![presentation](images/other/server_error.png)
+![presentation](images/other/banner_4g.png)
+![presentation](images/other/maintenance.png)
+![presentation](images/other//discord_notif.png)
 
 ## Étapes d'installation
 
