@@ -92,6 +92,16 @@ async function handleReportError(request, env) {
       return new Response(JSON.stringify({ ok: false, error: 'Missing required fields' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
+    // Extract service name from siteName
+    let serviceName;
+    if (siteName.includes('/')) {
+      serviceName = siteName.split('/').pop(); // Get the last part after the slash
+    } else if (siteName.includes('.')) {
+      serviceName = siteName.split('.')[0]; // Get the first part before the dot
+    } else {
+      serviceName = siteName; // Use the entire siteName if no slash or dot
+    }
+
     // Generate current date and time in DD/MM/YYYY HH:mm format
     const now = new Date();
     const formattedDate = now.toLocaleDateString('fr-FR'); // Format as DD/MM/YYYY
@@ -103,12 +113,12 @@ async function handleReportError(request, env) {
       url: redirectUrl,
       color: 14557473,
       fields: [
-        { name: env.REPORT_ERROR_DISCORD_CARD_SERVICE_FIELD_NAME, value: "Plex", inline: true },
+        { name: env.REPORT_ERROR_DISCORD_CARD_SERVICE_FIELD_NAME, value: serviceName, inline: true }, // Use extracted service name
         { name: "​", value: "​", inline: true },
         { name: env.REPORT_ERROR_DISCORD_CARD_CODE_FIELD_NAME, value: errorCode, inline: true },
         { name: env.REPORT_ERROR_DISCORD_CARD_REPORT_BY_FIELD_NAME, value: fullName, inline: true },
         { name: "​", value: "​", inline: true },
-        { name: env.REPORT_ERROR_DISCORD_CARD_REPORT_DATE_FIELD_NAME, value: reportDate, inline: true } // Use dynamically generated date and time
+        { name: env.REPORT_ERROR_DISCORD_CARD_REPORT_DATE_FIELD_NAME, value: reportDate, inline: true }
       ],
       timestamp: new Date().toISOString()
     };
