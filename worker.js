@@ -99,7 +99,6 @@ async function handleReportError(request, env) {
         { name: env.REPORT_ERROR_LABEL_PLACEHOLDER, value: fullName, inline: true },
         { name: env.REPORT_ERROR_DISWCORD_CARD_CODE_FIELD_NAME, value: errorCode, inline: true },
         { name: env.REPORT_ERROR_DISWCORD_CARD_SITE_FIELD_NAME, value: siteName, inline: true },
-        { name: 'URL', value: redirectUrl, inline: false }
       ],
       timestamp: new Date().toISOString()
     };
