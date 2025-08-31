@@ -65,6 +65,7 @@ function getErrorDetailsFromCfCode(cfCode, env) {
     return;
   }
   errorCode = cfCode ? cfCode.toString() : "500";
+  console.log(`Handling error with code: ${errorCode}`);
   enableReportError = env.ENABLE_REPORT_ERROR;
   if(enableReportError) {
     reportErrorButtonText = env.REPORT_ERROR_BUTTON_TEXT
