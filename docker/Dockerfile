@@ -5,4 +5,6 @@ COPY check_ip_and_store.py .
 
 RUN pip install requests
 
+ENV PYTHONUNBUFFERED=1
+
 CMD ["python", "check_ip_and_store.py"]

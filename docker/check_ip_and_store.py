@@ -41,6 +41,7 @@ def main():
     last_is_4g = None
     while True:
         try:
+            log(f"Last IP: {last_ip}")
             ip = get_wan_ip()
             log(f"Retrieved IP: {ip}")
             is_4g = is_mobile_ip(ip)

@@ -4,13 +4,15 @@
   <meta charset="UTF-8">
   <title>Erreur Serveur</title>
   <style>
-    body { background: #1e2323; color: #fff; font-family: Arial, sans-serif; }
+    body { background: #1e2323; font-family: Arial, sans-serif; }
     .container { width: 650px; margin: 50px auto; text-align: center; background: #222; border-radius: 15px; padding: 30px; }
     .error-code { font-size: 64px; color: #faa237; font-weight: bold; }
     .error-type { font-size: 64px; color: #faa237; font-weight: bold; }
-    .error-message { font-size: 24px; margin: 20px 0; }
+    .error-message { font-size: 24px; color: #fff; margin: 20px 0; }
     .gif { width: 700px; margin-bottom: 25px; }
     .footer { color: #aaa; font-size: 14px; margin-top: 40px; }
+    .report-btn { background: #ef4444; color: white; margin-bottom: 20px; border: none; border-radius: 8px; padding: 10px 20px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+    .report-btn:hover { background: #dc2626; }
   </style>
 </head>
 <body>
@@ -18,7 +20,164 @@
     <div class="error-code">ERROR_CODE</div>
     <div class="error-type">ERROR_TYPE</div>
     <div id="error-message" class="error-message">ERROR_MESSAGE</div>
+    <button id="open-report-modal" class="report-btn" data-link="" data-site="">REPORT_ERROR_BUTTON_TEXT</button>
     <img class="gif" src="ERROR_GIF" alt="Error illustration">
   </div>
+  <!-- Embedded front-end script for modal and reporting -->
+  <script>
+    const enableReportError = ENABLE_REPORT_ERROR; // Set this variable to control the button visibility
+
+
+    // Create a top-of-page success alert
+    const showTopAlert = msg => {
+      const bar = document.createElement('div')
+      bar.textContent = msg
+      bar.setAttribute('role', 'status')
+      bar.style.position = 'fixed'
+      bar.style.top = '0'
+      bar.style.left = '0'
+      bar.style.right = '0'
+      bar.style.padding = '12px 16px'
+      bar.style.textAlign = 'center'
+      bar.style.fontWeight = '600'
+      bar.style.background = '#16a34a'
+      bar.style.color = 'white'
+      bar.style.zIndex = '2147483647'
+      document.body.appendChild(bar)
+      setTimeout(() => bar.remove(), 4000)
+    }
+    // ====== modal ======
+    const ensureModal = () => {
+      if (document.getElementById('report-error-modal')) return
+      const overlay = document.createElement('div')
+      overlay.id = 'report-error-modal'
+      overlay.style.position = 'fixed'
+      overlay.style.inset = '0'
+      overlay.style.background = 'rgba(0,0,0,0.4)'
+      overlay.style.display = 'none'
+      overlay.style.alignItems = 'center'
+      overlay.style.justifyContent = 'center'
+      overlay.style.zIndex = '2147483646'
+      const box = document.createElement('div')
+      box.style.background = 'white'
+      box.style.borderRadius = '12px'
+      box.style.padding = '20px'
+      box.style.width = 'min(92vw, 420px)'
+      box.style.boxShadow = '0 10px 30px rgba(0,0,0,0.25)'
+      box.style.fontFamily = 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif'
+      const title = document.createElement('h2')
+      title.textContent = "REPORT_ERROR_MODAL_HEADER_TEXT"
+      title.style.margin = '0 0 12px 0'
+      title.style.fontSize = '20px'
+      const label = document.createElement('label')
+      label.textContent = "REPORT_ERROR_LABEL_PLACEHOLDER"
+      label.style.display = 'block'
+      label.style.fontSize = '14px'
+      label.style.marginBottom = '6px'
+      const input = document.createElement('input')
+      input.type = 'text'
+      input.placeholder = "REPORT_ERROR_MODAL_NAME_PLACEHOLDER"
+      input.required = true
+      input.style.width = '100%'
+      input.style.boxSizing = 'border-box'
+      input.style.padding = '10px 12px'
+      input.style.fontSize = '16px'
+      input.style.border = '1px solid #d1d5db'
+      input.style.borderRadius = '8px'
+      input.id = 'reporter-fullname'
+      const actions = document.createElement('div')
+      actions.style.display = 'flex'
+      actions.style.gap = '8px'
+      actions.style.marginTop = '16px'
+      const cancel = document.createElement('button')
+      cancel.type = 'button'
+      cancel.textContent = "REPORT_ERROR_CANCEL_BUTTON_TEXT"
+      cancel.style.flex = '1'
+      cancel.style.padding = '10px 12px'
+      cancel.style.border = '1px solid #d1d5db'
+      cancel.style.borderRadius = '8px'
+      cancel.style.background = 'white'
+      cancel.onclick = () => hideModal()
+      const submit = document.createElement('button')
+      submit.type = 'button'
+      submit.textContent = "REPORT_ERROR_SUBMIT_BUTTON_TEXT"
+      submit.style.flex = '1'
+      submit.style.padding = '10px 12px'
+      submit.style.border = '0'
+      submit.style.borderRadius = '8px'
+      submit.style.background = '#ef4444'
+      submit.style.color = 'white'
+      submit.style.fontWeight = '600'
+      submit.onclick = async () => {
+        const fullName = input.value.trim()
+        if (!fullName) {
+          input.focus()
+          return
+        }
+        // Collect data
+        const trigger = document.getElementById('open-report-modal')
+        const redirectUrl = trigger?.getAttribute('data-link') || location.href
+        const siteName = trigger?.getAttribute('data-site') || location.hostname
+        const errorCode = "REPORT_ERROR_CODE"
+        // Call the worker endpoint
+        try {
+          const res = await fetch('/report-error', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ fullName, errorCode, siteName, redirectUrl })
+          })
+          const data = await res.json().catch(() => ({}))
+          if (!res.ok || !data.ok) throw new Error(data.error || 'send failed')
+          hideModal()
+          showTopAlert("REPORT_ERROR_SUCCESS_MESSAGE")
+        } catch (e) {
+          hideModal()
+          showTopAlert("REPORT_ERROR_FAILURE_MESSAGE")
+          console.error('Discord webhook failed', e)
+        }
+      }
+      actions.appendChild(cancel)
+      actions.appendChild(submit)
+      box.appendChild(title)
+      box.appendChild(label)
+      box.appendChild(input)
+      box.appendChild(actions)
+      overlay.appendChild(box)
+      document.body.appendChild(overlay)
+    }
+    const showModal = () => {
+      ensureModal()
+      const overlay = document.getElementById('report-error-modal')
+      const input = document.getElementById('reporter-fullname')
+      overlay.style.display = 'flex'
+      setTimeout(() => input?.focus(), 0)
+    }
+    const hideModal = () => {
+      const overlay = document.getElementById('report-error-modal')
+      if (overlay) overlay.style.display = 'none'
+    }
+    // ====== wire the button ======
+    const wireButton = () => {
+      ensureModal()
+      const btn = document.getElementById('open-report-modal')
+      if (!btn) return
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        showModal()
+      })
+      // Set dynamic attributes
+      btn.setAttribute('data-link', location.href)
+      btn.setAttribute('data-site', location.hostname)
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!enableReportError) {
+        const reportButton = document.getElementById('open-report-modal');
+        if (reportButton) {
+          reportButton.style.display = 'none';
+        }
+      }
+      wireButton();
+    });
+  </script>
 </body>
 </html>

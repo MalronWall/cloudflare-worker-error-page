@@ -16,23 +16,50 @@ function createTimeoutController(timeoutMs) {
  * @returns {Promise<Response>} Request response
  */
 async function fetchWithMethodFallback(url, { signal, ...options } = {}) {
-  let response = await fetch(url, {
-    method: 'HEAD',
-    signal,
-    cf: { cacheTtl: 0, cacheEverything: false },
-    ...options
-  });
-
-  if (response.status === 405) {
-    response = await fetch(url, {
-      method: 'GET',
+  // Try HEAD first (with cf if provided)
+  try {
+    let response = await fetch(url, {
+      method: 'HEAD',
       signal,
       cf: { cacheTtl: 0, cacheEverything: false },
       ...options
     });
-  }
 
-  return response;
+    if (response.status === 405) {
+      response = await fetch(url, {
+        method: 'GET',
+        signal,
+        cf: { cacheTtl: 0, cacheEverything: false },
+        ...options
+      });
+    }
+
+    return response;
+  } catch (err) {
+    // Try GET with cf if HEAD failed, then GET without cf as a last resort
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        signal,
+        cf: { cacheTtl: 0, cacheEverything: false },
+        ...options
+      });
+      return response;
+    } catch (err2) {
+      // Final attempt: GET without cf (some runtimes / dev envs reject cf option)
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          signal,
+          ...options
+        });
+        return response;
+      } catch (err3) {
+        // rethrow the original error to be handled by callers
+        throw err3;
+      }
+    }
+  }
 }
 
 export const HELPER = {
@@ -41,15 +68,18 @@ export const HELPER = {
    * @param {Object} options - Request options
    * @returns {Promise<boolean>} true if NPM is accessible
    */
-  async isNpmUp({ timeoutMs = 2000 } = {}, env) {
+  async isNpmUp({ timeoutMs = 10000 } = {}, env) {
+    if (!env?.NPM_HEALTH_URL) {
+      return false;
+    }
     const [controller, id] = createTimeoutController(timeoutMs);
     try {
       const response = await fetchWithMethodFallback(env.NPM_HEALTH_URL, { signal: controller.signal });
-      if (this.isCloudflareError(response) && response.status >= 520 && response.status <= 529) {
+      if (HELPER.isCloudflareError(response) && response.status >= 520 && response.status <= 529) {
         return false;
       }
       return response.status > 0 && response.status < 500;
-    } catch {
+    } catch (err) {
       return false;
     } finally {
       clearTimeout(id);
@@ -62,13 +92,13 @@ export const HELPER = {
    * @returns {Promise<boolean|null>} Reachability state
    */
   async isOriginReachable({ timeoutMs = 1500 } = {}, env) {
-    if (!env.ORIGIN_PING_URL) return null;
+    if (!env?.ORIGIN_PING_URL) return null;
     
     const [controller, id] = createTimeoutController(timeoutMs);
     try {
       const response = await fetchWithMethodFallback(env.ORIGIN_PING_URL, { signal: controller.signal });
-      return response.status > 0 && response.status < 500;
-    } catch {
+      return response && response.status > 0 && response.status < 500;
+    } catch (err) {
       return false;
     } finally {
       clearTimeout(id);
